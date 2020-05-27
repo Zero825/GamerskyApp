@@ -10,6 +10,8 @@
 * 阅读正文
 * 查看评论
 * 图片懒加载
+* 查看和下载图片
+* 分享文章链接和图片
 ### 引用
 查看大图引用[BigImageViewer](https://github.com/Piasy/BigImageViewer)<br>
 下拉刷新引用[SmartRefreshLayout](https://github.com/scwang90/SmartRefreshLayout)<br>
