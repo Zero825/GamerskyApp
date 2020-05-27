@@ -56,6 +56,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -79,6 +82,7 @@ public class CommentFragment extends Fragment {
     private  int page;
     private  String sid;
     private  int flag;
+    private ExecutorService executor;
 
     @Nullable
     @Override
@@ -121,6 +125,7 @@ public class CommentFragment extends Fragment {
         mCurrentPosition = 0;
         page=1;
         flag=0;
+        executor= Executors.newSingleThreadExecutor();
 
     }
     @SuppressLint("ClickableViewAccessibility")
@@ -166,17 +171,18 @@ public class CommentFragment extends Fragment {
                     }
                     updateSuspensionBar();
                 }
-                System.out.println(layoutManager.findLastVisibleItemPosition()+"      "+allCommentData.size()+hotCommentData.size());
+
                int lastItem=layoutManager.findLastVisibleItemPosition();
                int dataNum=allCommentData.size()+hotCommentData.size();
                int line=dataNum;
                if(lastItem>dataNum){
                    line=dataNum+1;
                }
+                //System.out.println(lastItem+"      "+flag+"       "+line);
                 if(lastItem>10&&lastItem!=flag&&lastItem==line){
                     flag=lastItem;
                     System.out.println("加载评论");
-                    loadMoreComment();
+                    executor.submit(loadMoreComment());
                 }
 
             }
@@ -285,15 +291,15 @@ public class CommentFragment extends Fragment {
 
 
     public  void loadComment(){
-        hotCommentData.clear();
-        allCommentData.clear();
-        page=1;
-        flag=0;
         ((AnimationDrawable) loadimageView.getDrawable()).start();
         loadtextView.setText("正在加载...");
         new Thread(new Runnable() {
             @Override
             public void run() {
+                hotCommentData.clear();
+                allCommentData.clear();
+                page=1;
+                flag=0;
                 try {
                     doc = Jsoup.connect(data_src).get();
                     Elements content = doc.getElementsByClass("gsAreaContextArt");
@@ -657,12 +663,13 @@ public class CommentFragment extends Fragment {
         }).start();
     }
 
-    public  void loadMoreComment(){
+    public  Thread loadMoreComment(){
 
-        synchronized(this){
-            new  Thread(new Runnable() {
+
+           return new  Thread(new Runnable() {
                 @Override
                 public void run() {
+
                     final String lastCommentFloor1=allCommentData.get(allCommentData.size()-1).floor;
                     page++;
                     if (srcUrl != null && srcUrl.indexOf("https://club") != -1) {
@@ -698,6 +705,7 @@ public class CommentFragment extends Fragment {
                                 System.out.println(result);
                                 final JSONObject jsonObject = new JSONObject(result);
                                 JSONArray jsonArray3 = jsonObject.getJSONArray("content");
+
                                 for (int i = 0; i < jsonArray3.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray3.getJSONObject(i);
                                     String s1 = jsonObject1.getString("content");
@@ -775,7 +783,7 @@ public class CommentFragment extends Fragment {
                                     commentAdapter.notifyDataSetChanged();
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;
                                     if(lastCommentFloor2.equals("1楼")||lastCommentFloor1.equals(lastCommentFloor2)){
-
+                                       commentAdapter.setNoMore();
                                     }else {
 
                                     }
@@ -845,7 +853,7 @@ public class CommentFragment extends Fragment {
                                     updateSuspensionBar();
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;
                                     if(lastCommentFloor2.equals("1楼")||lastCommentFloor1.equals(lastCommentFloor2)){
-
+                                        commentAdapter.setNoMore();
                                     }else {
                                     }
                                 }
@@ -856,8 +864,8 @@ public class CommentFragment extends Fragment {
 
                     }
                 }
-            }).start();
-        }
+            });
+
 
     }
 
@@ -913,12 +921,14 @@ public class CommentFragment extends Fragment {
     public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHolder> {
         private ArrayList<CommentDataBean> hotData;
         private ArrayList<CommentDataBean> allData;
+        private boolean moreData;
 
 
         public CommentAdapter(ArrayList<CommentDataBean> hotData,ArrayList<CommentDataBean> allData){
 
             this.hotData=hotData;
             this.allData=allData;
+            moreData=true;
         }
 
         public  class MyViewHolder extends RecyclerView.ViewHolder {
@@ -1098,7 +1108,11 @@ public class CommentFragment extends Fragment {
                 }
                 else {
                     holder.textView.setVisibility(View.VISIBLE);
-                    holder.textView.setText("— End —");
+                    if(moreData) {
+                        holder.textView.setText("请稍等");
+                    }else {
+                        holder.textView.setText("没有了，没有奇迹了");
+                    }
                 }
             }
 
@@ -1108,6 +1122,9 @@ public class CommentFragment extends Fragment {
         public int getItemCount() {
                 return hotData.size()+allData.size()+3;
 
+        }
+        public void setNoMore(){
+            moreData=false;
         }
     }
 

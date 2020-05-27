@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity{
         refreshLayout.setRefreshHeader(new LoadHeader(this));
         refreshLayout.setEnableOverScrollDrag(true);
         refreshLayout.setDragRate(0.5f);
-        refreshLayout.setDisableContentWhenRefresh(true);
+        //refreshLayout.setDisableContentWhenRefresh(true);
 
     }
 
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity{
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
-                updata();
+               updata();
             }
         });
 
@@ -255,13 +255,14 @@ public class MainActivity extends AppCompatActivity{
 
     public void updata(){
 
-        bannerData.clear();
-        topData.clear();
-        newsList.clear();
+
 
         new Thread(){
             @Override
             public void run(){
+                bannerData.clear();
+                topData.clear();
+                newsList.clear();
                 Document doc = null;
                 try {
                     doc = Jsoup.connect("https://wap.gamersky.com/").get();
