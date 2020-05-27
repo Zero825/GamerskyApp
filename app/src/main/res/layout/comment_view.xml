@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
+    android:clickable="false"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,22 +36,28 @@
             app:layout_constraintStart_toEndOf="@+id/imageView6"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView11"
+        <LinearLayout
+            android:id="@+id/l1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:lineSpacingExtra="4sp"
-            android:text="TextView"
-            android:textColor="#000000"
-            android:textIsSelectable="true"
-            android:textSize="15sp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/imagecontainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView6"
-            app:layout_constraintTop_toBottomOf="@id/textView9" />
+            app:layout_constraintTop_toBottomOf="@id/textView9">
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:lineSpacingExtra="4sp"
+                android:text="TextView"
+                android:textColor="#000000"
+                android:textIsSelectable="true"
+                android:textSize="15sp" />
+        </LinearLayout>
 
         <GridLayout
             android:id="@+id/imagecontainer"
@@ -62,9 +69,9 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/textView12"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@id/imageView6"
-            app:layout_constraintTop_toBottomOf="@id/textView11"></GridLayout>
+            app:layout_constraintTop_toBottomOf="@id/l1"></GridLayout>
 
         <TextView
             android:id="@+id/textView12"
