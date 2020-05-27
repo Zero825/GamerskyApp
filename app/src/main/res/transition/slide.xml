@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+    <slide
+        android:duration="300"
+        android:slideEdge="right"
+        android:interpolator="@android:interpolator/accelerate_decelerate" />
+</transitionSet>
