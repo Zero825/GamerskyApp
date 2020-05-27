@@ -135,7 +135,7 @@ public class ArticleFragment extends Fragment {
                 Uri content_url = Uri.parse(url);
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.setData(content_url);
-                startActivity(Intent.createChooser(intent, "请选择浏览器"));
+                startActivity(intent);
                 return true;
             }
         });
