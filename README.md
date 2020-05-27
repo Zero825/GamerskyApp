@@ -1,7 +1,9 @@
 # GamerskyApp
 一个游民星空的第三方Android客户端<br>
-应用截图在preview文件夹<br>
-或者直接查看releases<br>
+<table><tr><td><img src="https://user-images.githubusercontent.com/37415536/82984573-049f3c00-a025-11ea-8bac-1b6a21363b88.png" width="200"></td>
+<td><img src="https://user-images.githubusercontent.com/37415536/82984624-197bcf80-a025-11ea-8493-4971b574f7bc.png" width="200"></td>
+<td><img src="https://user-images.githubusercontent.com/37415536/82984639-1f71b080-a025-11ea-87b7-1174309c4862.png" width="200"></td></tr></table>
+
 ### 功能特性
 * 下拉刷新
 * 上拉自动加载
