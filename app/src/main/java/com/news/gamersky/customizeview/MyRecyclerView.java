@@ -36,7 +36,7 @@ public class MyRecyclerView extends RecyclerView {
                 x2=(int)ev.getX();
                 y2= (int) ev.getY();
                 viewGroup.requestDisallowInterceptTouchEvent(true);
-                if(Math.abs(y1-y2)>5||(x2-x1<0)){
+                if(Math.abs(y1-y2)>10||(x2-x1<0)){
                     viewGroup.requestDisallowInterceptTouchEvent(true);
                 }
                 else{
