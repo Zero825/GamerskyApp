@@ -87,7 +87,7 @@ public class ArticleFragment extends Fragment {
 //                            b=1;
 //                            break;
 //                        } else
-                            if(Math.abs(y1-y2)>15||(x2-x1>=0)){
+                            if(Math.abs(y1-y2)>5||(x2-x1>=0)){
                             viewGroup.requestDisallowInterceptTouchEvent(true);
                         }
                         else{

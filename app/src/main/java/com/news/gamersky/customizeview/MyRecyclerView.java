@@ -36,11 +36,11 @@ public class MyRecyclerView extends RecyclerView {
                 x2=(int)ev.getX();
                 y2= (int) ev.getY();
                 viewGroup.requestDisallowInterceptTouchEvent(true);
-                if(Math.abs(y1-y2)<15&&(x2-x1>0)){
-                    viewGroup.requestDisallowInterceptTouchEvent(false);
+                if(Math.abs(y1-y2)>5||(x2-x1<0)){
+                    viewGroup.requestDisallowInterceptTouchEvent(true);
                 }
                 else{
-                    viewGroup.requestDisallowInterceptTouchEvent(true);
+                    viewGroup.requestDisallowInterceptTouchEvent(false);
                 }
                 break;
             case MotionEvent.ACTION_DOWN:
