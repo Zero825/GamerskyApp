@@ -331,7 +331,6 @@ public class MainActivity extends AppCompatActivity{
                         String result = is2s(inputStream);//将流转换为字符串。
                         result = result.substring(1, result.length() - 1);
                         JSONObject jsonObject = new JSONObject(result).getJSONObject("result");
-                        System.out.println(jsonObject.getJSONObject("1291581").getString("comments"));
                         for(int i=0;i<newsList.size();i++){
                             String s=jsonObject.getJSONObject(newsList.get(i).id).getString("comments");
                             newsList.get(i).setCommentCount(s);
