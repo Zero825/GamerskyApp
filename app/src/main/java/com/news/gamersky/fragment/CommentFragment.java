@@ -503,6 +503,10 @@ public class CommentFragment extends Fragment {
                                 loadimageView.setVisibility(View.GONE);
                                 commentHeader.setVisibility(View.VISIBLE);
                                 ((AnimationDrawable) loadimageView.getDrawable()).stop();
+                                if(allCommentData.size()!=0&&
+                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
+                                    commentAdapter.setNoMore();
+                                }
                                 refreshLayout.setEnableRefresh(true);
                                 refreshLayout.finishRefresh(true);
 
@@ -639,6 +643,10 @@ public class CommentFragment extends Fragment {
                                 loadimageView.setVisibility(View.GONE);
                                 commentHeader.setVisibility(View.VISIBLE);
                                 ((AnimationDrawable) loadimageView.getDrawable()).stop();
+                                if(allCommentData.size()!=0&&
+                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
+                                    commentAdapter.setNoMore();
+                                }
                                 refreshLayout.setEnableRefresh(true);
                                 refreshLayout.finishRefresh(true);
 
@@ -784,8 +792,6 @@ public class CommentFragment extends Fragment {
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;
                                     if(lastCommentFloor2.equals("1楼")||lastCommentFloor1.equals(lastCommentFloor2)){
                                        commentAdapter.setNoMore();
-                                    }else {
-
                                     }
                                 }
                             });
@@ -854,7 +860,6 @@ public class CommentFragment extends Fragment {
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;
                                     if(lastCommentFloor2.equals("1楼")||lastCommentFloor1.equals(lastCommentFloor2)){
                                         commentAdapter.setNoMore();
-                                    }else {
                                     }
                                 }
                             });

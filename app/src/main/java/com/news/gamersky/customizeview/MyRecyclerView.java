@@ -30,16 +30,22 @@ public class MyRecyclerView extends RecyclerView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev){
         ViewGroup viewGroup = (ViewGroup) this.getParent();
-        //System.out.println(ev.toString());
+        System.out.println(ev.toString());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                x2=(int)ev.getX();
                 y2= (int) ev.getY();
+                x2=(int)ev.getX();
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 if(Math.abs(y1-y2)>10||(x2-x1<0)){
                     viewGroup.requestDisallowInterceptTouchEvent(true);
-                }
-                else{
+                } else{
+//                    if(ev.getEventTime()-ev.getDownTime()>100) {
+//                        viewGroup.requestDisallowInterceptTouchEvent(false);
+//                    }else {
+//                        if(Math.abs(y1-y2)<5){
+//                            viewGroup.requestDisallowInterceptTouchEvent(false);
+//                        }
+//                    }
                     viewGroup.requestDisallowInterceptTouchEvent(false);
                 }
                 break;
