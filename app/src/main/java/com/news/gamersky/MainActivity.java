@@ -9,24 +9,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,7 +53,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-import static android.view.View.VISIBLE;
+
 
 public class MainActivity extends AppCompatActivity{
     private RefreshLayout refreshLayout;
@@ -83,7 +77,7 @@ public class MainActivity extends AppCompatActivity{
     private MyAdapter myAdapter;
     private MyViewpager2Adapter myViewpager2Adapter;
     private SharedPreferences sharedPreferences;
-
+    private ArrayList<String> alreadyRead;
 
 
     @Override
@@ -104,6 +98,7 @@ public class MainActivity extends AppCompatActivity{
         bannerData=new ArrayList<>();
         topData = new ArrayList<>();
         newsList = new ArrayList<>();
+        alreadyRead=new ArrayList<>();
 
         getWindow().getDecorView()
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -369,13 +364,13 @@ public class MainActivity extends AppCompatActivity{
                             vp.setCurrentItem(bannerNum/2);
 
                             System.out.println("更新ui完毕");
-                            recyclerView.setVisibility(VISIBLE);
+                            recyclerView.setVisibility(View.VISIBLE);
                             myAdapter.notifyDataSetChanged();
                             if(toast!=null) toast.cancel();
                             toast=showToast("数据更新成功",230,40);
                             toast.show();
-                            topiv.setVisibility(VISIBLE);
-                            footv.setVisibility(VISIBLE);
+                            topiv.setVisibility(View.VISIBLE);
+                            footv.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
                             refreshLayout.finishRefresh(true);
                         }
@@ -452,12 +447,21 @@ public class MainActivity extends AppCompatActivity{
 
         // Replace the contents of a view (invoked by the layout manager)
         @Override
-        public void onBindViewHolder(MyViewHolder holder, final int position) {
+        public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
-            holder.textView2.setText(mDataset.get(position).data);
+            holder.textView2.setText(mDataset.get(position).date);
             holder.textView.setText(mDataset.get(position).title);
+            boolean b=false;
+            for(String s:alreadyRead){
+                if(s.equals(mDataset.get(position).id)){
+                    b=true;
+                }
+            }
+            if(b){
+                holder.textView.setTextColor(getResources().getColor(R.color.defaultColor));
+            }
             holder.textView3.setText(mDataset.get(position).sort);
             if (!mDataset.get(position).commentCount.equals("")) {
                 holder.textView4.setText(mDataset.get(position).commentCount + "评论");
@@ -472,6 +476,8 @@ public class MainActivity extends AppCompatActivity{
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        holder.textView.setTextColor(getResources().getColor(R.color.defaultColor));
+                        alreadyRead.add(mDataset.get(position).id);
                         System.out.println("我是第"+position);
                         Intent intent=new Intent(MainActivity.this,ArticleActivity.class);
                         intent.putExtra("data_src",newsList.get(position).src);
