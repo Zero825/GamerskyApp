@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -13,6 +14,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
@@ -21,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity{
     private NestedScrollView nestedScrollView;
     private MyAdapter myAdapter;
     private MyViewpager2Adapter myViewpager2Adapter;
+    private SharedPreferences sharedPreferences;
 
 
 
@@ -89,26 +93,9 @@ public class MainActivity extends AppCompatActivity{
         init();
         updata();
         startListen();
+
     }
 
-
-    public void clearGlideDiskCache(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Glide.get(MainActivity.this).clearDiskCache();
-                BigImageViewer.imageLoader().cancelAll();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(toast!=null) toast.cancel();
-                        toast=showToast("缓存已清空",230,40);
-                        toast.show();
-                    }
-                });
-            }
-        }).start();
-    }
 
     public void init(){
         timer=new Timer();
@@ -149,8 +136,41 @@ public class MainActivity extends AppCompatActivity{
         refreshLayout.setRefreshHeader(new LoadHeader(this));
         refreshLayout.setEnableOverScrollDrag(true);
         refreshLayout.setDragRate(0.5f);
-        //refreshLayout.setDisableContentWhenRefresh(true);
+        refreshLayout.setDisableContentWhenRefresh(true);
 
+        sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        clearGlideDiskCache(sharedPreferences.getBoolean("auto_clear_cache",true));
+    }
+
+    public void clearGlideDiskCache(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(MainActivity.this).clearDiskCache();
+                BigImageViewer.imageLoader().cancelAll();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(toast!=null) toast.cancel();
+                        toast=showToast("缓存已清空",230,40);
+                        toast.show();
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void clearGlideDiskCache(boolean b){
+        if(b) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Glide.get(MainActivity.this).clearDiskCache();
+                    BigImageViewer.imageLoader().cancelAll();
+                }
+            }).start();
+        }
     }
 
 
@@ -168,7 +188,6 @@ public class MainActivity extends AppCompatActivity{
                updata();
             }
         });
-
         toptv1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,9 +243,6 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-
-
-
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -242,10 +258,11 @@ public class MainActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()) {
             case R.id.activity_main_menu1:
-                clearGlideDiskCache();
+                Intent intent=new Intent(this,SettingsActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.activity_main_menu2:
-
+                clearGlideDiskCache();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -304,39 +321,41 @@ public class MainActivity extends AppCompatActivity{
                         String s3=content2.get(i).getElementsByTag("a").attr("href");
                         String s4=e1.get(0).getElementsByTag("time").text();
                         String s5=e2.get(0).getElementsByTag("strong").text();
-                        newsList.add(new NewsDataBean(s0,s1,s2,s3,s4,s5));
+                        newsList.add(new NewsDataBean(s0,s1,s2,s3,s4,s5,""));
                     }
 
-                    String topic_source_id = "";
-                    for(int i=0;i<newsList.size();i++){
-                        topic_source_id=topic_source_id+newsList.get(i).id+",";
-                    }
-
-
-                    String src = "https://cm.gamersky.com/commentapi/count?" +
-                            "topic_source_id=" +topic_source_id;
-                    URL url = new URL(src);
-                    //得到connection对象。
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    //设置请求方式
-                    connection.setRequestMethod("GET");
-                    //连接
-                    connection.connect();
-                    //得到响应码
-                    int responseCode = connection.getResponseCode();
-                    if (responseCode == HttpURLConnection.HTTP_OK) {
-                        //得到响应流
-                        InputStream inputStream = connection.getInputStream();
-                        //将响应流转换成字符串
-                        String result = is2s(inputStream);//将流转换为字符串。
-                        result = result.substring(1, result.length() - 1);
-                        JSONObject jsonObject = new JSONObject(result).getJSONObject("result");
-                        for(int i=0;i<newsList.size();i++){
-                            String s=jsonObject.getJSONObject(newsList.get(i).id).getString("comments");
-                            newsList.get(i).setCommentCount(s);
+                    if(sharedPreferences.getBoolean("load_comments_count",false)) {
+                        String topic_source_id = "";
+                        for (int i = 0; i < newsList.size(); i++) {
+                            topic_source_id = topic_source_id + newsList.get(i).id + ",";
                         }
-                        connection.disconnect();
+                        String src = "https://cm.gamersky.com/commentapi/count?" +
+                                "topic_source_id=" + topic_source_id;
+                        URL url = new URL(src);
+                        //得到connection对象。
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        //设置请求方式
+                        connection.setRequestMethod("GET");
+                        //连接
+                        connection.connect();
+                        //得到响应码
+                        int responseCode = connection.getResponseCode();
+                        if (responseCode == HttpURLConnection.HTTP_OK) {
+                            //得到响应流
+                            InputStream inputStream = connection.getInputStream();
+                            //将响应流转换成字符串
+                            String result = is2s(inputStream);//将流转换为字符串。
+                            result = result.substring(1, result.length() - 1);
+                            JSONObject jsonObject = new JSONObject(result).getJSONObject("result");
+                            for (int i = 0; i < newsList.size(); i++) {
+                                String s = jsonObject.getJSONObject(newsList.get(i).id).getString("comments");
+                                newsList.get(i).setCommentCount(s);
+                            }
+                            connection.disconnect();
+                        }
                     }
+
+
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -361,6 +380,7 @@ public class MainActivity extends AppCompatActivity{
                             refreshLayout.finishRefresh(true);
                         }
                     });
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
@@ -439,7 +459,12 @@ public class MainActivity extends AppCompatActivity{
             holder.textView2.setText(mDataset.get(position).data);
             holder.textView.setText(mDataset.get(position).title);
             holder.textView3.setText(mDataset.get(position).sort);
-            holder.textView4.setText(mDataset.get(position).commentCount+"评论");
+            if (!mDataset.get(position).commentCount.equals("")) {
+                holder.textView4.setText(mDataset.get(position).commentCount + "评论");
+            }else {
+                holder.textView4.setText("");
+            }
+
             // holder.imageView.setImageResource(R.mipmap.ic_launcher);
             Glide.with(holder.imageView)
                     .load(mDataset.get(position).imageUrl)

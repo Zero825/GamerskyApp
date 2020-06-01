@@ -1,16 +1,13 @@
 package com.news.gamersky.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +35,6 @@ import com.scwang.smartrefresh.layout.listener.OnMultiPurposeListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -56,7 +51,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -355,7 +349,8 @@ public class CommentFragment extends Fragment {
                             System.out.println(result);
                             final JSONObject jsonObject = new JSONObject(result);
                             JSONArray jsonArray1 = jsonObject.getJSONArray("hotContent");
-                            JSONArray jsonArray3 = jsonObject.getJSONArray("content");
+                            JSONArray jsonArray2 = jsonObject.getJSONArray("content");
+
                             for (int i = 0; i < jsonArray1.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
                                 String s1 = jsonObject1.getString("content");
@@ -367,7 +362,7 @@ public class CommentFragment extends Fragment {
                                 final Elements es5 = doc.getElementsByClass("digg-btn");
                                 Elements es6 = doc.getElementsByClass("userlink")
                                         .get(0).getElementsByTag("img");
-                                final JSONArray jsonArray2 = new JSONArray();
+                                final JSONArray jsonArray = new JSONArray();
                                 ArrayList<String> images = new ArrayList<>();
                                 try{
                                     Elements es7 = doc.getElementsByClass("qzcmt-picdiv").get(0)
@@ -378,11 +373,37 @@ public class CommentFragment extends Fragment {
                                         JSONObject jsonObject2 = new JSONObject();
                                         jsonObject2.put("tinysquare", element.attr("src"));
                                         jsonObject2.put("origin", element.attr("src").replace("tinysquare", "origin"));
-                                        jsonArray2.put(j, jsonObject2);
+                                        jsonArray.put(j, jsonObject2);
                                         images.add(element.attr("src"));
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
+                                }
+                                JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
+                                ArrayList<CommentDataBean> replies=new ArrayList<>();
+                                String repliesCommentId;
+                                for(int j=0;j<5&&j<jsonArray3.length();j++){
+                                    Document doc1 = Jsoup.parse(jsonArray3.get(j).toString());
+                                    System.out.println(doc1.toString());
+                                    String userImage=doc1.getElementsByTag("img").get(0).attr("src");
+                                    String userName=doc1.getElementsByClass("uname").get(0).html();
+                                    String objectUserName=es2.html();
+                                    String time=doc1.getElementsByClass("ccmt_time").get(0).html();
+                                    String likeNum=doc1.getElementsByClass("digg-btn").get(0).html();
+                                    String content=doc1.getElementsByClass("content").get(0).html();
+                                    try{
+                                        objectUserName=doc1.getElementsByClass("uname").get(1).html();
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                    replies.add(new CommentDataBean(
+                                            userImage,
+                                            userName,
+                                            time,
+                                            likeNum,
+                                            content,
+                                            objectUserName
+                                    ));
                                 }
                                 String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
                                         "jsondata=" +
@@ -403,27 +424,31 @@ public class CommentFragment extends Fragment {
                                     //将响应流转换成字符串
                                     String result1 = is2s(inputStream1);//将流转换为字符串。
                                     result1 = result1.substring(1, result1.length() - 1);
-                                    System.out.println(result1);
                                     JSONObject jsonObject2 = new JSONObject(result1);
                                     String s = jsonObject2.getString("body");
                                     s = s.substring(1, s.length() - 1);
                                     JSONObject jsonObject3 = new JSONObject(s);
-                                    System.out.println(jsonObject3.getString("digg"));
                                     s2 = jsonObject3.getString("digg");
                                 }
                                 connection1.disconnect();
                                 hotCommentData.add(new CommentDataBean(
+                                        es5.attr("cmtid"),
+                                        sid,
                                         es6.attr("src"),
                                         es2.html(),
                                         es3.html(),
                                         "赞:"+s2,
                                         es1.html(),
                                         es4.html() + "楼",
-                                        images, jsonArray2.toString()
+                                        images,
+                                        jsonArray.toString(),
+                                        replies,
+                                        jsonObject1.getString("replyCount")
+
                                 ));
                             }
-                            for (int i = 0; i < jsonArray3.length(); i++) {
-                                JSONObject jsonObject1 = jsonArray3.getJSONObject(i);
+                            for (int i = 0; i < jsonArray2.length(); i++) {
+                                JSONObject jsonObject1 = jsonArray2.getJSONObject(i);
                                 String s1 = jsonObject1.getString("content");
                                 Document doc = Jsoup.parse(s1);
                                 Elements es1 = doc.getElementsByClass("content");
@@ -433,7 +458,7 @@ public class CommentFragment extends Fragment {
                                 final Elements es5 = doc.getElementsByClass("digg-btn");
                                 Elements es6 = doc.getElementsByClass("userlink")
                                         .get(0).getElementsByTag("img");
-                                final JSONArray jsonArray2 = new JSONArray();
+                                final JSONArray jsonArray = new JSONArray();
                                 ArrayList<String> images = new ArrayList<>();
                                 try{
                                     Elements es7 = doc.getElementsByClass("qzcmt-picdiv").get(0)
@@ -444,12 +469,40 @@ public class CommentFragment extends Fragment {
                                         JSONObject jsonObject2 = new JSONObject();
                                         jsonObject2.put("tinysquare", element.attr("src"));
                                         jsonObject2.put("origin", element.attr("src").replace("tinysquare", "origin"));
-                                        jsonArray2.put(j, jsonObject2);
+                                        jsonArray.put(j, jsonObject2);
                                         images.add(element.attr("src"));
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
+
+                                JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
+                                ArrayList<CommentDataBean> replies=new ArrayList<>();
+                                String repliesCommentId;
+                                for(int j=0;j<5&&j<jsonArray3.length();j++){
+                                    Document doc1 = Jsoup.parse(jsonArray3.get(j).toString());
+                                    System.out.println(doc1.toString());
+                                    String userImage=doc1.getElementsByTag("img").get(0).attr("src");
+                                    String userName=doc1.getElementsByClass("uname").get(0).html();
+                                    String objectUserName=es2.html();
+                                    String time=doc1.getElementsByClass("ccmt_time").get(0).html();
+                                    String likeNum=doc1.getElementsByClass("digg-btn").get(0).html();
+                                    String content=doc1.getElementsByClass("content").get(0).html();
+                                    try{
+                                        objectUserName=doc1.getElementsByClass("uname").get(1).html();
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                    replies.add(new CommentDataBean(
+                                            userImage,
+                                            userName,
+                                            time,
+                                            likeNum,
+                                            content,
+                                            objectUserName
+                                    ));
+                                }
+
                                 String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
                                         "jsondata=" +
                                         "{\"commentIds\":" + es5.attr("cmtid") + "}";
@@ -479,13 +532,18 @@ public class CommentFragment extends Fragment {
                                 }
                                 connection1.disconnect();
                                 allCommentData.add(new CommentDataBean(
+                                        es5.attr("cmtid"),
+                                        sid,
                                         es6.attr("src"),
                                         es2.html(),
                                         es3.html(),
                                         "赞:"+s2,
                                         es1.html(),
                                         es4.html() + "楼",
-                                        images, jsonArray2.toString()
+                                        images,
+                                        jsonArray.toString(),
+                                        replies,
+                                        jsonObject1.getString("replyCount")
                                 ));
                             }
                         }
@@ -496,6 +554,7 @@ public class CommentFragment extends Fragment {
                         recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
+                                updateSuspensionBar();
                                 commentAdapter.notifyDataSetChanged();
                                 recyclerView.scheduleLayoutAnimation();
                                 loadtextView.setText("加载成功");
@@ -534,7 +593,7 @@ public class CommentFragment extends Fragment {
                         String pageIndex = "1";
                         String pageSize = "5"; //最多条数
                         String minCount = "5"; //最少赞数
-                        String maxCount = "0"; //回复条数
+                        String maxCount = "5"; //回复条数
                         sid = doc.getElementsByTag("div").attr("sid");
                         System.out.println("sid=" + sid);
                         String src = "https://cm.gamersky.com/appapi/GetArticleCommentWithClubStyle?" +
@@ -564,21 +623,41 @@ public class CommentFragment extends Fragment {
                             for (int i = 0; i < jsonArray1.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
                                 JSONArray jsonArray2 = jsonObject1.getJSONArray("imageInfes");
+                                JSONArray jsonArray3 = jsonObject1.getJSONArray("replies");
                                 ArrayList<String> images = new ArrayList<>();
+                                ArrayList<CommentDataBean> replies=new ArrayList<>();
                                 if (jsonArray2.length() != 0) {
                                     for (int j = 0; j < jsonArray2.length(); j++) {
                                         JSONObject jsonObject2 = jsonArray2.getJSONObject(j);
                                         images.add(jsonObject2.getString("tinysquare"));
                                     }
                                 }
+                                if(jsonArray3.length()!=0){
+                                    for (int j = 0; j < jsonArray3.length(); j++) {
+                                        JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
+                                        replies.add(new CommentDataBean(
+                                                jsonObject3.getString("userHeadImageURL"),
+                                                jsonObject3.getString("userName"),
+                                                format(jsonObject3.getLong("createTime")),
+                                                jsonObject3.getString("praisesCount"),
+                                                jsonObject3.getString("replyContent"),
+                                                jsonObject3.getString("objectUserName")
+                                        ));
+                                    }
+                                }
                                 hotCommentData.add(new CommentDataBean(
+                                        jsonObject1.getString("comment_id"),
                                         jsonObject1.getString("img_url"),
                                         jsonObject1.getString("nickname"),
                                         format(jsonObject1.getLong("create_time")),
                                         "赞:" + jsonObject1.getString("support_count"),
                                         jsonObject1.getString("content"),
                                         jsonObject1.getString("floorNumber") + "楼",
-                                        images, jsonArray2.toString()
+                                        images,
+                                        jsonArray2.toString(),
+                                        replies,
+                                        jsonObject1.getString("repliesCount")
+
                                 ));
 
                             }
@@ -613,21 +692,41 @@ public class CommentFragment extends Fragment {
                             for (int i = 0; i < jsonArray1.length(); i++) {
                                 JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
                                 JSONArray jsonArray2 = jsonObject1.getJSONArray("imageInfes");
+                                JSONArray jsonArray3 = jsonObject1.getJSONArray("replies");
                                 ArrayList<String> images = new ArrayList<>();
+                                ArrayList<CommentDataBean> replies=new ArrayList<>();
                                 if (jsonArray2.length() != 0) {
                                     for (int j = 0; j < jsonArray2.length(); j++) {
                                         JSONObject jsonObject2 = jsonArray2.getJSONObject(j);
                                         images.add(jsonObject2.getString("tinysquare"));
                                     }
                                 }
+                                if(jsonArray3.length()!=0){
+                                    for (int j = 0; j < jsonArray3.length(); j++) {
+                                        JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
+                                        replies.add(new CommentDataBean(
+                                                jsonObject3.getString("userHeadImageURL"),
+                                                jsonObject3.getString("userName"),
+                                                format(jsonObject3.getLong("createTime")),
+                                                jsonObject3.getString("praisesCount"),
+                                                jsonObject3.getString("replyContent"),
+                                                jsonObject3.getString("objectUserName")
+                                        ));
+                                    }
+                                }
                                 allCommentData.add(new CommentDataBean(
+                                        jsonObject1.getString("comment_id"),
                                         jsonObject1.getString("img_url"),
                                         jsonObject1.getString("nickname"),
                                         format(jsonObject1.getLong("create_time")),
                                         "赞:" + jsonObject1.getString("support_count"),
                                         jsonObject1.getString("content"),
                                         jsonObject1.getString("floorNumber") + "楼",
-                                        images, jsonArray2.toString()
+                                        images,
+                                        jsonArray2.toString(),
+                                        replies,
+                                        jsonObject1.getString("repliesCount")
+
                                 ));
 
                             }
@@ -636,6 +735,7 @@ public class CommentFragment extends Fragment {
                         recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
+                                updateSuspensionBar();
                                 commentAdapter.notifyDataSetChanged();
                                 recyclerView.scheduleLayoutAnimation();
                                 loadtextView.setText("加载成功");
@@ -680,7 +780,7 @@ public class CommentFragment extends Fragment {
 
                     final String lastCommentFloor1=allCommentData.get(allCommentData.size()-1).floor;
                     page++;
-                    if (srcUrl != null && srcUrl.indexOf("https://club") != -1) {
+                    if (srcUrl != null && srcUrl.contains("https://club")) {
                         try {
                             System.out.println("特殊处理sid" + sid);
                             String pageSize = "10"; //最多条数
@@ -712,10 +812,10 @@ public class CommentFragment extends Fragment {
                                 result = result.substring(1, result.length() - 1);
                                 System.out.println(result);
                                 final JSONObject jsonObject = new JSONObject(result);
-                                JSONArray jsonArray3 = jsonObject.getJSONArray("content");
+                                JSONArray jsonArray2 = jsonObject.getJSONArray("content");
 
-                                for (int i = 0; i < jsonArray3.length(); i++) {
-                                    JSONObject jsonObject1 = jsonArray3.getJSONObject(i);
+                                for (int i = 0; i < jsonArray2.length(); i++) {
+                                    JSONObject jsonObject1 = jsonArray2.getJSONObject(i);
                                     String s1 = jsonObject1.getString("content");
                                     Document doc = Jsoup.parse(s1);
                                     Elements es1 = doc.getElementsByClass("content");
@@ -725,7 +825,7 @@ public class CommentFragment extends Fragment {
                                     final Elements es5 = doc.getElementsByClass("digg-btn");
                                     Elements es6 = doc.getElementsByClass("userlink")
                                             .get(0).getElementsByTag("img");
-                                    final JSONArray jsonArray2 = new JSONArray();
+                                    final JSONArray jsonArray = new JSONArray();
                                     ArrayList<String> images = new ArrayList<>();
                                     try{
                                         Elements es7 = doc.getElementsByClass("qzcmt-picdiv").get(0)
@@ -736,11 +836,38 @@ public class CommentFragment extends Fragment {
                                             JSONObject jsonObject2 = new JSONObject();
                                             jsonObject2.put("tinysquare", element.attr("src"));
                                             jsonObject2.put("origin", element.attr("src").replace("tinysquare", "origin"));
-                                            jsonArray2.put(j, jsonObject2);
+                                            jsonArray.put(j, jsonObject2);
                                             images.add(element.attr("src"));
                                         }
                                     }catch (Exception e){
                                         e.printStackTrace();
+                                    }
+
+                                    JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
+                                    ArrayList<CommentDataBean> replies=new ArrayList<>();
+                                    String repliesCommentId;
+                                    for(int j=0;j<5&&j<jsonArray3.length();j++){
+                                        Document doc1 = Jsoup.parse(jsonArray3.get(j).toString());
+                                        System.out.println(doc1.toString());
+                                        String userImage=doc1.getElementsByTag("img").get(0).attr("src");
+                                        String userName=doc1.getElementsByClass("uname").get(0).html();
+                                        String objectUserName=es2.html();
+                                        String time=doc1.getElementsByClass("ccmt_time").get(0).html();
+                                        String likeNum=doc1.getElementsByClass("digg-btn").get(0).html();
+                                        String content=doc1.getElementsByClass("content").get(0).html();
+                                        try{
+                                            objectUserName=doc1.getElementsByClass("uname").get(1).html();
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                        replies.add(new CommentDataBean(
+                                                userImage,
+                                                userName,
+                                                time,
+                                                likeNum,
+                                                content,
+                                                objectUserName
+                                        ));
                                     }
                                     String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
                                             "jsondata=" +
@@ -771,13 +898,18 @@ public class CommentFragment extends Fragment {
                                     }
                                     connection1.disconnect();
                                     allCommentData.add(new CommentDataBean(
+                                            es5.attr("cmtid"),
+                                            sid,
                                             es6.attr("src"),
                                             es2.html(),
                                             es3.html(),
                                             "赞:"+s2,
                                             es1.html(),
                                             es4.html() + "楼",
-                                            images, jsonArray2.toString()
+                                            images,
+                                            jsonArray2.toString(),
+                                            replies,
+                                            jsonObject1.getString("replyCount")
                                     ));
                                 }
                             }
@@ -803,7 +935,7 @@ public class CommentFragment extends Fragment {
                         try {
                             String pageSize = "10"; //最多条数
                             String minCount = "0"; //最少赞数
-                            String maxCount = "0"; //回复条数
+                            String maxCount = "5"; //回复条数
                             String src1 = "https://cm.gamersky.com/appapi/GetArticleCommentWithClubStyle?" +
                                     "request=" +
                                     "{\"articleId\":" + sid + "," +
@@ -831,21 +963,41 @@ public class CommentFragment extends Fragment {
                                 for (int i = 0; i < jsonArray1.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
                                     JSONArray jsonArray2 = jsonObject1.getJSONArray("imageInfes");
+                                    JSONArray jsonArray3 = jsonObject1.getJSONArray("replies");
                                     ArrayList<String> images = new ArrayList<>();
+                                    ArrayList<CommentDataBean> replies=new ArrayList<>();
                                     if (jsonArray2.length() != 0) {
                                         for (int j = 0; j < jsonArray2.length(); j++) {
                                             JSONObject jsonObject2 = jsonArray2.getJSONObject(j);
                                             images.add(jsonObject2.getString("tinysquare"));
                                         }
                                     }
+                                    if(jsonArray3.length()!=0){
+                                        for (int j = 0; j < jsonArray3.length(); j++) {
+                                            JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
+                                            replies.add(new CommentDataBean(
+                                                    jsonObject3.getString("userHeadImageURL"),
+                                                    jsonObject3.getString("userName"),
+                                                    format(jsonObject3.getLong("createTime")),
+                                                    jsonObject3.getString("praisesCount"),
+                                                    jsonObject3.getString("replyContent"),
+                                                    jsonObject3.getString("objectUserName")
+                                            ));
+                                        }
+                                    }
                                     allCommentData.add(new CommentDataBean(
+                                            jsonObject1.getString("comment_id"),
                                             jsonObject1.getString("img_url"),
                                             jsonObject1.getString("nickname"),
                                             format(jsonObject1.getLong("create_time")),
                                             "赞:" + jsonObject1.getString("support_count"),
                                             jsonObject1.getString("content"),
                                             jsonObject1.getString("floorNumber") + "楼",
-                                            images, jsonArray2.toString()
+                                            images,
+                                            jsonArray2.toString(),
+                                            replies,
+                                            jsonObject1.getString("repliesCount")
+
                                     ));
 
                                 }
@@ -946,8 +1098,11 @@ public class CommentFragment extends Fragment {
             public TextView textView3;
             public TextView textView4;
             public TextView textView5;
+            public TextView textView6;
             public CircleImageView imageView;
             public GridLayout gridLayout;
+            public LinearLayout linearLayout;
+
             public MyViewHolder(View v) {
                 super(v);
                 textView=v.findViewById(R.id.textView8);
@@ -957,8 +1112,9 @@ public class CommentFragment extends Fragment {
                 textView4=v.findViewById(R.id.textView13);
                 textView5=v.findViewById(R.id.textView14);
                 imageView=v.findViewById(R.id.imageView6);
-                gridLayout=v.findViewById(R.id.imagecontainer);
-
+                gridLayout=v.findViewById(R.id.imageContainer);
+                textView6=v.findViewById(R.id.textView18);
+                linearLayout=v.findViewById(R.id.repliesContainer);
             }
         }
 
@@ -1023,87 +1179,86 @@ public class CommentFragment extends Fragment {
                 }
             }
             if(vt==2){
+                int p;
+                CommentDataBean tempData;
                 if(position<=hotData.size()){
-                    final int p=position-1;
-                    holder.textView1.setText(hotData.get(p).userName);
-                    if(hotData.get(p).content.equals("")){
-                        holder.textView2.setVisibility(View.GONE);
-                    }else {
-                        holder.textView2.setVisibility(View.VISIBLE);
-                        holder.textView2.setText(hotData.get(p).content);
-                    }
-                    holder.textView3.setText(hotData.get(p).time);
-                    holder.textView4.setText(hotData.get(p).floor);
-                    holder.textView5.setText(hotData.get(p).likeNum);
-                    Glide.with(holder.imageView)
-                    .load(hotData.get(p).userImage)
-                    .centerCrop()
-                    .into(holder.imageView);
+                    p=position-1;
+                    tempData=hotData.get(p);
 
-                    holder.gridLayout.removeAllViews();
-                    final ImageView[] imageViews=new ImageView[hotData.get(p).images.size()];
-                    for (int i=0;i<hotData.get(p).images.size();i++){
-                        View ic = LayoutInflater.from(getContext())
-                                .inflate(R.layout.images_container, null, false);
-                        imageViews[i]=ic.findViewById(R.id.imageView7);
-                        Glide.with(imageViews[i])
-                                .load(hotData.get(p).images.get(i))
-                                .centerCrop()
-                                .into(imageViews[i]);
-                        final int finalI = i;
-                        imageViews[i].setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(getContext(), ImagesBrowser.class);
-                                intent.putExtra("imagesSrc", hotData.get(p).imagesJson);
-                                intent.putExtra("imagePosition", finalI);
-                                //startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
-                                startActivity(intent);
-                            }
-                        });
-                        holder.gridLayout.addView(ic);
-                    }
+
                 }else {
-                    final int p=position-2-hotData.size();
-                    holder.textView1.setText(allData.get(p).userName);
-                    if(allData.get(p).content.equals("")){
-                        holder.textView2.setVisibility(View.GONE);
-                    }else {
-                        holder.textView2.setVisibility(View.VISIBLE);
-                        holder.textView2.setText(allData.get(p).content);
-                    }
-                    holder.textView3.setText(allData.get(p).time);
-                    holder.textView4.setText(allData.get(p).floor);
-                    holder.textView5.setText(allData.get(p).likeNum);
+                    p=position-2-hotData.size();
+                    tempData=allData.get(p);
+                }
+                holder.textView1.setText(tempData.userName);
+                if(tempData.content.equals("")){
+                    holder.textView2.setVisibility(View.GONE);
+                }else {
+                    holder.textView2.setVisibility(View.VISIBLE);
+                    holder.textView2.setText(tempData.content);
+                }
+                if(Integer.parseInt(tempData.repliesCount)<=5){
+                    holder.textView6.setVisibility(View.GONE);
+                }else {
+                    holder.textView6.setVisibility(View.VISIBLE);
+                    holder.textView6.setText("全部"+tempData.repliesCount+"条回复");
+                }
+                holder.textView3.setText(tempData.time);
+                holder.textView4.setText(tempData.floor);
+                holder.textView5.setText(tempData.likeNum);
+                if(!tempData.userImage.equals("")) {
                     Glide.with(holder.imageView)
-                            .load(allData.get(p).userImage)
+                            .load(tempData.userImage)
                             .centerCrop()
                             .into(holder.imageView);
-                    holder.gridLayout.removeAllViews();
-                    for (int i=0;i<allData.get(p).images.size();i++){
-                        View ic = LayoutInflater.from(getContext())
-                                .inflate(R.layout.images_container, null, false);
-                        final ImageView imageView1=ic.findViewById(R.id.imageView7);
-                        Glide.with(imageView1)
-                                .load(allData.get(p).images.get(i))
+                }
+                holder.gridLayout.removeAllViews();
+                final ImageView[] imageViews=new ImageView[tempData.images.size()];
+                for (int i=0;i<tempData.images.size();i++){
+                    View ic = LayoutInflater.from(getContext())
+                            .inflate(R.layout.images_container, null, false);
+                    imageViews[i]=ic.findViewById(R.id.imageView7);
+                    Glide.with(imageViews[i])
+                            .load(tempData.images.get(i))
+                            .centerCrop()
+                            .into(imageViews[i]);
+                    final int finalI = i;
+                    final CommentDataBean finalTempData=tempData;
+                    imageViews[i].setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getContext(), ImagesBrowser.class);
+                            intent.putExtra("imagesSrc", finalTempData.imagesJson);
+                            intent.putExtra("imagePosition", finalI);
+                            //startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                            startActivity(intent);
+                        }
+                    });
+                    holder.gridLayout.addView(ic);
+                }
+                holder.linearLayout.removeAllViews();
+                for (int i=0;i<tempData.replies.size();i++){
+                    CommentDataBean commentDataBean=tempData.replies.get(i);
+                    View rc = LayoutInflater.from(getContext())
+                            .inflate(R.layout.replies_container, null, false);
+                    ImageView imageView=rc.findViewById(R.id.imageView6_2);
+                    if(!commentDataBean.userImage.equals("")) {
+                        Glide.with(imageView)
+                                .load(commentDataBean.userImage)
                                 .centerCrop()
-                                .into(imageView1);
-                        holder.gridLayout.addView(ic);
-                        imageView1.setTransitionName("image"+i);
-                        final int finalI = i;
-                        ic.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(getContext(), ImagesBrowser.class);
-                                intent.putExtra("imagesSrc", allData.get(p).imagesJson);
-                                intent.putExtra("imagePosition", finalI);
-                                //startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
-                                startActivity(intent);
-
-                            }
-                        });
+                                .into(imageView);
                     }
-
+                    TextView textView1=rc.findViewById(R.id.textView9_2);
+                    TextView textView2=rc.findViewById(R.id.textView20_2);
+                    TextView textView3=rc.findViewById(R.id.textView11_2);
+                    TextView textView4=rc.findViewById(R.id.textView12_2);
+                    TextView textView5=rc.findViewById(R.id.textView14_2);
+                    textView1.setText(commentDataBean.userName);
+                    textView2.setText(commentDataBean.objectUserName);
+                    textView3.setText(commentDataBean.content);
+                    textView4.setText(commentDataBean.time);
+                    textView5.setText("赞:"+commentDataBean.likeNum);
+                    holder.linearLayout.addView(rc);
                 }
 
             }

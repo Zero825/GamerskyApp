@@ -24,14 +24,14 @@ public class NewsDataBean {
         this.src = src;
 
     }
-    public NewsDataBean(String id,String imageUrl, String title, String src, String data, String sort) {
+    public NewsDataBean(String id,String imageUrl, String title, String src, String data, String sort,String commentCount) {
         this.id=id;
         this.imageUrl = imageUrl;
         this.title = title;
         this.src = src;
         this.data=data;
         this.sort=sort;
-
+        this.commentCount=commentCount;
     }
 
     public void setCommentCount(String commentCount){

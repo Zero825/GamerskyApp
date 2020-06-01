@@ -21,7 +21,6 @@
             android:paddingRight="15dp"
             android:src="@drawable/back"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tab_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,6 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView12"
             app:layout_constraintStart_toEndOf="@id/imageView5"
             app:layout_constraintTop_toTopOf="parent"
             app:tabMode="auto">
@@ -50,9 +50,9 @@
             android:id="@+id/imageView12"
             android:layout_width="50dp"
             android:layout_height="0dp"
-            android:paddingLeft="8dp"
-            android:paddingTop="5dp"
-            android:paddingRight="22dp"
+            android:paddingTop="14dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="14dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

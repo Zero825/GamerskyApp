@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.news.gamersky.ImagesBrowser;
 import com.news.gamersky.R;
+import com.news.gamersky.customizeview.MyWebView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +36,7 @@ import java.io.IOException;
 
 public class ArticleFragment extends Fragment {
     private String  data_src;
-    private WebView webView;
+    private MyWebView webView;
     private ProgressBar progressBar;
     private JSONArray jsonArray;
     private Thread loadThread;
@@ -57,7 +58,7 @@ public class ArticleFragment extends Fragment {
         init();
         loadData();
     }
-    @SuppressLint("ClickableViewAccessibility")
+
     public void init(){
         jsonArray=new JSONArray();
         webView.setBackgroundColor(0);
@@ -67,49 +68,6 @@ public class ArticleFragment extends Fragment {
         //webView.getSettings().setLoadsImagesAutomatically(false);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setTextZoom(110);
-        webView.setOnTouchListener(new View.OnTouchListener() {
-            int y1=0;
-            int y2=0;
-            int x1=0;
-            int x2=0;
-            int b=0;
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                ViewGroup viewGroup = (ViewGroup) v.getParent();
-                //System.out.println(event.toString());
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_MOVE:
-                        x2=(int)event.getX();
-                        y2= (int) event.getY();
-                        viewGroup.requestDisallowInterceptTouchEvent(true);
-//                        if(Math.abs(y1-y2)<100&&(x2-x1>=100)){
-//                            //滑动返回
-//                            b=1;
-//                            break;
-//                        } else
-                            if(Math.abs(y1-y2)>10||(x2-x1>=0)){
-                            viewGroup.requestDisallowInterceptTouchEvent(true);
-                        }
-                        else{
-                            //System.out.println(Math.abs(y1-y2)+"取消");
-                            viewGroup.requestDisallowInterceptTouchEvent(false);
-                        }
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        y1=(int)event.getY();
-                        x1=(int)event.getX();
-                        viewGroup.requestDisallowInterceptTouchEvent(true);
-                        break;
-                    case MotionEvent.ACTION_UP:
-//                        x2=(int)event.getX();
-//                        y2= (int) event.getY();
-//                        if(b==1&&Math.abs(y1-y2)<100&&(x2-x1>=100)) getActivity().onBackPressed();
-                        break;
-                }
-
-                return false;
-            }
-        });
         //java回调js代码，不要忘了@JavascriptInterface这个注解，不然点击事件不起作用
         webView.addJavascriptInterface(new JsCallJavaObj() {
             @JavascriptInterface

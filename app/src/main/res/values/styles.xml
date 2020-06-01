@@ -9,18 +9,14 @@
 
     </style>
 
-    <style name="AppTheme1" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="SettingTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!-- enable window content transitions -->
-        <item name="android:windowActivityTransitions">true</item>
 
-        <!-- specify enter and exit transitions -->
-        <item name="android:windowEnterTransition">@transition/slide</item>
-        <item name="android:windowExitTransition">@transition/slide</item>
     </style>
+
 
 
 </resources>

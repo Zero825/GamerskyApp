@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.ContextMenu;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -312,11 +313,15 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
                                public void onReady() {
                                    final int LONG_IMAGE_SIZE_RATIO = 2;
                                    SubsamplingScaleImageView mImageView=imageView.getSSIV();
+
                                    float result = 0.5f;
+                                   Display defaultDisplay = getWindowManager().getDefaultDisplay();
+                                   Point point = new Point();
+                                   defaultDisplay.getRealSize(point);
                                    int imageWidth = mImageView.getSWidth();
                                    int imageHeight = mImageView.getSHeight();
-                                   int viewWidth = mImageView.getWidth();
-                                   int viewHeight = mImageView.getHeight();
+                                   int viewWidth = point.x;
+                                   int viewHeight = point.y;
 
                                    boolean hasZeroValue = false;
                                    if (imageWidth == 0 || imageHeight == 0 || viewWidth == 0 || viewHeight == 0) {
@@ -325,32 +330,22 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
                                    }
 
                                    if (!hasZeroValue) {
-                                       if (imageWidth <= imageHeight) {
-                                           result = (float) viewWidth / imageWidth;
-                                       } else {
+
                                            result = (float) viewHeight / imageHeight;
-                                       }
+
                                    }
 
                                    if (!hasZeroValue && (float) imageHeight / imageWidth > LONG_IMAGE_SIZE_RATIO) {
+                                       result = (float) viewWidth / imageWidth;
                                        // scale at top
                                        mImageView
                                                .animateScaleAndCenter(result, new PointF(imageWidth / 2, 0))
                                                .withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)
                                                .start();
 
-                                       // `对结果进行放大裁定，防止计算结果跟双击放大结果过于相近`
-                                       if (Math.abs(result - 0.1) < 0.2f) {
-                                           result += 0.2f;
-                                       }
-                                       mImageView.setDoubleTapZoomScale(result);
-                                   }else {
-                                       Display defaultDisplay = getWindowManager().getDefaultDisplay();
-                                       Point point = new Point();
-                                       defaultDisplay.getRealSize(point);
-                                       float hh=(float) point.y/(float) imageView.getSSIV().getSHeight();
-                                       imageView.getSSIV().setDoubleTapZoomScale(hh);
                                    }
+                                   mImageView.setDoubleTapZoomScale(result);
+
 
                                }
 
