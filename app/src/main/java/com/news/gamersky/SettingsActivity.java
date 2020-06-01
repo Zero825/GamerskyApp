@@ -1,7 +1,9 @@
 package com.news.gamersky;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,11 +43,36 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.setting, rootKey);
+            Preference preference=findPreference("manual_clear_cache");
+            preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    clearGlideDiskCache();
+                    return false;
+                }
+            });
         }
+        public void clearGlideDiskCache(){
 
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Glide.get(SettingsFragment.this.getContext()).clearDiskCache();
+                    BigImageViewer.imageLoader().cancelAll();
+                    SettingsFragment.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(SettingsFragment.this.getView(), "缓存已清除", Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }).start();
+
+        }
     }
 
 }

@@ -22,5 +22,12 @@
             android:summary="每次启动时清除缓存"
             android:title="自动清除缓存"
             app:iconSpaceReserved="false" />
+
+        <Preference
+            android:title="清除缓存"
+            android:key="manual_clear_cache"
+            android:summary="点击清除缓存"
+            app:iconSpaceReserved="false">
+            </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

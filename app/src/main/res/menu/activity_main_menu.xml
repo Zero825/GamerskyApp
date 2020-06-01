@@ -9,11 +9,7 @@
 
     <item
         android:id="@+id/activity_main_menu2"
-        android:title="清空缓存"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/activity_main_menu3"
         android:title="关于"
         app:showAsAction="never"/>
+
 </menu>

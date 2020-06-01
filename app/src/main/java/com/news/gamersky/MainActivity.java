@@ -138,23 +138,7 @@ public class MainActivity extends AppCompatActivity{
         clearGlideDiskCache(sharedPreferences.getBoolean("auto_clear_cache",true));
     }
 
-    public void clearGlideDiskCache(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Glide.get(MainActivity.this).clearDiskCache();
-                BigImageViewer.imageLoader().cancelAll();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(toast!=null) toast.cancel();
-                        toast=showToast("缓存已清空",230,40);
-                        toast.show();
-                    }
-                });
-            }
-        }).start();
-    }
+
 
     public void clearGlideDiskCache(boolean b){
         if(b) {
@@ -257,7 +241,6 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
                 return true;
             case R.id.activity_main_menu2:
-                clearGlideDiskCache();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
