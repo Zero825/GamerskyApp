@@ -50,7 +50,7 @@ public class MyWebView extends WebView {
                 x2=ev.getX();
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 float k=(y2-y1)/(x2-x1);
-                System.out.println(k);
+                //System.out.println(k);
                 if(x2-x1<0&&Math.abs(k)<0.2){
                     viewGroup.requestDisallowInterceptTouchEvent(false);
                 } else{

@@ -1,6 +1,7 @@
 package com.news.gamersky.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -21,8 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ImagesBrowser;
 import com.news.gamersky.R;
+import com.news.gamersky.RepliesActivity;
+import com.news.gamersky.Util.CommentEmojiUtil;
 import com.news.gamersky.customizeview.LoadHeader;
 import com.news.gamersky.customizeview.MyRecyclerView;
 import com.news.gamersky.databean.CommentDataBean;
@@ -43,6 +47,7 @@ import org.jsoup.select.Elements;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -346,7 +351,6 @@ public class CommentFragment extends Fragment {
                             //将响应流转换成字符串
                             String result = is2s(inputStream);//将流转换为字符串。
                             result = result.substring(1, result.length() - 1);
-                            System.out.println(result);
                             final JSONObject jsonObject = new JSONObject(result);
                             JSONArray jsonArray1 = jsonObject.getJSONArray("hotContent");
                             JSONArray jsonArray2 = jsonObject.getJSONArray("content");
@@ -381,10 +385,9 @@ public class CommentFragment extends Fragment {
                                 }
                                 JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
                                 ArrayList<CommentDataBean> replies=new ArrayList<>();
-                                String repliesCommentId;
+                                String repliesCommentId="";
                                 for(int j=0;j<5&&j<jsonArray3.length();j++){
                                     Document doc1 = Jsoup.parse(jsonArray3.get(j).toString());
-                                    System.out.println(doc1.toString());
                                     String userImage=doc1.getElementsByTag("img").get(0).attr("src");
                                     String userName=doc1.getElementsByClass("uname").get(0).html();
                                     String objectUserName=es2.html();
@@ -404,10 +407,13 @@ public class CommentFragment extends Fragment {
                                             content,
                                             objectUserName
                                     ));
+                                    repliesCommentId+=
+                                            doc1.getElementsByClass("ccmt_reply_cont").get(0).attr("cmtid")+",";
                                 }
+                                System.out.println(repliesCommentId);
                                 String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
                                         "jsondata=" +
-                                        "{\"commentIds\":" + es5.attr("cmtid") + "}";
+                                        "{\"commentIds\":" +"\""+ es5.attr("cmtid")+","+repliesCommentId +"\""+ "}";
                                 URL url1 = new URL(src1);
                                 //得到connection对象。
                                 HttpURLConnection connection1 = (HttpURLConnection) url1.openConnection();
@@ -426,9 +432,14 @@ public class CommentFragment extends Fragment {
                                     result1 = result1.substring(1, result1.length() - 1);
                                     JSONObject jsonObject2 = new JSONObject(result1);
                                     String s = jsonObject2.getString("body");
-                                    s = s.substring(1, s.length() - 1);
-                                    JSONObject jsonObject3 = new JSONObject(s);
+                                   JSONArray jsonArray4=new JSONArray(s);
+                                    JSONObject jsonObject3 = jsonArray4.getJSONObject(0);
                                     s2 = jsonObject3.getString("digg");
+                                    for(int j=0;j<5&&j<jsonArray3.length();j++){
+                                        JSONObject jsonObject4 = jsonArray4.getJSONObject(j+1);
+                                        String s3 = jsonObject4.getString("digg");
+                                        replies.get(j).setLikeNum(s3);
+                                    }
                                 }
                                 connection1.disconnect();
                                 hotCommentData.add(new CommentDataBean(
@@ -478,10 +489,9 @@ public class CommentFragment extends Fragment {
 
                                 JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
                                 ArrayList<CommentDataBean> replies=new ArrayList<>();
-                                String repliesCommentId;
+                                String repliesCommentId="";
                                 for(int j=0;j<5&&j<jsonArray3.length();j++){
                                     Document doc1 = Jsoup.parse(jsonArray3.get(j).toString());
-                                    System.out.println(doc1.toString());
                                     String userImage=doc1.getElementsByTag("img").get(0).attr("src");
                                     String userName=doc1.getElementsByClass("uname").get(0).html();
                                     String objectUserName=es2.html();
@@ -501,11 +511,13 @@ public class CommentFragment extends Fragment {
                                             content,
                                             objectUserName
                                     ));
+                                    repliesCommentId+=
+                                            doc1.getElementsByClass("ccmt_reply_cont").get(0).attr("cmtid")+",";
                                 }
 
                                 String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
                                         "jsondata=" +
-                                        "{\"commentIds\":" + es5.attr("cmtid") + "}";
+                                        "{\"commentIds\":" +"\""+ es5.attr("cmtid")+","+repliesCommentId +"\""+ "}";
                                 URL url1 = new URL(src1);
                                 //得到connection对象。
                                 HttpURLConnection connection1 = (HttpURLConnection) url1.openConnection();
@@ -522,13 +534,16 @@ public class CommentFragment extends Fragment {
                                     //将响应流转换成字符串
                                     String result1 = is2s(inputStream1);//将流转换为字符串。
                                     result1 = result1.substring(1, result1.length() - 1);
-                                    System.out.println(result1);
                                     JSONObject jsonObject2 = new JSONObject(result1);
                                     String s = jsonObject2.getString("body");
-                                    s = s.substring(1, s.length() - 1);
-                                    JSONObject jsonObject3 = new JSONObject(s);
-                                    System.out.println(jsonObject3.getString("digg"));
+                                    JSONArray jsonArray4=new JSONArray(s);
+                                    JSONObject jsonObject3 = jsonArray4.getJSONObject(0);
                                     s2 = jsonObject3.getString("digg");
+                                    for(int j=0;j<5&&j<jsonArray3.length();j++){
+                                        JSONObject jsonObject4 = jsonArray4.getJSONObject(j+1);
+                                        String s3 = jsonObject4.getString("digg");
+                                        replies.get(j).setLikeNum(s3);
+                                    }
                                 }
                                 connection1.disconnect();
                                 allCommentData.add(new CommentDataBean(
@@ -810,7 +825,6 @@ public class CommentFragment extends Fragment {
                                 //将响应流转换成字符串
                                 String result = is2s(inputStream);//将流转换为字符串。
                                 result = result.substring(1, result.length() - 1);
-                                System.out.println(result);
                                 final JSONObject jsonObject = new JSONObject(result);
                                 JSONArray jsonArray2 = jsonObject.getJSONArray("content");
 
@@ -845,10 +859,9 @@ public class CommentFragment extends Fragment {
 
                                     JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
                                     ArrayList<CommentDataBean> replies=new ArrayList<>();
-                                    String repliesCommentId;
+                                    String repliesCommentId="";
                                     for(int j=0;j<5&&j<jsonArray3.length();j++){
                                         Document doc1 = Jsoup.parse(jsonArray3.get(j).toString());
-                                        System.out.println(doc1.toString());
                                         String userImage=doc1.getElementsByTag("img").get(0).attr("src");
                                         String userName=doc1.getElementsByClass("uname").get(0).html();
                                         String objectUserName=es2.html();
@@ -868,10 +881,12 @@ public class CommentFragment extends Fragment {
                                                 content,
                                                 objectUserName
                                         ));
+                                        repliesCommentId+=
+                                                doc1.getElementsByClass("ccmt_reply_cont").get(0).attr("cmtid")+",";
                                     }
                                     String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
                                             "jsondata=" +
-                                            "{\"commentIds\":" + es5.attr("cmtid") + "}";
+                                            "{\"commentIds\":" +"\""+ es5.attr("cmtid")+","+repliesCommentId +"\""+ "}";
                                     URL url1 = new URL(src1);
                                     //得到connection对象。
                                     HttpURLConnection connection1 = (HttpURLConnection) url1.openConnection();
@@ -888,13 +903,16 @@ public class CommentFragment extends Fragment {
                                         //将响应流转换成字符串
                                         String result1 = is2s(inputStream1);//将流转换为字符串。
                                         result1 = result1.substring(1, result1.length() - 1);
-                                        System.out.println(result1);
                                         JSONObject jsonObject2 = new JSONObject(result1);
                                         String s = jsonObject2.getString("body");
-                                        s = s.substring(1, s.length() - 1);
-                                        JSONObject jsonObject3 = new JSONObject(s);
-                                        System.out.println(jsonObject3.getString("digg"));
+                                        JSONArray jsonArray4=new JSONArray(s);
+                                        JSONObject jsonObject3 = jsonArray4.getJSONObject(0);
                                         s2 = jsonObject3.getString("digg");
+                                        for(int j=0;j<5&&j<jsonArray3.length();j++){
+                                            JSONObject jsonObject4 = jsonArray4.getJSONObject(j+1);
+                                            String s3 = jsonObject4.getString("digg");
+                                            replies.get(j).setLikeNum(s3);
+                                        }
                                     }
                                     connection1.disconnect();
                                     allCommentData.add(new CommentDataBean(
@@ -1180,7 +1198,7 @@ public class CommentFragment extends Fragment {
             }
             if(vt==2){
                 int p;
-                CommentDataBean tempData;
+                final CommentDataBean tempData;
                 if(position<=hotData.size()){
                     p=position-1;
                     tempData=hotData.get(p);
@@ -1195,13 +1213,24 @@ public class CommentFragment extends Fragment {
                     holder.textView2.setVisibility(View.GONE);
                 }else {
                     holder.textView2.setVisibility(View.VISIBLE);
-                    holder.textView2.setText(tempData.content);
+                    holder.textView2.setText(CommentEmojiUtil.getEmojiString(tempData.content));
                 }
                 if(Integer.parseInt(tempData.repliesCount)<=5){
                     holder.textView6.setVisibility(View.GONE);
                 }else {
                     holder.textView6.setVisibility(View.VISIBLE);
                     holder.textView6.setText("全部"+tempData.repliesCount+"条回复");
+                    holder.textView6.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent=new Intent(getContext(), RepliesActivity.class);
+                            intent.putExtra("commentId",tempData.commentId);
+                            intent.putExtra("clubContentId",tempData.clubContentId);
+                            intent.putExtra("comment", tempData);
+                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                           // startActivity(intent);
+                        }
+                    });
                 }
                 holder.textView3.setText(tempData.time);
                 holder.textView4.setText(tempData.floor);
@@ -1220,6 +1249,7 @@ public class CommentFragment extends Fragment {
                     imageViews[i]=ic.findViewById(R.id.imageView7);
                     Glide.with(imageViews[i])
                             .load(tempData.images.get(i))
+                            .transition(DrawableTransitionOptions.withCrossFade())
                             .centerCrop()
                             .into(imageViews[i]);
                     final int finalI = i;
@@ -1255,7 +1285,7 @@ public class CommentFragment extends Fragment {
                     TextView textView5=rc.findViewById(R.id.textView14_2);
                     textView1.setText(commentDataBean.userName);
                     textView2.setText(commentDataBean.objectUserName);
-                    textView3.setText(commentDataBean.content);
+                    textView3.setText(CommentEmojiUtil.getEmojiString(commentDataBean.content));
                     textView4.setText(commentDataBean.time);
                     textView5.setText("赞:"+commentDataBean.likeNum);
                     holder.linearLayout.addView(rc);

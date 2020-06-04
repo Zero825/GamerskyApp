@@ -8,6 +8,6 @@
     <color name="colorPressed">#00FFFFFF</color>
     <color name="colorOnPressed">#19ADADAD</color>
     <color name="defaultColor">#737373</color>
-
+    <color name="darkMask">#4D969696</color>
 
 </resources>

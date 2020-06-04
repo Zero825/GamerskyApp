@@ -1,8 +1,9 @@
 package com.news.gamersky.databean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class CommentDataBean {
+public class CommentDataBean implements Serializable {
     public String commentId;
     public String clubContentId;
     public String userImage;
@@ -85,6 +86,10 @@ public class CommentDataBean {
                 ", replies=" + replies +
                 ", repliesCount='" + repliesCount + '\'' +
                 '}';
+    }
+
+    public void setLikeNum(String likeNum){
+        this.likeNum=likeNum;
     }
 
 }

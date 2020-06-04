@@ -184,7 +184,6 @@ public class ArticleFragment extends Fragment {
                         "<p class=\"author\" style=\"font-size:13px;margin:0;color:#808080\">"+"&nbsp;"+content1.get(0).getElementsByTag("span").text()+"</p >";
 
                 String s=h+a;
-                System.out.println();
                 Elements elements1 = doc.getElementsByClass("yu-btnwrap");
                 if(pinye) {
                     if (!elements1.toString().equals("")) {
@@ -226,7 +225,7 @@ public class ArticleFragment extends Fragment {
                     public void run() {
                         System.out.println("正文载入");
                         //System.out.println(finalS);
-                        System.out.println(getNewContent(finalS));
+                        //System.out.println(getNewContent(finalS));
                         webView.loadDataWithBaseURL("file:///android_asset", getNewContent(finalS), "text/html", "utf-8", null);
                         progressBar.setVisibility(View.GONE);
                         webView.setVisibility(View.VISIBLE);
@@ -319,7 +318,6 @@ public class ArticleFragment extends Fragment {
                     if(s.indexOf("'",i1)!=-1&&s.indexOf("'",i1)!=-1) {
                         i2 = (s.indexOf("\"", i1) < s.indexOf("'", i1)) ? s.indexOf("\"", i1) : s.indexOf("'", i1);
                     }
-                    System.out.println(i1+" "+s.indexOf("\"",i1)+" "+s.indexOf("'",i1));
                     s=s.substring(i1,i2);
                     System.out.println("视频链接"+s);
                     v.parent().html("<a class=\"\" target=\"_blank\" href=\""+s+"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>");

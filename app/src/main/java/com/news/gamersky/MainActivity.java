@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity{
         topiv=findViewById(R.id.imageView2);
         footv=findViewById(R.id.textView6);
         vp = findViewById(R.id.pager);
+        vp.setVisibility(View.INVISIBLE);
         vp.setPageTransformer(new ZoomOutPageTransformer());
         vp.setOffscreenPageLimit(4);
         myViewpager2Adapter=new MyViewpager2Adapter(bannerData);
@@ -343,6 +344,7 @@ public class MainActivity extends AppCompatActivity{
                             toptv1.setText(topData.get(0).title);
                             toptv2.setText(topData.get(1).title);
 
+                            vp.setVisibility(View.VISIBLE);
                             myViewpager2Adapter.notifyDataSetChanged();
                             vp.setCurrentItem(bannerNum/2);
 
@@ -367,6 +369,7 @@ public class MainActivity extends AppCompatActivity{
                             if(toast!=null) toast.cancel();
                             toast=showToast("数据更新失败",230,40);
                             toast.show();
+                            progressBar.setVisibility(View.GONE);
                             refreshLayout.finishRefresh(false);
                             }
                     });

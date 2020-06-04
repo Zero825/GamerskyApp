@@ -1,37 +1,26 @@
 package com.news.gamersky;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.view.ContextMenu;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
@@ -42,7 +31,6 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
-import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.loader.ImageLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.github.piasy.biv.view.GlideImageViewFactory;
@@ -56,14 +44,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.net.URI;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-
-import static androidx.core.content.FileProvider.getUriForFile;
-import static java.security.AccessController.getContext;
 
 public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragment.ImageDialogListener {
     private ViewPager viewPager;
@@ -79,7 +60,6 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
         loadData();
     }
     public void  init(){
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS|WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS|WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -98,6 +78,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
         imagesSrc = intent.getStringExtra("imagesSrc");
         imagePosition = intent.getIntExtra("imagePosition",0);
         System.out.println("位置"+imagePosition+"json"+imagesSrc);
+
 
     }
 
@@ -118,7 +99,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
 
 
     @Override
-    public void onDownloadClick(DialogFragment dialog) {
+    public void onDownloadClick(DialogFragment dialogFragment) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -155,8 +136,9 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
         }
     }
 
+
     @Override
-    public void onShareClick(DialogFragment dialog) {
+    public void onShareClick(DialogFragment dialogFragment) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -187,6 +169,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
 
         }
     }
+
 
 
     public class MyViewpager2Adapter extends RecyclerView.Adapter<MyViewpager2Adapter.MyViewHolder> {
@@ -266,10 +249,29 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            View v = LayoutInflater.from(container.getContext())
+            final View v = LayoutInflater.from(container.getContext())
                     .inflate(R.layout.images_viewpager, container, false);
             final BigImageView imageView=v.findViewById(R.id.imageView8);
             final ProgressBar progressBar=v.findViewById(R.id.progressBar2);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+            imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                        try {
+                            bigImageViewTemp=imageView;
+                            DialogFragment newFragment = new ImageDialogFragment();
+                            newFragment.show(getSupportFragmentManager(), "imageMenu");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    return false;
+                }
+            });
             try{
                 JSONObject jsonObject2=jsonArray.getJSONObject(position);
                 System.out.println(jsonObject2.getString("origin"));
@@ -302,6 +304,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
                     @Override
                     public void onSuccess(File image) {
                         progressBar.setVisibility(View.GONE);
+                        v.setOnClickListener(null);
                        if(imageView.getSSIV()!=null) {
                            System.out.println(imageView.getSSIV());
                            imageView.getSSIV().setMaxScale(5.0f);
@@ -391,19 +394,8 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
                         System.out.println("结束浏览图片");
                     }
                 });
-                imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        try {
-                            bigImageViewTemp=imageView;
-                            DialogFragment newFragment = new ImageDialogFragment();
-                            newFragment.show(getSupportFragmentManager(), "imageMenu");
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        return false;
-                    }
-                });
+
+
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -418,6 +410,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
             container.removeView((View) object);
         }
     }
+
 
 
 
