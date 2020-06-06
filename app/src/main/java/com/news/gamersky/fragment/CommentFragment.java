@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -27,16 +28,8 @@ import com.news.gamersky.ImagesBrowser;
 import com.news.gamersky.R;
 import com.news.gamersky.RepliesActivity;
 import com.news.gamersky.Util.CommentEmojiUtil;
-import com.news.gamersky.customizeview.LoadHeader;
-import com.news.gamersky.customizeview.MyRecyclerView;
+import com.news.gamersky.customizeview.MySwipeRefreshLayout;
 import com.news.gamersky.databean.CommentDataBean;
-
-import com.scwang.smartrefresh.layout.api.RefreshFooter;
-import com.scwang.smartrefresh.layout.api.RefreshHeader;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.constant.RefreshState;
-import com.scwang.smartrefresh.layout.listener.OnMultiPurposeListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,28 +38,24 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.news.gamersky.Util.AppUtil.format;
+import static com.news.gamersky.Util.AppUtil.is2s;
 
 
 public class CommentFragment extends Fragment {
     private String  data_src;
     private ImageView loadimageView;
     private TextView loadtextView;
-    private MyRecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private LinearLayout mask;
     private LinearLayoutManager layoutManager;
     private ArrayList<CommentDataBean> hotCommentData;
@@ -75,7 +64,7 @@ public class CommentFragment extends Fragment {
     private LinearLayout commentHeader;
     private int mSuspensionHeight;
     private int mCurrentPosition;
-    private RefreshLayout refreshLayout;
+    private MySwipeRefreshLayout refreshLayout;
     private  Document doc;
     private  String srcUrl;
     private  int page;
@@ -107,6 +96,7 @@ public class CommentFragment extends Fragment {
         mask=view.findViewById(R.id.mask);
         commentHeader=view.findViewById(R.id.comment_head);
         refreshLayout=view.findViewById(R.id.refreshLayout2);
+        refreshLayout.setColorSchemeResources(R.color.colorAccent);
         hotCommentData=new ArrayList<>();
         allCommentData=new ArrayList<>();
         recyclerView.setHasFixedSize(true);
@@ -114,12 +104,6 @@ public class CommentFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         commentAdapter=new CommentAdapter(hotCommentData,allCommentData);
         recyclerView.setAdapter(commentAdapter);
-
-        refreshLayout.setRefreshHeader(new LoadHeader(getContext()));
-        refreshLayout.setEnableOverScrollDrag(true);
-        refreshLayout.setEnableRefresh(false);
-        refreshLayout.setDragRate(0.5f);
-        refreshLayout.setDisableContentWhenRefresh(true);
 
         mCurrentPosition = 0;
         page=1;
@@ -186,82 +170,14 @@ public class CommentFragment extends Fragment {
 
             }
         });
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+            public void onRefresh() {
                 loadComment();
-            }
-        });
-        refreshLayout.setOnMultiPurposeListener(new OnMultiPurposeListener() {
-            @Override
-            public void onHeaderMoving(RefreshHeader header, boolean isDragging, float percent, int offset, int headerHeight, int maxDragHeight) {
-
-            }
-
-            @Override
-            public void onHeaderReleased(RefreshHeader header, int headerHeight, int maxDragHeight) {
-                mask.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onHeaderStartAnimator(RefreshHeader header, int headerHeight, int maxDragHeight) {
-
-            }
-
-            @Override
-            public void onHeaderFinish(RefreshHeader header, boolean success) {
-                Timer timer = new Timer();
-                TimerTask timerTask=new TimerTask() {
-                    @Override
-                    public void run() {
-                        mask.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mask.setVisibility(View.GONE);
-                            }
-                        });
-
-                    }
-                };
-                timer.schedule(timerTask,800);
-            }
-
-            @Override
-            public void onFooterMoving(RefreshFooter footer, boolean isDragging, float percent, int offset, int footerHeight, int maxDragHeight) {
-
-            }
-
-            @Override
-            public void onFooterReleased(RefreshFooter footer, int footerHeight, int maxDragHeight) {
-
-            }
-
-            @Override
-            public void onFooterStartAnimator(RefreshFooter footer, int footerHeight, int maxDragHeight) {
-
-            }
-
-            @Override
-            public void onFooterFinish(RefreshFooter footer, boolean success) {
-
-            }
-
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
-            }
-
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-
-            }
-
-            @Override
-            public void onStateChanged(@NonNull RefreshLayout refreshLayout, @NonNull RefreshState oldState, @NonNull RefreshState newState) {
 
             }
         });
+
 
         mask.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -292,11 +208,12 @@ public class CommentFragment extends Fragment {
     public  void loadComment(){
         ((AnimationDrawable) loadimageView.getDrawable()).start();
         loadtextView.setText("正在加载...");
+        final ArrayList<CommentDataBean> tempHotCommentData=new ArrayList<>();
+        final ArrayList<CommentDataBean> tempAllCommentData=new ArrayList<>();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                hotCommentData.clear();
-                allCommentData.clear();
+
                 page=1;
                 flag=0;
                 try {
@@ -442,7 +359,7 @@ public class CommentFragment extends Fragment {
                                     }
                                 }
                                 connection1.disconnect();
-                                hotCommentData.add(new CommentDataBean(
+                                tempHotCommentData.add(new CommentDataBean(
                                         es5.attr("cmtid"),
                                         sid,
                                         es6.attr("src"),
@@ -546,7 +463,7 @@ public class CommentFragment extends Fragment {
                                     }
                                 }
                                 connection1.disconnect();
-                                allCommentData.add(new CommentDataBean(
+                                tempAllCommentData.add(new CommentDataBean(
                                         es5.attr("cmtid"),
                                         sid,
                                         es6.attr("src"),
@@ -570,6 +487,10 @@ public class CommentFragment extends Fragment {
                             @Override
                             public void run() {
                                 updateSuspensionBar();
+                                hotCommentData.clear();
+                                allCommentData.clear();
+                                hotCommentData.addAll(tempHotCommentData);
+                                allCommentData.addAll(tempAllCommentData);
                                 commentAdapter.notifyDataSetChanged();
                                 recyclerView.scheduleLayoutAnimation();
                                 loadtextView.setText("加载成功");
@@ -581,8 +502,7 @@ public class CommentFragment extends Fragment {
                                         (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
                                     commentAdapter.setNoMore();
                                 }
-                                refreshLayout.setEnableRefresh(true);
-                                refreshLayout.finishRefresh(true);
+                                refreshLayout.setRefreshing(false);
 
                             }
                         });
@@ -594,8 +514,7 @@ public class CommentFragment extends Fragment {
                                 ((AnimationDrawable) loadimageView.getDrawable()).stop();
                                 loadimageView.setImageResource(R.drawable.load_animation);
                                 loadtextView.setText("加载失败");
-                                refreshLayout.setEnableRefresh(true);
-                                refreshLayout.finishRefresh(false);
+                                refreshLayout.setRefreshing(false);
 
                             }
                         });
@@ -660,7 +579,7 @@ public class CommentFragment extends Fragment {
                                         ));
                                     }
                                 }
-                                hotCommentData.add(new CommentDataBean(
+                                tempHotCommentData.add(new CommentDataBean(
                                         jsonObject1.getString("comment_id"),
                                         jsonObject1.getString("img_url"),
                                         jsonObject1.getString("nickname"),
@@ -729,7 +648,7 @@ public class CommentFragment extends Fragment {
                                         ));
                                     }
                                 }
-                                allCommentData.add(new CommentDataBean(
+                                tempAllCommentData.add(new CommentDataBean(
                                         jsonObject1.getString("comment_id"),
                                         jsonObject1.getString("img_url"),
                                         jsonObject1.getString("nickname"),
@@ -751,6 +670,10 @@ public class CommentFragment extends Fragment {
                             @Override
                             public void run() {
                                 updateSuspensionBar();
+                                hotCommentData.clear();
+                                allCommentData.clear();
+                                hotCommentData.addAll(tempHotCommentData);
+                                allCommentData.addAll(tempAllCommentData);
                                 commentAdapter.notifyDataSetChanged();
                                 recyclerView.scheduleLayoutAnimation();
                                 loadtextView.setText("加载成功");
@@ -762,8 +685,7 @@ public class CommentFragment extends Fragment {
                                         (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
                                     commentAdapter.setNoMore();
                                 }
-                                refreshLayout.setEnableRefresh(true);
-                                refreshLayout.finishRefresh(true);
+                                refreshLayout.setRefreshing(false);
 
                             }
                         });
@@ -775,8 +697,7 @@ public class CommentFragment extends Fragment {
                                 ((AnimationDrawable) loadimageView.getDrawable()).stop();
                                 loadimageView.setImageResource(R.drawable.load_animation);
                                 loadtextView.setText("加载失败");
-                                refreshLayout.setEnableRefresh(true);
-                                refreshLayout.finishRefresh(false);
+                                refreshLayout.setRefreshing(false);
                             }
                         });
                     }
@@ -819,6 +740,7 @@ public class CommentFragment extends Fragment {
                             connection.connect();
                             //得到响应码
                             int responseCode = connection.getResponseCode();
+                            int loadCommentNum=0;
                             if (responseCode == HttpURLConnection.HTTP_OK) {
                                 //得到响应流
                                 InputStream inputStream = connection.getInputStream();
@@ -827,7 +749,7 @@ public class CommentFragment extends Fragment {
                                 result = result.substring(1, result.length() - 1);
                                 final JSONObject jsonObject = new JSONObject(result);
                                 JSONArray jsonArray2 = jsonObject.getJSONArray("content");
-
+                                loadCommentNum=jsonArray2.length();
                                 for (int i = 0; i < jsonArray2.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray2.getJSONObject(i);
                                     String s1 = jsonObject1.getString("content");
@@ -934,14 +856,15 @@ public class CommentFragment extends Fragment {
                             connection.disconnect();
 
 
-
+                            final int finalLoadCommentNum=loadCommentNum;
                             recyclerView.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    commentAdapter.notifyDataSetChanged();
+                                    commentAdapter.notifyItemRangeInserted(commentAdapter.getItemCount(),finalLoadCommentNum);
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;
                                     if(lastCommentFloor2.equals("1楼")||lastCommentFloor1.equals(lastCommentFloor2)){
                                        commentAdapter.setNoMore();
+                                       commentAdapter.notifyItemChanged(commentAdapter.getItemCount()-1);
                                     }
                                 }
                             });
@@ -971,6 +894,7 @@ public class CommentFragment extends Fragment {
                             connection1.connect();
                             //得到响应码
                             int responseCode1 = connection1.getResponseCode();
+                            int loadCommentNum=0;
                             if (responseCode1 == HttpURLConnection.HTTP_OK) {
                                 //得到响应流
                                 InputStream inputStream = connection1.getInputStream();
@@ -978,6 +902,7 @@ public class CommentFragment extends Fragment {
                                 String result = is2s(inputStream);//将流转换为字符串。
                                 JSONObject jsonObject = new JSONObject(result);
                                 JSONArray jsonArray1 = jsonObject.getJSONObject("result").getJSONArray("comments");
+                                loadCommentNum=jsonArray1.length();
                                 for (int i = 0; i < jsonArray1.length(); i++) {
                                     JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
                                     JSONArray jsonArray2 = jsonObject1.getJSONArray("imageInfes");
@@ -1021,15 +946,17 @@ public class CommentFragment extends Fragment {
                                 }
                             }
                             connection1.disconnect();
+                            final int finalLoadCommentNum=loadCommentNum;
                             recyclerView.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     System.out.println("加载评论成功");
-                                    commentAdapter.notifyDataSetChanged();
+                                    commentAdapter.notifyItemRangeInserted(commentAdapter.getItemCount(),finalLoadCommentNum);
                                     updateSuspensionBar();
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;
                                     if(lastCommentFloor2.equals("1楼")||lastCommentFloor1.equals(lastCommentFloor2)){
                                         commentAdapter.setNoMore();
+                                        commentAdapter.notifyItemChanged(commentAdapter.getItemCount()-1);
                                     }
                                 }
                             });
@@ -1044,54 +971,7 @@ public class CommentFragment extends Fragment {
 
     }
 
-    public String is2s(InputStream inputStream){
-        String str="";
-        try {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            str = result.toString(StandardCharsets.UTF_8.name());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return str;
-    }
 
-    /**
-     * 根据毫秒时间戳来格式化字符串
-     * 今天显示今天、昨天显示昨天、前天显示前天.
-     * 早于前天的显示具体年-月-日，如2017-06-12；
-     * @param timeStamp 毫秒值
-     * @return 今天 昨天 前天 或者 yyyy-MM-dd HH:mm:ss类型字符串
-     */
-    public static String format(long timeStamp) {
-        long curTimeMillis = System.currentTimeMillis();
-        Date curDate = new Date(curTimeMillis);
-        int todayHoursSeconds = curDate.getHours() * 60 * 60;
-        int todayMinutesSeconds = curDate.getMinutes() * 60;
-        int todaySeconds = curDate.getSeconds();
-        int todayMillis = (todayHoursSeconds + todayMinutesSeconds + todaySeconds) * 1000;
-        long todayStartMillis = curTimeMillis - todayMillis;
-        SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
-        if(timeStamp >= todayStartMillis) {
-            return "今天 "+sdf1.format(new Date(timeStamp));
-        }
-        int oneDayMillis = 24 * 60 * 60 * 1000;
-        long yesterdayStartMilis = todayStartMillis - oneDayMillis;
-        if(timeStamp >= yesterdayStartMilis) {
-            return "昨天 "+sdf1.format(new Date(timeStamp));
-        }
-        long yesterdayBeforeStartMilis = yesterdayStartMilis - oneDayMillis;
-        if(timeStamp >= yesterdayBeforeStartMilis) {
-            return "前天 "+sdf1.format(new Date(timeStamp));
-        }
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return  sdf2.format(new Date(timeStamp));
-    }
 
     public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHolder> {
         private ArrayList<CommentDataBean> hotData;
@@ -1266,6 +1146,11 @@ public class CommentFragment extends Fragment {
                     });
                     holder.gridLayout.addView(ic);
                 }
+                if(tempData.images.size()==0){
+                    holder.gridLayout.setVisibility(View.GONE);
+                }else {
+                    holder.gridLayout.setVisibility(View.VISIBLE);
+                }
                 holder.linearLayout.removeAllViews();
                 for (int i=0;i<tempData.replies.size();i++){
                     CommentDataBean commentDataBean=tempData.replies.get(i);
@@ -1283,8 +1168,16 @@ public class CommentFragment extends Fragment {
                     TextView textView3=rc.findViewById(R.id.textView11_2);
                     TextView textView4=rc.findViewById(R.id.textView12_2);
                     TextView textView5=rc.findViewById(R.id.textView14_2);
+                    TextView textView6=rc.findViewById(R.id.textView19_2);
                     textView1.setText(commentDataBean.userName);
-                    textView2.setText(commentDataBean.objectUserName);
+                    if(commentDataBean.objectUserName.equals(tempData.userName)){
+                        textView2.setText("");
+                        textView6.setVisibility(View.GONE);
+                    }else {
+                        textView2.setText(commentDataBean.objectUserName);
+                        textView6.setVisibility(View.VISIBLE);
+                    }
+
                     textView3.setText(CommentEmojiUtil.getEmojiString(commentDataBean.content));
                     textView4.setText(commentDataBean.time);
                     textView5.setText("赞:"+commentDataBean.likeNum);

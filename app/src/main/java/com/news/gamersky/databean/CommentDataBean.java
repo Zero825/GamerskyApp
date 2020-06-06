@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class CommentDataBean implements Serializable {
     public String commentId;
+    public String replyId;
     public String clubContentId;
     public String userImage;
     public String userName;
@@ -60,6 +61,16 @@ public class CommentDataBean implements Serializable {
     }
 
     public CommentDataBean(String userImage, String userName, String time, String likeNum, String content,String objectUserName) {
+        this.userImage = userImage;
+        this.userName = userName;
+        this.time = time;
+        this.likeNum = likeNum;
+        this.content = content;
+        this.objectUserName=objectUserName;
+    }
+
+    public CommentDataBean(String replyId,String userImage, String userName, String time, String likeNum, String content,String objectUserName) {
+        this.replyId=replyId;
         this.userImage = userImage;
         this.userName = userName;
         this.time = time;

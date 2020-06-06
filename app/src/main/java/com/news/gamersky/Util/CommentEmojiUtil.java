@@ -3,6 +3,7 @@ package com.news.gamersky.Util;
 //https://www.jianshu.com/p/9561bc1f6253
 
 import android.graphics.drawable.Drawable;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
@@ -31,7 +32,7 @@ public class CommentEmojiUtil {
      * @return 处理过的string
      */
     public static SpannableString getEmojiString(String commentString) {
-        SpannableString spannableString = new SpannableString(commentString);
+        SpannableString spannableString = new SpannableString(Html.fromHtml(commentString));
         Pattern pattern = Pattern.compile(EMOJI);
         Matcher matcher = pattern.matcher(spannableString);
         boolean result = matcher.find();

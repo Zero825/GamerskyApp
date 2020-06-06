@@ -169,16 +169,16 @@ public class ArticleFragment extends Fragment {
                 }
 
                 String h= "<script src=\"file:///android_asset/js/echo.min.js\"></script>\n"+
-                        "<script src=\"file:///android_asset/js/jquery-3.5.0.min.js\"></script>\n"+
+//                        "<script src=\"file:///android_asset/js/jquery-3.5.0.min.js\"></script>\n"+
                         "<script>\n" +
                         "  echo.init({\n" +
                         "    offset: 2000,\n" +
                         "    throttle: 250,\n" +
                         "    unload: false,\n" +
                         "  });\n" +
-                        "   $(function() {\n" +
-                        "       $(\"div\").fadeIn(300);\n"+
-                        "   });\n"+
+//                        "   $(function() {\n" +
+//                        "       $(\"div\").fadeIn(300);\n"+
+//                        "   });\n"+
                         "</script>"+
                         "<b style=\"font-size:22px;margin:0;\">"+content1.get(0).getElementsByTag("h1").text()+"</b >"+
                         "<p class=\"author\" style=\"font-size:13px;margin:0;color:#808080\">"+"&nbsp;"+content1.get(0).getElementsByTag("span").text()+"</p >";
@@ -257,7 +257,7 @@ public class ArticleFragment extends Fragment {
             Document doc = Jsoup.parse(htmltext);
 
             Elements elements2=doc.getElementsByTag("body");
-            elements2.html("<div style=\"margin:0px 5px;display:none\">"+doc.body().children()+"</div>");
+            elements2.html("<div style=\"margin:0px 5px\">"+doc.body().children()+"</div>");
             Elements elements = doc.getElementsByTag("a");
             Elements elements1=doc.getElementsByTag("img");
             Elements elements3 = doc.getElementsByTag("span");
@@ -267,7 +267,7 @@ public class ArticleFragment extends Fragment {
             elements2.attr("href","");
             for (int i=0;i<elements1.size();i++) {
                 Element element=elements1.get(i);
-                element.attr("style", "")
+                element.attr("style", "border-radius: 1px")
                         .attr("width", "100%")
                         .attr("height", "auto")
                         .attr("data-echo",element.attr("src"))

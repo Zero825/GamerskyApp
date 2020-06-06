@@ -6,13 +6,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
     </style>
+
 
     <style name="SettingTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
 
     </style>
 
@@ -21,16 +24,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:statusBarColor">@color/darkMask</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <!-- enable window content transitions -->
         <item name="android:windowActivityTransitions">true</item>
 
         <!-- specify enter and exit transitions -->
-        <item name="android:windowEnterTransition">@transition/fade</item>
-        <item name="android:windowExitTransition">@transition/fade</item>
+        <item name="android:windowEnterTransition">@transition/tnull</item>
+        <item name="android:windowExitTransition">@transition/tnull</item>
 <!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
     </style>
 

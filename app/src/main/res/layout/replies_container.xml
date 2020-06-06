@@ -8,6 +8,7 @@
         android:id="@+id/imageView6_2"
         android:layout_width="25dp"
         android:layout_height="25dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:src="@drawable/avatar"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,7 +18,7 @@
         android:id="@+id/textView9_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="9dp"
         android:ellipsize="end"
@@ -61,8 +62,9 @@
         android:id="@+id/l1_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="16dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/textView12_2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +75,6 @@
             android:id="@+id/textView11_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:lineSpacingExtra="4sp"
             android:text="TextView"
@@ -86,9 +87,11 @@
         android:id="@+id/textView12_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp"
         android:text="TextView"
         android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/imageView6_2"
         app:layout_constraintTop_toBottomOf="@+id/l1_2" />
 
@@ -96,18 +99,11 @@
         android:id="@+id/textView14_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="18dp"
+        android:layout_marginEnd="16dp"
         android:gravity="right"
         android:text="TextView"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/l1_2" />
 
-    <View
-        android:id="@+id/divider2_2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView12_2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

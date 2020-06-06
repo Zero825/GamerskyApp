@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+    <com.news.gamersky.customizeview.MySwipeRefreshLayout
 
         android:id="@+id/refreshLayout2"
         android:layout_width="match_parent"
@@ -13,9 +13,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srlAccentColor="@color/colorAccent"
-        app:srlPrimaryColor="@color/colorAccent">
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <FrameLayout
@@ -24,14 +22,14 @@
             android:orientation="vertical"
             android:animateLayoutChanges="true">
 
-            <com.news.gamersky.customizeview.MyRecyclerView
+
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comment_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layoutAnimation="@anim/layout_animation_slide_right">
 
-            </com.news.gamersky.customizeview.MyRecyclerView>
-
+            </androidx.recyclerview.widget.RecyclerView>
 
             <LinearLayout
                 android:id="@+id/comment_head"
@@ -49,6 +47,7 @@
                     android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:text="TextView"
+                    android:textColor="@color/colorAccent"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -85,7 +84,7 @@
         </FrameLayout>
 
 
-</com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</com.news.gamersky.customizeview.MySwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/mask"
