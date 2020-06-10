@@ -38,12 +38,14 @@ public class CommentEmojiUtil {
         boolean result = matcher.find();
         //循环直到匹配不到
         while (result) {
-            //matcher.group():匹配到的字符串，作为key，获取对应的图片
-            Drawable drawable = ContextCompat.getDrawable(ThisApp.getContext(), emojiMap.get(matcher.group()));
-            drawable.setBounds(0, 0, 75, 75);
-            ImageSpan imageSpan = new ImageSpan(drawable);
-            //matcher.start()  matcher.end()是匹配到的字符串在原始字符串中的起始位置，进行替换
-            spannableString.setSpan(imageSpan, matcher.start(), matcher.end(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            System.out.println(matcher.group());
+            if(emojiMap.containsKey(matcher.group())) {
+                Drawable drawable = ContextCompat.getDrawable(ThisApp.getContext(), emojiMap.get(matcher.group()));
+                drawable.setBounds(0, 0, 75, 75);
+                ImageSpan imageSpan = new ImageSpan(drawable);
+                //matcher.start()  matcher.end()是匹配到的字符串在原始字符串中的起始位置，进行替换
+                spannableString.setSpan(imageSpan, matcher.start(), matcher.end(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
             result = matcher.find();
         }
         return spannableString;

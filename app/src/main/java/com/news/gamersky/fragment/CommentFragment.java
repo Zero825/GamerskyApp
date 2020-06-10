@@ -24,7 +24,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.news.gamersky.ImagesBrowser;
+import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.RepliesActivity;
 import com.news.gamersky.Util.CommentEmojiUtil;
@@ -56,7 +56,6 @@ public class CommentFragment extends Fragment {
     private ImageView loadimageView;
     private TextView loadtextView;
     private RecyclerView recyclerView;
-    private LinearLayout mask;
     private LinearLayoutManager layoutManager;
     private ArrayList<CommentDataBean> hotCommentData;
     private ArrayList<CommentDataBean> allCommentData;
@@ -76,7 +75,7 @@ public class CommentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.comment_show, container, false);
+        return inflater.inflate(R.layout.fragment_comment, container, false);
     }
 
     @Override
@@ -93,13 +92,12 @@ public class CommentFragment extends Fragment {
         loadimageView=view.findViewById(R.id.imageView9);
         loadtextView=view.findViewById(R.id.textView7);
         recyclerView=view.findViewById(R.id.comment_recycler_view);
-        mask=view.findViewById(R.id.mask);
         commentHeader=view.findViewById(R.id.comment_head);
         refreshLayout=view.findViewById(R.id.refreshLayout2);
         refreshLayout.setColorSchemeResources(R.color.colorAccent);
         hotCommentData=new ArrayList<>();
         allCommentData=new ArrayList<>();
-        recyclerView.setHasFixedSize(true);
+       // recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         commentAdapter=new CommentAdapter(hotCommentData,allCommentData);
@@ -179,14 +177,6 @@ public class CommentFragment extends Fragment {
         });
 
 
-        mask.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                ViewGroup viewGroup = (ViewGroup) v.getParent();
-                viewGroup.requestDisallowInterceptTouchEvent(true);
-                return true;
-            }
-        });
 
     }
 
@@ -316,6 +306,12 @@ public class CommentFragment extends Fragment {
                                     }catch (Exception e){
                                         e.printStackTrace();
                                     }
+                                    try {
+                                        String temp=doc1.getElementsByClass("ccmt_all").attr("data-content");
+                                        if (!temp.equals("")) content=temp;
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
                                     replies.add(new CommentDataBean(
                                             userImage,
                                             userName,
@@ -420,6 +416,12 @@ public class CommentFragment extends Fragment {
                                     }catch (Exception e){
                                         e.printStackTrace();
                                     }
+                                    try {
+                                        String temp=doc1.getElementsByClass("ccmt_all").attr("data-content");
+                                        if (!temp.equals("")) content=temp;
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
                                     replies.add(new CommentDataBean(
                                             userImage,
                                             userName,
@@ -486,7 +488,7 @@ public class CommentFragment extends Fragment {
                         recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
-                                updateSuspensionBar();
+
                                 hotCommentData.clear();
                                 allCommentData.clear();
                                 hotCommentData.addAll(tempHotCommentData);
@@ -503,6 +505,7 @@ public class CommentFragment extends Fragment {
                                     commentAdapter.setNoMore();
                                 }
                                 refreshLayout.setRefreshing(false);
+                                updateSuspensionBar();
 
                             }
                         });
@@ -669,7 +672,7 @@ public class CommentFragment extends Fragment {
                         recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
-                                updateSuspensionBar();
+
                                 hotCommentData.clear();
                                 allCommentData.clear();
                                 hotCommentData.addAll(tempHotCommentData);
@@ -686,7 +689,7 @@ public class CommentFragment extends Fragment {
                                     commentAdapter.setNoMore();
                                 }
                                 refreshLayout.setRefreshing(false);
-
+                                updateSuspensionBar();
                             }
                         });
                     } catch (Exception e) {
@@ -795,6 +798,12 @@ public class CommentFragment extends Fragment {
                                         }catch (Exception e){
                                             e.printStackTrace();
                                         }
+                                        try {
+                                            String temp=doc1.getElementsByClass("ccmt_all").attr("data-content");
+                                            if (!temp.equals("")) content=temp;
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
                                         replies.add(new CommentDataBean(
                                                 userImage,
                                                 userName,
@@ -847,7 +856,7 @@ public class CommentFragment extends Fragment {
                                             es1.html(),
                                             es4.html() + "楼",
                                             images,
-                                            jsonArray2.toString(),
+                                            jsonArray.toString(),
                                             replies,
                                             jsonObject1.getString("replyCount")
                                     ));
@@ -1038,19 +1047,19 @@ public class CommentFragment extends Fragment {
             View v=null;
             if(viewType==0){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.comment_header, parent, false);
+                        .inflate(R.layout.recyclerview_header, parent, false);
             }
             if(viewType==1){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.comment_header, parent, false);
+                        .inflate(R.layout.recyclerview_header, parent, false);
             }
             if(viewType==2){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.comment_view, parent, false);
+                        .inflate(R.layout.recyclerview_comment, parent, false);
             }
             if(viewType==3){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.comment_header, parent, false);
+                        .inflate(R.layout.recyclerview_header, parent, false);
             }
             return new MyViewHolder(v);
         }
@@ -1125,7 +1134,7 @@ public class CommentFragment extends Fragment {
                 final ImageView[] imageViews=new ImageView[tempData.images.size()];
                 for (int i=0;i<tempData.images.size();i++){
                     View ic = LayoutInflater.from(getContext())
-                            .inflate(R.layout.images_container, null, false);
+                            .inflate(R.layout.gridlayout_image, null, false);
                     imageViews[i]=ic.findViewById(R.id.imageView7);
                     Glide.with(imageViews[i])
                             .load(tempData.images.get(i))
@@ -1137,7 +1146,7 @@ public class CommentFragment extends Fragment {
                     imageViews[i].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(getContext(), ImagesBrowser.class);
+                            Intent intent = new Intent(getContext(), ImagesBrowserActivity.class);
                             intent.putExtra("imagesSrc", finalTempData.imagesJson);
                             intent.putExtra("imagePosition", finalI);
                             //startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
@@ -1155,7 +1164,7 @@ public class CommentFragment extends Fragment {
                 for (int i=0;i<tempData.replies.size();i++){
                     CommentDataBean commentDataBean=tempData.replies.get(i);
                     View rc = LayoutInflater.from(getContext())
-                            .inflate(R.layout.replies_container, null, false);
+                            .inflate(R.layout.item_reply, null, false);
                     ImageView imageView=rc.findViewById(R.id.imageView6_2);
                     if(!commentDataBean.userImage.equals("")) {
                         Glide.with(imageView)
@@ -1173,11 +1182,12 @@ public class CommentFragment extends Fragment {
                     if(commentDataBean.objectUserName.equals(tempData.userName)){
                         textView2.setText("");
                         textView6.setVisibility(View.GONE);
+                        textView1.setMaxEms(14);
                     }else {
                         textView2.setText(commentDataBean.objectUserName);
                         textView6.setVisibility(View.VISIBLE);
+                        textView1.setMaxEms(7);
                     }
-
                     textView3.setText(CommentEmojiUtil.getEmojiString(commentDataBean.content));
                     textView4.setText(commentDataBean.time);
                     textView5.setText("赞:"+commentDataBean.likeNum);

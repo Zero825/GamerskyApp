@@ -86,10 +86,4 @@
 
 </com.news.gamersky.customizeview.MySwipeRefreshLayout>
 
-    <LinearLayout
-        android:id="@+id/mask"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone"></LinearLayout>
 </FrameLayout>

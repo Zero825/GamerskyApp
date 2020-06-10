@@ -6,8 +6,7 @@
     <com.news.gamersky.customizeview.RoundImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:onClick="bannerClick" />
+        android:layout_height="200dp" />
 
     <TextView
         android:id="@+id/textView"

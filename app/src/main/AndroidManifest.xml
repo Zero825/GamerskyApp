@@ -14,13 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".RepliesActivity"
-            android:theme="@style/RepliesTheme" />
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/SettingTheme" />
+        <activity android:name=".SearchActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,8 +22,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ArticleActivity" />
-        <activity android:name=".ImagesBrowser" />
+        <activity
+            android:name=".RepliesActivity"
+            android:theme="@style/RepliesTheme"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/SettingTheme"
+            android:launchMode="singleTop"/>
+        <activity android:name=".ArticleActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".ImagesBrowserActivity"
+            android:launchMode="singleTop"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

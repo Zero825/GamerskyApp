@@ -12,6 +12,9 @@
             android:title="加载主页评论数量"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
+<!--    <PreferenceCategory-->
+<!--        android:title="功能相关"-->
+<!--        app:iconSpaceReserved="false"></PreferenceCategory>-->
     <PreferenceCategory
         android:title="缓存相关"
         app:iconSpaceReserved="false">
@@ -22,6 +25,7 @@
             android:summary="每次启动时清除缓存"
             android:title="自动清除缓存"
             app:iconSpaceReserved="false" />
+
 
         <Preference
             android:title="清除缓存"

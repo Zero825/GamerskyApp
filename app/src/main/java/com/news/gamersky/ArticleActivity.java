@@ -2,9 +2,7 @@ package com.news.gamersky;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -33,7 +31,7 @@ public class ArticleActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.news_show);
+        setContentView(R.layout.activity_news);
         init();
         setListen();
     }
@@ -50,6 +48,7 @@ public class ArticleActivity extends AppCompatActivity{
         viewPager.setAdapter(collectionAdapter);
         viewPager.setOffscreenPageLimit(2);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setTabIndicatorFullWidth(false);
         new TabLayoutMediator(tabLayout, viewPager,
                 new TabLayoutMediator.TabConfigurationStrategy() {
                     @Override
@@ -106,13 +105,14 @@ public class ArticleActivity extends AppCompatActivity{
 
     }
 
-//    @Override
-//    public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
 //        if (viewPager.getCurrentItem()==0){
 //            finish();
 //        }else {
 //            viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
 //        }
-//    }
+        super.onBackPressed();
+    }
 
 }

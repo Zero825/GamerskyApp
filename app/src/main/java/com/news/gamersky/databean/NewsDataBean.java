@@ -11,6 +11,7 @@ public class NewsDataBean {
     public String date;
     public String sort;
     public String commentCount;
+    public String content;
 
 
     public NewsDataBean(String imageUrl, String title, String src) {
@@ -32,6 +33,15 @@ public class NewsDataBean {
         this.date=date;
         this.sort=sort;
         this.commentCount=commentCount;
+    }
+
+    public NewsDataBean(String id,String title, String src, String date, String sort,String content) {
+        this.id=id;
+        this.title = title;
+        this.src = src;
+        this.date=date;
+        this.sort=sort;
+        this.content=content;
     }
 
     public void setCommentCount(String commentCount){

@@ -9,11 +9,8 @@ import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -22,7 +19,6 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
@@ -46,7 +42,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
-public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragment.ImageDialogListener {
+public class ImagesBrowserActivity extends AppCompatActivity implements ImageDialogFragment.ImageDialogListener {
     private ViewPager viewPager;
     private String imagesSrc;
     private int imagePosition;
@@ -55,7 +51,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.images_browser);
+        setContentView(R.layout.activity_images_browser);
         init();
         loadData();
     }
@@ -198,7 +194,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.images_viewpager, parent, false);
+                    .inflate(R.layout.viewpager_image, parent, false);
             return new MyViewHolder(v);
         }
 
@@ -206,7 +202,6 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
         public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
             try{
                 JSONObject jsonObject2=jsonArray.getJSONObject(position);
-                System.out.println(jsonObject2.getString("origin"));
 
                 holder.imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -250,7 +245,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             final View v = LayoutInflater.from(container.getContext())
-                    .inflate(R.layout.images_viewpager, container, false);
+                    .inflate(R.layout.viewpager_image, container, false);
             final BigImageView imageView=v.findViewById(R.id.imageView8);
             final ProgressBar progressBar=v.findViewById(R.id.progressBar2);
             v.setOnClickListener(new View.OnClickListener() {
@@ -274,7 +269,6 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
             });
             try{
                 JSONObject jsonObject2=jsonArray.getJSONObject(position);
-                System.out.println(jsonObject2.getString("origin"));
                 imageView.setImageLoaderCallback(new ImageLoader.Callback() {
                     @Override
                     public void onCacheHit(int imageType, File image) {
@@ -406,7 +400,7 @@ public class ImagesBrowser extends AppCompatActivity implements ImageDialogFragm
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {//必须实现，销毁
+        public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
     }

@@ -1,13 +1,9 @@
 package com.news.gamersky.fragment;
 
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
@@ -19,8 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.news.gamersky.ImagesBrowser;
+import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.Util.ReadingProgressUtil;
 import com.news.gamersky.customizeview.MyWebView;
 
 import org.json.JSONArray;
@@ -46,7 +43,7 @@ public class ArticleFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.article_show, container, false);
+        return inflater.inflate(R.layout.fragment_article, container, false);
     }
 
     @Override
@@ -74,7 +71,7 @@ public class ArticleFragment extends Fragment {
             @Override
             public void showBigImg(int i) {
                 System.out.println("我是第几张图片"+i);
-                Intent intent=new Intent(getActivity(), ImagesBrowser.class);
+                Intent intent=new Intent(getActivity(), ImagesBrowserActivity.class);
                 intent.putExtra("imagesSrc",jsonArray.toString());
                 intent.putExtra("imagePosition",i);
                 startActivity(intent);
@@ -86,6 +83,7 @@ public class ArticleFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 setWebImageClick(view);
+                webView.scrollTo(0,ReadingProgressUtil.getProgress(getContext(),data_src));
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url){
@@ -334,6 +332,7 @@ public class ArticleFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
         webView.clearCache(true);
         webView.destroy();
         super.onDestroy();

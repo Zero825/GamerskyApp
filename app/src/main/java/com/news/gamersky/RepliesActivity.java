@@ -8,15 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -28,7 +26,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.Util.CommentEmojiUtil;
 import com.news.gamersky.databean.CommentDataBean;
-import com.news.gamersky.fragment.CommentFragment;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -94,7 +91,7 @@ public class RepliesActivity extends AppCompatActivity {
         repliesData=new ArrayList<>();
 
         recyclerView=findViewById(R.id.replies_recycler_view);
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         repliesAdapter=new RepliesAdapter(comment,repliesData);
@@ -514,8 +511,11 @@ public class RepliesActivity extends AppCompatActivity {
                     System.out.println("加载评论");
                     executor.submit(loadMoreReplies());
                 }
+
             }
+
         });
+
     }
 
     @Override
@@ -588,7 +588,7 @@ public class RepliesActivity extends AppCompatActivity {
                 final ImageView[] imageViews=new ImageView[ commentData.images.size()];
                 for (int i=0;i< commentData.images.size();i++){
                     View ic = LayoutInflater.from(RepliesActivity.this)
-                            .inflate(R.layout.images_container, null, false);
+                            .inflate(R.layout.gridlayout_image, null, false);
                     imageViews[i]=ic.findViewById(R.id.imageView7);
                     Glide.with(imageViews[i])
                             .load( commentData.images.get(i))
@@ -600,7 +600,7 @@ public class RepliesActivity extends AppCompatActivity {
                     imageViews[i].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(RepliesActivity.this, ImagesBrowser.class);
+                            Intent intent = new Intent(RepliesActivity.this, ImagesBrowserActivity.class);
                             intent.putExtra("imagesSrc", finalTempData.imagesJson);
                             intent.putExtra("imagePosition", finalI);
                             //startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
@@ -656,9 +656,11 @@ public class RepliesActivity extends AppCompatActivity {
                 if(tempCommentDataBean.objectUserName.equals(commentData.userName)){
                     textView2.setText("");
                     textView6.setVisibility(View.GONE);
+                    textView1.setMaxEms(14);
                 }else {
                     textView2.setText(tempCommentDataBean.objectUserName);
                     textView6.setVisibility(View.VISIBLE);
+                    textView1.setMaxEms(7);
                 }
 
                 textView3.setText(CommentEmojiUtil.getEmojiString(tempCommentDataBean.content));
@@ -711,17 +713,17 @@ public class RepliesActivity extends AppCompatActivity {
             View v=null;
             if(viewType==0){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.comment_view, parent, false);
+                        .inflate(R.layout.recyclerview_comment, parent, false);
                 return new RepliesAdapter.CommentViewHolder(v);
             }
             if(viewType==1){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.replies_container, parent, false);
+                        .inflate(R.layout.item_reply, parent, false);
                 return new RepliesAdapter.RepliesViewHolder(v);
             }
             if(viewType==2){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.comment_header, parent, false);
+                        .inflate(R.layout.recyclerview_header, parent, false);
                 return new RepliesAdapter.FooterViewHolder(v);
             }
 

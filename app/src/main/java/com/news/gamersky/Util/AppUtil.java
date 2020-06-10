@@ -1,5 +1,15 @@
 package com.news.gamersky.Util;
 
+import android.app.Activity;
+import android.content.Context;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.news.gamersky.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -7,6 +17,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class AppUtil {
+
+    public static Toast toast;
+
+    public static Toast getToast(Activity activity, String message){
+        toast = new Toast(activity);
+        View toastview = activity.getLayoutInflater().inflate(R.layout.toast, null);
+        toast.setView(toastview);
+        TextView tv = toastview.findViewById(R.id.textView15);
+        tv.setText(message);
+        return toast;
+    }
+    public static void stopToast(){
+        if (toast!=null) toast.cancel();
+    }
+
+
     public static String is2s(InputStream inputStream){
         String str="";
         try {
