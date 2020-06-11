@@ -1,8 +1,11 @@
 # GamerskyApp
 一个游民星空的第三方Android客户端<br>
-<table><tr><td><img src="https://user-images.githubusercontent.com/37415536/82984573-049f3c00-a025-11ea-8bac-1b6a21363b88.png" width="200"></td>
+<table><tr>
+<td><img src="https://user-images.githubusercontent.com/37415536/84290070-d0c02c80-ab75-11ea-821f-80288ca4bb96.png" width="200"></td>
 <td><img src="https://user-images.githubusercontent.com/37415536/82984624-197bcf80-a025-11ea-8493-4971b574f7bc.png" width="200"></td>
-<td><img src="https://user-images.githubusercontent.com/37415536/82984639-1f71b080-a025-11ea-87b7-1174309c4862.png" width="200"></td></tr></table>
+<td><img src="https://user-images.githubusercontent.com/37415536/84290088-d61d7700-ab75-11ea-9aed-25e4d39e4671.png" width="200"></td>
+<td><img src="https://user-images.githubusercontent.com/37415536/84290079-d3228680-ab75-11ea-89a6-1d7db72cff04.png" width="200"></td>
+</tr></table>
 
 ### 功能特性
 * 下拉刷新
@@ -14,6 +17,6 @@
 * 分享文章链接和图片
 ### 引用
 查看大图引用[BigImageViewer](https://github.com/Piasy/BigImageViewer)<br>
-下拉刷新引用[SmartRefreshLayout](https://github.com/scwang90/SmartRefreshLayout)<br>
+下拉刷新引用[SmartRefreshLayout](https://github.com/scwang90/SmartRefreshLayout)(v1.0.3起不再引用)<br>
 图片懒加载引用[echo](https://github.com/toddmotto/echo)<br>
 圆形ImageView引用[CircleImageView](https://github.com/hdodenhof/CircleImageView)
