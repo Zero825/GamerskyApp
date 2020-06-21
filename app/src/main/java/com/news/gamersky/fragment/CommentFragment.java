@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
@@ -31,6 +30,7 @@ import com.news.gamersky.Util.CommentEmojiUtil;
 import com.news.gamersky.customizeview.MySwipeRefreshLayout;
 import com.news.gamersky.databean.CommentDataBean;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -69,6 +69,7 @@ public class CommentFragment extends Fragment {
     private  int page;
     private  String sid;
     private  int flag;
+    private int lastFlag;
     private ExecutorService executor;
 
     @Nullable
@@ -81,7 +82,9 @@ public class CommentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
-        data_src = args.getString("data_src");
+        if (args != null) {
+            data_src = args.getString("data_src");
+        }
         System.out.println("评论片接收到的链接"+data_src);
         init(view);
         loadComment();
@@ -106,6 +109,7 @@ public class CommentFragment extends Fragment {
         mCurrentPosition = 0;
         page=1;
         flag=0;
+        lastFlag=0;
         executor= Executors.newSingleThreadExecutor();
 
     }
@@ -114,13 +118,13 @@ public class CommentFragment extends Fragment {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mSuspensionHeight = commentHeader.getHeight();
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
                 if (commentAdapter.getItemViewType(mCurrentPosition + 1) == 0
@@ -161,6 +165,7 @@ public class CommentFragment extends Fragment {
                }
                 //System.out.println(lastItem+"      "+flag+"       "+line);
                 if(lastItem>10&&lastItem!=flag&&lastItem==line){
+                    lastFlag=flag;
                     flag=lastItem;
                     System.out.println("加载评论");
                     executor.submit(loadMoreComment());
@@ -198,6 +203,7 @@ public class CommentFragment extends Fragment {
     public  void loadComment(){
         ((AnimationDrawable) loadimageView.getDrawable()).start();
         loadtextView.setText("正在加载...");
+        commentAdapter.setNoMore(false);
         final ArrayList<CommentDataBean> tempHotCommentData=new ArrayList<>();
         final ArrayList<CommentDataBean> tempAllCommentData=new ArrayList<>();
         new Thread(new Runnable() {
@@ -206,6 +212,7 @@ public class CommentFragment extends Fragment {
 
                 page=1;
                 flag=0;
+                lastFlag=0;
                 try {
                     doc = Jsoup.connect(data_src).get();
                     Elements content = doc.getElementsByClass("gsAreaContextArt");
@@ -214,7 +221,7 @@ public class CommentFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                if (srcUrl != null && srcUrl.indexOf("https://club") != -1) {
+                if (srcUrl != null && (srcUrl.contains("https://club")||srcUrl.contains("http://club"))) {
                     System.out.println("特殊处理");
                     try {
                         int i1 = srcUrl.indexOf("h");
@@ -273,26 +280,38 @@ public class CommentFragment extends Fragment {
                                 final Elements es5 = doc.getElementsByClass("digg-btn");
                                 Elements es6 = doc.getElementsByClass("userlink")
                                         .get(0).getElementsByTag("img");
+                                String contentComment=es1.html();
+                                try {
+                                    String temp=doc.getElementsByClass("ccmt_all").attr("data-content");
+                                    if (!temp.equals("")) contentComment=temp;
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 final JSONArray jsonArray = new JSONArray();
                                 ArrayList<String> images = new ArrayList<>();
                                 try{
                                     Elements es7 = doc.getElementsByClass("qzcmt-picdiv").get(0)
-                                            .getElementsByTag("img");
+                                            .getElementsByTag("li");
 
                                     for (int j = 0; j < es7.size(); j++) {
-                                        Element element = es7.get(j);
+                                        Element element1 = es7.get(j).getElementsByTag("img").get(0);
+                                        Element element2 = es7.get(j).getElementsByTag("i").get(0);
                                         JSONObject jsonObject2 = new JSONObject();
-                                        jsonObject2.put("tinysquare", element.attr("src"));
-                                        jsonObject2.put("origin", element.attr("src").replace("tinysquare", "origin"));
+                                        jsonObject2.put("tinysquare", element1.attr("src"));
+                                        String origin=element1.attr("src").replace("tinysquare", "origin");
+                                        if(element2.attr("class").equals("gif")){
+                                            origin=origin.replace("jpg","gif");
+                                        }
+                                        jsonObject2.put("origin",origin);
                                         jsonArray.put(j, jsonObject2);
-                                        images.add(element.attr("src"));
+                                        images.add(element1.attr("src"));
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
                                 JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
                                 ArrayList<CommentDataBean> replies=new ArrayList<>();
-                                String repliesCommentId="";
+                                StringBuilder repliesCommentId= new StringBuilder();
                                 for(int j=0;j<5&&j<jsonArray3.length();j++){
                                     Document doc1 = Jsoup.parse(jsonArray3.get(j).toString());
                                     String userImage=doc1.getElementsByTag("img").get(0).attr("src");
@@ -320,8 +339,7 @@ public class CommentFragment extends Fragment {
                                             content,
                                             objectUserName
                                     ));
-                                    repliesCommentId+=
-                                            doc1.getElementsByClass("ccmt_reply_cont").get(0).attr("cmtid")+",";
+                                    repliesCommentId.append(doc1.getElementsByClass("ccmt_reply_cont").get(0).attr("cmtid")).append(",");
                                 }
                                 System.out.println(repliesCommentId);
                                 String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
@@ -362,7 +380,7 @@ public class CommentFragment extends Fragment {
                                         es2.html(),
                                         es3.html(),
                                         "赞:"+s2,
-                                        es1.html(),
+                                        contentComment,
                                         es4.html() + "楼",
                                         images,
                                         jsonArray.toString(),
@@ -382,19 +400,31 @@ public class CommentFragment extends Fragment {
                                 final Elements es5 = doc.getElementsByClass("digg-btn");
                                 Elements es6 = doc.getElementsByClass("userlink")
                                         .get(0).getElementsByTag("img");
+                                String contentComment=es1.html();
+                                try {
+                                    String temp=doc.getElementsByClass("ccmt_all").attr("data-content");
+                                    if (!temp.equals("")) contentComment=temp;
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 final JSONArray jsonArray = new JSONArray();
                                 ArrayList<String> images = new ArrayList<>();
                                 try{
                                     Elements es7 = doc.getElementsByClass("qzcmt-picdiv").get(0)
-                                            .getElementsByTag("img");
+                                            .getElementsByTag("li");
 
                                     for (int j = 0; j < es7.size(); j++) {
-                                        Element element = es7.get(j);
+                                        Element element1 = es7.get(j).getElementsByTag("img").get(0);
+                                        Element element2 = es7.get(j).getElementsByTag("i").get(0);
                                         JSONObject jsonObject2 = new JSONObject();
-                                        jsonObject2.put("tinysquare", element.attr("src"));
-                                        jsonObject2.put("origin", element.attr("src").replace("tinysquare", "origin"));
+                                        jsonObject2.put("tinysquare", element1.attr("src"));
+                                        String origin=element1.attr("src").replace("tinysquare", "origin");
+                                        if(element2.attr("class").equals("gif")){
+                                            origin=origin.replace("jpg","gif");
+                                        }
+                                        jsonObject2.put("origin",origin);
                                         jsonArray.put(j, jsonObject2);
-                                        images.add(element.attr("src"));
+                                        images.add(element1.attr("src"));
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
@@ -402,7 +432,7 @@ public class CommentFragment extends Fragment {
 
                                 JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
                                 ArrayList<CommentDataBean> replies=new ArrayList<>();
-                                String repliesCommentId="";
+                                StringBuilder repliesCommentId= new StringBuilder();
                                 for(int j=0;j<5&&j<jsonArray3.length();j++){
                                     Document doc1 = Jsoup.parse(jsonArray3.get(j).toString());
                                     String userImage=doc1.getElementsByTag("img").get(0).attr("src");
@@ -430,8 +460,7 @@ public class CommentFragment extends Fragment {
                                             content,
                                             objectUserName
                                     ));
-                                    repliesCommentId+=
-                                            doc1.getElementsByClass("ccmt_reply_cont").get(0).attr("cmtid")+",";
+                                    repliesCommentId.append(doc1.getElementsByClass("ccmt_reply_cont").get(0).attr("cmtid")).append(",");
                                 }
 
                                 String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
@@ -472,7 +501,7 @@ public class CommentFragment extends Fragment {
                                         es2.html(),
                                         es3.html(),
                                         "赞:"+s2,
-                                        es1.html(),
+                                        contentComment,
                                         es4.html() + "楼",
                                         images,
                                         jsonArray.toString(),
@@ -502,7 +531,7 @@ public class CommentFragment extends Fragment {
                                 ((AnimationDrawable) loadimageView.getDrawable()).stop();
                                 if(allCommentData.size()!=0&&
                                         (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
-                                    commentAdapter.setNoMore();
+                                    commentAdapter.setNoMore(true);
                                 }
                                 refreshLayout.setRefreshing(false);
                                 updateSuspensionBar();
@@ -686,7 +715,7 @@ public class CommentFragment extends Fragment {
                                 ((AnimationDrawable) loadimageView.getDrawable()).stop();
                                 if(allCommentData.size()!=0&&
                                         (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
-                                    commentAdapter.setNoMore();
+                                    commentAdapter.setNoMore(true);
                                 }
                                 refreshLayout.setRefreshing(false);
                                 updateSuspensionBar();
@@ -719,7 +748,7 @@ public class CommentFragment extends Fragment {
 
                     final String lastCommentFloor1=allCommentData.get(allCommentData.size()-1).floor;
                     page++;
-                    if (srcUrl != null && srcUrl.contains("https://club")) {
+                    if (srcUrl != null && (srcUrl.contains("https://club")||srcUrl.contains("http://club"))) {
                         try {
                             System.out.println("特殊处理sid" + sid);
                             String pageSize = "10"; //最多条数
@@ -764,6 +793,13 @@ public class CommentFragment extends Fragment {
                                     final Elements es5 = doc.getElementsByClass("digg-btn");
                                     Elements es6 = doc.getElementsByClass("userlink")
                                             .get(0).getElementsByTag("img");
+                                    String contentComment=es1.html();
+                                    try {
+                                        String temp=doc.getElementsByClass("ccmt_all").attr("data-content");
+                                        if (!temp.equals("")) contentComment=temp;
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
                                     final JSONArray jsonArray = new JSONArray();
                                     ArrayList<String> images = new ArrayList<>();
                                     try{
@@ -846,6 +882,7 @@ public class CommentFragment extends Fragment {
                                         }
                                     }
                                     connection1.disconnect();
+
                                     allCommentData.add(new CommentDataBean(
                                             es5.attr("cmtid"),
                                             sid,
@@ -853,7 +890,7 @@ public class CommentFragment extends Fragment {
                                             es2.html(),
                                             es3.html(),
                                             "赞:"+s2,
-                                            es1.html(),
+                                            contentComment,
                                             es4.html() + "楼",
                                             images,
                                             jsonArray.toString(),
@@ -872,13 +909,14 @@ public class CommentFragment extends Fragment {
                                     commentAdapter.notifyItemRangeInserted(commentAdapter.getItemCount(),finalLoadCommentNum);
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;
                                     if(lastCommentFloor2.equals("1楼")||lastCommentFloor1.equals(lastCommentFloor2)){
-                                       commentAdapter.setNoMore();
+                                       commentAdapter.setNoMore(true);
                                        commentAdapter.notifyItemChanged(commentAdapter.getItemCount()-1);
                                     }
                                 }
                             });
                         } catch (Exception e) {
                             e.printStackTrace();
+                            flag=lastFlag;
                         }
                     }
                     else {
@@ -964,13 +1002,15 @@ public class CommentFragment extends Fragment {
                                     updateSuspensionBar();
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;
                                     if(lastCommentFloor2.equals("1楼")||lastCommentFloor1.equals(lastCommentFloor2)){
-                                        commentAdapter.setNoMore();
+                                        commentAdapter.setNoMore(true);
                                         commentAdapter.notifyItemChanged(commentAdapter.getItemCount()-1);
                                     }
                                 }
                             });
                         }catch (Exception e){
                             e.printStackTrace();
+                            flag=lastFlag;
+                            page--;
                         }
 
                     }
@@ -980,7 +1020,9 @@ public class CommentFragment extends Fragment {
 
     }
 
-
+    public void upTop(){
+        recyclerView.smoothScrollToPosition(0);
+    }
 
     public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHolder> {
         private ArrayList<CommentDataBean> hotData;
@@ -1064,6 +1106,7 @@ public class CommentFragment extends Fragment {
             return new MyViewHolder(v);
         }
 
+
         @Override
         public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
             int vt=holder.getItemViewType();
@@ -1142,7 +1185,8 @@ public class CommentFragment extends Fragment {
                             .centerCrop()
                             .into(imageViews[i]);
                     final int finalI = i;
-                    final CommentDataBean finalTempData=tempData;
+                    final CommentDataBean finalTempData;
+                    finalTempData = tempData;
                     imageViews[i].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1216,8 +1260,8 @@ public class CommentFragment extends Fragment {
                 return hotData.size()+allData.size()+3;
 
         }
-        public void setNoMore(){
-            moreData=false;
+        public void setNoMore(boolean b){
+            moreData=!b;
         }
     }
 

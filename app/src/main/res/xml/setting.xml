@@ -3,6 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:title="主页相关"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <SwitchPreference
@@ -17,6 +19,8 @@
 <!--        app:iconSpaceReserved="false"></PreferenceCategory>-->
     <PreferenceCategory
         android:title="缓存相关"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <SwitchPreference
@@ -28,10 +32,9 @@
 
 
         <Preference
-            android:title="清除缓存"
             android:key="manual_clear_cache"
             android:summary="点击清除缓存"
-            app:iconSpaceReserved="false">
-            </Preference>
+            android:title="清除缓存"
+            app:iconSpaceReserved="false"></Preference>
     </PreferenceCategory>
 </PreferenceScreen>

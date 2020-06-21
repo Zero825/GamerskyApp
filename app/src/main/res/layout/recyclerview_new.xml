@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="@drawable/pressed"
+    android:background="@drawable/pressed_rectangle"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_weight="1"
         android:orientation="horizontal">
@@ -18,7 +18,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="65dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="6dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -26,7 +27,6 @@
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginStart="6dp"
                 android:ellipsize="end"
                 android:lineSpacingExtra="2sp"
                 android:text="TextView"
@@ -44,7 +44,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:layout_marginStart="6dp"
                     android:gravity="bottom|left"
                     android:text="TextView"
                     android:textSize="12sp" />
@@ -70,15 +69,18 @@
 
         </LinearLayout>
 
-        <com.news.gamersky.customizeview.RoundImageView
+        <ImageView
             android:id="@+id/imageView3"
             android:layout_width="230dp"
             android:layout_height="65dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
+            android:background="@color/tc"
             android:scaleType="fitXY"
-            app:srcCompat="@color/colorAccent" />
+            app:srcCompat="@color/colorAccent"
+            />
 
     </LinearLayout>
 
@@ -87,6 +89,6 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_weight="1"
-        android:background="#1EDAD5D5" />
+        android:background="@color/tc" />
 
 </LinearLayout>

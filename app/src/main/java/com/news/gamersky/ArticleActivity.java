@@ -19,6 +19,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
+import com.news.gamersky.fragment.HomePageFragment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ArticleActivity extends AppCompatActivity{
@@ -27,6 +31,8 @@ public class ArticleActivity extends AppCompatActivity{
     private ImageView imageView1;
     private ImageView imageView2;
     private ViewPager2 viewPager;
+    private CollectionAdapter collectionAdapter;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +47,13 @@ public class ArticleActivity extends AppCompatActivity{
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         Intent intent = getIntent();
         data_src = intent.getStringExtra("data_src");
-        CollectionAdapter collectionAdapter = new CollectionAdapter(getSupportFragmentManager(), getLifecycle());
+        collectionAdapter = new CollectionAdapter(getSupportFragmentManager(), getLifecycle());
         imageView1=findViewById(R.id.imageView5);
         imageView2=findViewById(R.id.imageView12);
         viewPager = findViewById(R.id.pager2);
         viewPager.setAdapter(collectionAdapter);
         viewPager.setOffscreenPageLimit(2);
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setTabIndicatorFullWidth(false);
         new TabLayoutMediator(tabLayout, viewPager,
                 new TabLayoutMediator.TabConfigurationStrategy() {
@@ -62,6 +68,7 @@ public class ArticleActivity extends AppCompatActivity{
 
 
     public class CollectionAdapter extends FragmentStateAdapter {
+
         public CollectionAdapter(FragmentManager fm, Lifecycle lifecycle) {
             super(fm,lifecycle);
         }
@@ -70,8 +77,12 @@ public class ArticleActivity extends AppCompatActivity{
         @Override
         public Fragment createFragment(int position) {
             Fragment fragment=new Fragment();
-            if (position==0) fragment = new ArticleFragment();
-            else if(position==1) fragment=new CommentFragment();
+            if (position==0) {
+                fragment = new ArticleFragment();
+            }
+            if(position==1) {
+                fragment = new CommentFragment();
+            }
             Bundle args = new Bundle();
             args.putString("data_src",data_src);
             fragment.setArguments(args);
@@ -82,6 +93,7 @@ public class ArticleActivity extends AppCompatActivity{
         public int getItemCount() {
             return 2;
         }
+
     }
 
     public void setListen(){
@@ -103,6 +115,21 @@ public class ArticleActivity extends AppCompatActivity{
             }
         });
 
+        tabLayout.getTabAt(0).view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(viewPager.getCurrentItem()==0)
+                ((ArticleFragment)getSupportFragmentManager().getFragments().get(0)).upTop();
+            }
+        });
+        tabLayout.getTabAt(1).view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(viewPager.getCurrentItem()==1)
+                ((CommentFragment)getSupportFragmentManager().getFragments().get(1)).upTop();
+            }
+        });
+
     }
 
     @Override
@@ -113,6 +140,27 @@ public class ArticleActivity extends AppCompatActivity{
 //            viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
 //        }
         super.onBackPressed();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            ((ArticleFragment)getSupportFragmentManager().getFragments().get(0)).pauseWebView();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            ((ArticleFragment)getSupportFragmentManager().getFragments().get(0)).resumeWebView();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

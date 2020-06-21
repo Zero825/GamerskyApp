@@ -4,15 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:nestedScrollingEnabled="false"
     android:orientation="vertical">
 
     <com.news.gamersky.customizeview.HomePageSwipeRefreshLayout
         android:id="@+id/refreshLayout1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipChildren="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,23 +19,17 @@
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
             android:fillViewport="true"
             app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipChildren="false">
+                android:layout_height="match_parent">
 
                 <com.news.gamersky.customizeview.MyViewPager
                     android:id="@+id/pager"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="20dp"
-                    android:clipChildren="false"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -62,6 +53,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="20dp"
                     android:textColor="#f01a21"
                     android:textSize="13sp"
@@ -75,6 +67,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:textColor="#000000"
                     android:textSize="13sp"
@@ -92,7 +85,7 @@
                     app:layout_constraintBottom_toTopOf="@id/textView6"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textView3">
+                    app:layout_constraintTop_toBottomOf="@+id/imageView2">
 
                 </androidx.recyclerview.widget.RecyclerView>
 

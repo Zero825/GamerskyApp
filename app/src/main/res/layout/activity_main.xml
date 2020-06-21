@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="#FAFAFA"
-        android:elevation="10dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +42,9 @@
             app:tabPaddingBottom="0dp"
             app:tabPaddingEnd="5dp"
             app:tabPaddingStart="5dp"
-            app:tabPaddingTop="0dp">
+            app:tabPaddingTop="0dp"
+            app:tabBackground="@color/tc"
+            app:tabRippleColor="@color/tc">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -59,26 +60,27 @@
 
         <ImageView
             android:id="@+id/imageView11"
-            android:layout_width="25dp"
-            android:layout_height="0dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/pressed_circle"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/toolbar"
+            app:layout_constraintEnd_toStartOf="@+id/imageView10"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/icon_search" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:paddingRight="10dp"
-            android:theme="?attr/actionBarTheme"
+        <ImageView
+            android:id="@+id/imageView10"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/pressed_circle"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:menu="@menu/activity_main_menu"
-            app:title=" " />
+            app:srcCompat="@drawable/icon_settings" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

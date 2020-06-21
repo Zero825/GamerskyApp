@@ -2,6 +2,10 @@ package com.news.gamersky.Util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -32,6 +36,25 @@ public class AppUtil {
         if (toast!=null) toast.cancel();
     }
 
+    public static SpannableString keyTextColor(String text,String key,int color){
+        SpannableString spannableString = new SpannableString(text);
+        try {
+            ForegroundColorSpan colorSpan = new ForegroundColorSpan(color);
+            spannableString.setSpan(colorSpan, text.indexOf(key), text.indexOf(key)+key.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }catch (Exception e){
+           // e.printStackTrace();
+            System.out.println("着色失败");
+        }
+        return spannableString;
+    }
+
+    public static Snackbar getSnackbar(Context context,View view,String msg){
+        Snackbar snackbar= Snackbar.make(view,msg,1000);
+        View snackbarView = snackbar.getView();
+        ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.BLACK);
+        snackbar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
+        return snackbar;
+    }
 
     public static String is2s(InputStream inputStream){
         String str="";

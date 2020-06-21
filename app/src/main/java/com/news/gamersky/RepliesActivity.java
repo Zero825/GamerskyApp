@@ -60,6 +60,7 @@ public class RepliesActivity extends AppCompatActivity {
     private Point point;
     private  int page;
     private  int flag;
+    private int lastFlag;
     private ExecutorService executor;
 
     @Override
@@ -99,6 +100,7 @@ public class RepliesActivity extends AppCompatActivity {
 
         page=1;
         flag=0;
+        lastFlag=0;
         executor= Executors.newSingleThreadExecutor();
 
     }
@@ -106,6 +108,8 @@ public class RepliesActivity extends AppCompatActivity {
     public void loadReplies(){
         page=1;
         flag=0;
+        lastFlag=0;
+        repliesAdapter.setNoMore(false);
         if(clubContentId!=null){
             new Thread(new Runnable() {
                 @Override
@@ -149,13 +153,20 @@ public class RepliesActivity extends AppCompatActivity {
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
+                                String contentReply=e1.getElementsByClass("content").get(0).html();
+                                try {
+                                    String temp=e1.getElementsByClass("ccmt_all").attr("data-content");
+                                    if (!temp.equals("")) contentReply=temp;
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 repliesData.add(new CommentDataBean(
                                         e1.attr("cmtid"),
                                         e1.getElementsByTag("img").get(0).attr("src"),
                                         e1.getElementsByClass("uname").get(0).html(),
                                         e1.getElementsByClass("ccmt_time").get(0).html(),
                                         "赞:"+e1.getElementsByClass("digg-btn").get(0).html(),
-                                        e1.getElementsByClass("content").get(0).html(),
+                                        contentReply,
                                         objectUserName
 
                                 ));
@@ -198,7 +209,7 @@ public class RepliesActivity extends AppCompatActivity {
                                 public void run() {
                                     repliesAdapter.notifyDataSetChanged();
                                     if(repliesData.size()<10){
-                                        repliesAdapter.setNoMore();
+                                        repliesAdapter.setNoMore(true);
                                     }
                                     startAnimator();
                                 }
@@ -264,7 +275,7 @@ public class RepliesActivity extends AppCompatActivity {
                                 public void run() {
                                     repliesAdapter.notifyDataSetChanged();
                                     if(repliesData.size()<10){
-                                        repliesAdapter.setNoMore();
+                                        repliesAdapter.setNoMore(true);
                                     }
                                     startAnimator();
                                 }
@@ -384,7 +395,7 @@ public class RepliesActivity extends AppCompatActivity {
                                     repliesAdapter.notifyItemRangeInserted(repliesAdapter.getItemCount(),finalLoadRepliesNum);
                                     String nowReplyId=repliesData.get(repliesData.size()-1).replyId;
                                     if(lastReplyId.equals(nowReplyId)){
-                                        repliesAdapter.setNoMore();
+                                        repliesAdapter.setNoMore(true);
                                         repliesAdapter.notifyItemChanged(repliesAdapter.getItemCount()-1);
                                     }
                                 }
@@ -392,6 +403,7 @@ public class RepliesActivity extends AppCompatActivity {
                         }
                     }catch (Exception e){
                         e.printStackTrace();
+                        flag=lastFlag;
                     }
                 }
             });
@@ -448,7 +460,7 @@ public class RepliesActivity extends AppCompatActivity {
                                     repliesAdapter.notifyItemRangeInserted(repliesAdapter.getItemCount(),finalLoadRepliesNum);
                                     String nowReplyId=repliesData.get(repliesData.size()-1).replyId;
                                     if(lastReplyId.equals(nowReplyId)){
-                                        repliesAdapter.setNoMore();
+                                        repliesAdapter.setNoMore(true);
                                         repliesAdapter.notifyItemChanged(repliesAdapter.getItemCount()-1);
                                     }
                                 }
@@ -456,6 +468,8 @@ public class RepliesActivity extends AppCompatActivity {
                         }
                     }catch (Exception e){
                         e.printStackTrace();
+                        flag=lastFlag;
+                        page--;
                     }
                 }
             });
@@ -475,8 +489,8 @@ public class RepliesActivity extends AppCompatActivity {
     }
 
     public void endAnimator(){
-        ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(constraintLayout, "translationY", 0f, point.y);
-        ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(mask, "alpha", 1f, 0f);
+        ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(constraintLayout, "translationY", constraintLayout.getTranslationY(), point.y);
+        ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(mask, "alpha", mask.getAlpha(), 0f);
         objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
         AnimatorSet animSet = new AnimatorSet();
@@ -507,6 +521,7 @@ public class RepliesActivity extends AppCompatActivity {
                 }
                 //System.out.println(lastItem+"      "+flag+"       "+line);
                 if(lastItem>10&&lastItem!=flag&&lastItem==line){
+                    lastFlag=flag;
                     flag=lastItem;
                     System.out.println("加载评论");
                     executor.submit(loadMoreReplies());
@@ -655,7 +670,7 @@ public class RepliesActivity extends AppCompatActivity {
                 textView1.setText(tempCommentDataBean.userName);
                 if(tempCommentDataBean.objectUserName.equals(commentData.userName)){
                     textView2.setText("");
-                    textView6.setVisibility(View.GONE);
+                    textView6.setVisibility(View.INVISIBLE);
                     textView1.setMaxEms(14);
                 }else {
                     textView2.setText(tempCommentDataBean.objectUserName);
@@ -752,8 +767,8 @@ public class RepliesActivity extends AppCompatActivity {
             return repliesData.size()+2;
 
         }
-        public void setNoMore(){
-            moreData=false;
+        public void setNoMore(boolean b){
+            moreData=!b;
         }
     }
 

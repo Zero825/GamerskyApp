@@ -5,11 +5,14 @@ import android.view.View;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
     private static final float MIN_SCALE = 0.85f;
     private static final float MIN_ALPHA = 0.5f;
 
-    public void transformPage(View view, float position) {
+    @Override
+    public void transformPage(@NotNull View view, float position) {
         int pageWidth = view.getWidth();
         int pageHeight = view.getHeight();
 

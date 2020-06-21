@@ -23,12 +23,15 @@ import com.github.piasy.biv.BigImageViewer;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.HomePageFragment;
 import com.news.gamersky.fragment.InterestingImagesFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ImageView logo;
     private ImageView searchBtn;
+    private ImageView setBtn;
     private ViewPager2 viewPager2;
     private TabLayout tabLayout;
     private FragmentAdapter fragmentAdapter;
@@ -48,8 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().getDecorView()
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        logo=findViewById(R.id.imageView4);
         searchBtn=findViewById(R.id.imageView11);
+        setBtn=findViewById(R.id.imageView10);
         viewPager2=findViewById(R.id.viewPager);
         tabLayout=findViewById(R.id.tabLayout);
         fragmentAdapter=new FragmentAdapter(this);
@@ -75,6 +79,24 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this,SearchActivity.class));
             }
         });
+        setBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,SettingsActivity.class));
+            }
+        });
+        logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(viewPager2.getCurrentItem()==0){
+                    try {
+                        ((HomePageFragment)getSupportFragmentManager().getFragments().get(0)).upTop();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     public void clearGlideDiskCache(boolean b){
@@ -89,25 +111,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()) {
-            case R.id.activity_main_menu1:
-                Intent intent=new Intent(this,SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.activity_main_menu2:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     public void onBackPressed() {

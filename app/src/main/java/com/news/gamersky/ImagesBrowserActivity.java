@@ -339,9 +339,10 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
                                                .animateScaleAndCenter(result, new PointF(imageWidth / 2, 0))
                                                .withEasing(SubsamplingScaleImageView.EASE_OUT_QUAD)
                                                .start();
-
+                                       mImageView.setDoubleTapZoomScale(result+0.5f);
+                                   }else {
+                                       mImageView.setDoubleTapZoomScale(result);
                                    }
-                                   mImageView.setDoubleTapZoomScale(result);
 
 
                                }

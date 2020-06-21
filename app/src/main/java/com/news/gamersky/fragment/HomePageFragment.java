@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -32,13 +31,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.google.android.material.snackbar.Snackbar;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.Util.AppUtil;
 import com.news.gamersky.Util.ReadingProgressUtil;
 import com.news.gamersky.customizeview.HomePageSwipeRefreshLayout;
 import com.news.gamersky.customizeview.MyViewPager;
-import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.customizeview.ZoomOutPageTransformer;
 import com.news.gamersky.databean.NewsDataBean;
 
@@ -124,7 +122,7 @@ public class HomePageFragment extends Fragment {
         topiv.setVisibility(View.INVISIBLE);
         footv.setVisibility(View.INVISIBLE);
         vp =view.findViewById(R.id.pager);
-        vp.setPageTransformer(true,new ZoomOutPageTransformer());
+        vp.setPageTransformer(false,new ZoomOutPageTransformer());
         vp.setOffscreenPageLimit(4);
         myViewpagerAdapter=new MyViewpagerAdapter(bannerData);
         vp.setAdapter(myViewpagerAdapter);
@@ -436,6 +434,9 @@ public class HomePageFragment extends Fragment {
         });
     }
 
+    public void upTop(){
+        nestedScrollView.smoothScrollTo(0,0);
+    }
 
 
 
@@ -451,7 +452,7 @@ public class HomePageFragment extends Fragment {
             public TextView textView2;
             public TextView textView3;
             public TextView textView4;
-            public RoundImageView imageView;
+            public ImageView imageView;
             public MyViewHolder(View v) {
                 super(v);
                 textView = v.findViewById(R.id.textView4);
@@ -539,7 +540,7 @@ public class HomePageFragment extends Fragment {
         public  class MyViewHolder extends RecyclerView.ViewHolder {
             // each data item is just a string in this case
 
-            public RoundImageView imageView;
+            public ImageView imageView;
             public TextView textView;
             public MyViewHolder(View v) {
                 super(v);
@@ -608,7 +609,7 @@ public class HomePageFragment extends Fragment {
             View v = LayoutInflater.from(container.getContext())
                     .inflate(R.layout.viewpager_banner, container, false);
             TextView textView=v.findViewById(R.id.textView);
-            RoundImageView imageView=v.findViewById(R.id.imageView);
+            ImageView imageView=v.findViewById(R.id.imageView);
             textView.setText(myData.get(position).title);
             Glide.with(imageView)
                     .load(myData.get(position).imageUrl)
@@ -653,15 +654,10 @@ public class HomePageFragment extends Fragment {
                                 toptv1.setText(topData.get(0).title);
                                 toptv2.setText(topData.get(1).title);
                                 myViewpagerAdapter.notifyDataSetChanged();
-                                vp.setCurrentItem(bannerNum/2,true);
 
                                 System.out.println("更新ui完毕");
                                 myAdapter.notifyDataSetChanged();
-                                Snackbar snackbar= Snackbar.make(recyclerView,"数据更新成功",1000);
-                                View snackbarView = snackbar.getView();
-                                ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.BLACK);
-                                snackbar.setBackgroundTint(getResources().getColor(R.color.colorPrimary));
-                                snackbar.show();
+                                AppUtil.getSnackbar(getContext(),recyclerView,"数据更新成功").show();
                                 topiv.setVisibility(View.VISIBLE);
                                 footv.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
@@ -673,11 +669,7 @@ public class HomePageFragment extends Fragment {
 
             }
             if (msg.what==0){
-                Snackbar snackbar= Snackbar.make(recyclerView,"数据更新失败",1000);
-                View snackbarView = snackbar.getView();
-                ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.BLACK);
-                snackbar.setBackgroundTint(getResources().getColor(R.color.colorPrimary));
-                snackbar.show();
+                AppUtil.getSnackbar(getContext(),recyclerView,"数据更新失败").show();
                 progressBar.setVisibility(View.GONE);
                 refreshLayout.setRefreshing(false);
             }

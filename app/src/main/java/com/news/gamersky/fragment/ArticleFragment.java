@@ -132,7 +132,7 @@ public class ArticleFragment extends Fragment {
                 Elements content4=doc.getElementsByClass("gsAreaContextArt");
                 String srcUrl=content4.get(0).getElementsByTag("script").html();
                 String a=content.html();
-                Boolean pinye=true;
+                boolean pinye=true;
                 if(!srcUrl.equals("")){
                     pinye=false;
                     int i1=srcUrl.indexOf("h");
@@ -197,8 +197,9 @@ public class ArticleFragment extends Fragment {
                         String s2 = s1.substring(0, s1.indexOf("_"));
 
                         for (int i = 2; i <= n; i++) {
-                            String s3 = s2 + "_" + i + ".html";
+                            String s3 = s2 + "_" + i+".html";
                             Document doc1 = null;
+                            System.out.println(s3);
                             try {
                                 doc1 = Jsoup.connect(s3).get();
                             } catch (IOException e) {
@@ -255,7 +256,7 @@ public class ArticleFragment extends Fragment {
             Document doc = Jsoup.parse(htmltext);
 
             Elements elements2=doc.getElementsByTag("body");
-            elements2.html("<div style=\"margin:0px 5px\">"+doc.body().children()+"</div>");
+            elements2.html("<div style=\"margin:0px 10px\">"+doc.body().children()+"</div>");
             Elements elements = doc.getElementsByTag("a");
             Elements elements1=doc.getElementsByTag("img");
             Elements elements3 = doc.getElementsByTag("span");
@@ -265,7 +266,7 @@ public class ArticleFragment extends Fragment {
             elements2.attr("href","");
             for (int i=0;i<elements1.size();i++) {
                 Element element=elements1.get(i);
-                element.attr("style", "border-radius: 1px")
+                element.attr("style", "border-radius: 0px")
                         .attr("width", "100%")
                         .attr("height", "auto")
                         .attr("data-echo",element.attr("src"))
@@ -330,6 +331,10 @@ public class ArticleFragment extends Fragment {
         }
     }
 
+    public void upTop(){
+        webView.scrollTo(0,0);
+    }
+
     @Override
     public void onDestroy() {
         ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
@@ -338,14 +343,12 @@ public class ArticleFragment extends Fragment {
         super.onDestroy();
     }
 
-    @Override
-    public void onPause() {
-        webView.pauseTimers();
-        super.onPause();
-    }
-    @Override
-    public void onResume() {
+
+    public void resumeWebView() {
         webView.resumeTimers();
-        super.onResume();
+    }
+
+    public void pauseWebView(){
+        webView.pauseTimers();
     }
 }

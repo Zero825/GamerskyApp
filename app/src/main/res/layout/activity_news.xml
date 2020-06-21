@@ -14,15 +14,16 @@
 
         <ImageView
             android:id="@+id/imageView5"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:src="@drawable/back"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/pressed_circle"
+            android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -32,7 +33,9 @@
             app:layout_constraintEnd_toStartOf="@+id/imageView12"
             app:layout_constraintStart_toEndOf="@id/imageView5"
             app:layout_constraintTop_toTopOf="parent"
-            app:tabMode="auto">
+            app:tabMode="auto"
+            app:tabBackground="@color/tc"
+            app:tabRippleColor="@color/tc">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -48,15 +51,16 @@
 
         <ImageView
             android:id="@+id/imageView12"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:paddingTop="14dp"
-            android:paddingRight="8dp"
-            android:paddingBottom="14dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/pressed_circle"
+            android:padding="10dp"
+            android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/share" />
+            app:srcCompat="@drawable/icon_share" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
