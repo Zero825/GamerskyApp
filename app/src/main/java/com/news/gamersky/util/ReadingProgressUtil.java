@@ -1,4 +1,4 @@
-package com.news.gamersky.Util;
+package com.news.gamersky.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

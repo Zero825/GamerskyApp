@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -24,7 +23,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.news.gamersky.Util.CommentEmojiUtil;
+import com.news.gamersky.util.CommentEmojiUtil;
 import com.news.gamersky.databean.CommentDataBean;
 
 import org.json.JSONArray;
@@ -43,13 +42,14 @@ import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.news.gamersky.Util.AppUtil.format;
-import static com.news.gamersky.Util.AppUtil.is2s;
+import static com.news.gamersky.util.AppUtil.format;
+import static com.news.gamersky.util.AppUtil.is2s;
 
 public class RepliesActivity extends AppCompatActivity {
     private String commentId;
     private String clubContentId;
     private ConstraintLayout constraintLayout;
+    private TextView headTextView;
     private ImageView mask;
     private ImageButton imageButton;
     private CommentDataBean comment;
@@ -75,7 +75,7 @@ public class RepliesActivity extends AppCompatActivity {
     public void init(){
         getWindow().getDecorView()
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        TextView textView=findViewById(R.id.textView20);
+        headTextView=findViewById(R.id.textView20);
         constraintLayout=findViewById(R.id.constraintLayout);
         imageButton=findViewById(R.id.imageButton);
         mask=findViewById(R.id.imageView13);
@@ -84,7 +84,7 @@ public class RepliesActivity extends AppCompatActivity {
         clubContentId = intent.getStringExtra("clubContentId");
         System.out.println(commentId+"    "+clubContentId);
         comment= (CommentDataBean) intent.getSerializableExtra("comment");
-        textView.setText(comment.userName+"的回复");
+        headTextView.setText(comment.userName+"的回复");
         point = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(point);
         constraintLayout.setY(point.y);
@@ -342,13 +342,20 @@ public class RepliesActivity extends AppCompatActivity {
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
+                                String contentReply=e1.getElementsByClass("content").get(0).html();
+                                try {
+                                    String temp=e1.getElementsByClass("ccmt_all").attr("data-content");
+                                    if (!temp.equals("")) contentReply=temp;
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 repliesData.add(new CommentDataBean(
                                         e1.attr("cmtid"),
                                         e1.getElementsByTag("img").get(0).attr("src"),
                                         e1.getElementsByClass("uname").get(0).html(),
                                         e1.getElementsByClass("ccmt_time").get(0).html(),
                                         "赞:"+e1.getElementsByClass("digg-btn").get(0).html(),
-                                        e1.getElementsByClass("content").get(0).html(),
+                                        contentReply,
                                         objectUserName
 
                                 ));
@@ -477,6 +484,10 @@ public class RepliesActivity extends AppCompatActivity {
 
     }
 
+    public void upTop(){
+        recyclerView.smoothScrollToPosition(0);
+    }
+
     public void startAnimator(){
         ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(constraintLayout, "translationY", point.y, 0f);
         ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(mask, "alpha", 0f, 1f);
@@ -529,6 +540,13 @@ public class RepliesActivity extends AppCompatActivity {
 
             }
 
+        });
+
+        headTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                upTop();
+            }
         });
 
     }

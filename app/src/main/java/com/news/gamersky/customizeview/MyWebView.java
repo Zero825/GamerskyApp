@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 public class MyWebView extends WebView {
+    float x=0;
+    float y=0;
     float y1=0;
     float y2=0;
     float x1=0;
@@ -43,23 +45,28 @@ public class MyWebView extends WebView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev){
         ViewGroup viewGroup = (ViewGroup) this.getParent();
-        //System.out.println(ev.toString());
+        System.out.println(ev.toString());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 y2=ev.getY();
                 x2=ev.getX();
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 float k=(y2-y1)/(x2-x1);
+                float k1=(y2-y)/(x2-x);
                 //System.out.println(k);
-                if(x2-x1<0&&Math.abs(k)<0.2){
+                if(x2-x1<0&&Math.abs(k)<0.2&&Math.abs(k1)<0.2){
                     viewGroup.requestDisallowInterceptTouchEvent(false);
                 } else{
                     viewGroup.requestDisallowInterceptTouchEvent(true);
                 }
+                y1=ev.getY();
+                x1=ev.getX();
                 break;
             case MotionEvent.ACTION_DOWN:
                 y1=ev.getY();
                 x1=ev.getX();
+                y=ev.getY();
+                x=ev.getX();
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 break;
         }

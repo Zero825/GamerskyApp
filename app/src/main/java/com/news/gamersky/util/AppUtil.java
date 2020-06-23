@@ -1,4 +1,4 @@
-package com.news.gamersky.Util;
+package com.news.gamersky.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +45,19 @@ public class AppUtil {
             System.out.println("着色失败");
         }
         return spannableString;
+    }
+
+    public static String urlToId(String url){
+        String s=url;
+        try {
+            String id=new StringBuffer(s).reverse().toString();
+            id=id.substring(id.indexOf(".")+1,id.indexOf("/"));
+            id=new StringBuffer(id).reverse().toString();
+            s=id;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return s;
     }
 
     public static Snackbar getSnackbar(Context context,View view,String msg){

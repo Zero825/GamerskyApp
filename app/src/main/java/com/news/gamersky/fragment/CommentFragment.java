@@ -26,8 +26,9 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.RepliesActivity;
-import com.news.gamersky.Util.CommentEmojiUtil;
-import com.news.gamersky.customizeview.MySwipeRefreshLayout;
+import com.news.gamersky.util.AppUtil;
+import com.news.gamersky.util.CommentEmojiUtil;
+import com.news.gamersky.customizeview.EndSwipeRefreshLayout;
 import com.news.gamersky.databean.CommentDataBean;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,13 +43,15 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.news.gamersky.Util.AppUtil.format;
-import static com.news.gamersky.Util.AppUtil.is2s;
+import static com.news.gamersky.util.AppUtil.format;
+import static com.news.gamersky.util.AppUtil.is2s;
 
 
 public class CommentFragment extends Fragment {
@@ -63,13 +66,14 @@ public class CommentFragment extends Fragment {
     private LinearLayout commentHeader;
     private int mSuspensionHeight;
     private int mCurrentPosition;
-    private MySwipeRefreshLayout refreshLayout;
+    private EndSwipeRefreshLayout refreshLayout;
     private  Document doc;
     private  String srcUrl;
     private  int page;
     private  String sid;
     private  int flag;
     private int lastFlag;
+    private boolean isFirst;
     private ExecutorService executor;
 
     @Nullable
@@ -110,6 +114,7 @@ public class CommentFragment extends Fragment {
         page=1;
         flag=0;
         lastFlag=0;
+        isFirst=true;
         executor= Executors.newSingleThreadExecutor();
 
     }
@@ -173,6 +178,7 @@ public class CommentFragment extends Fragment {
 
             }
         });
+
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -512,32 +518,47 @@ public class CommentFragment extends Fragment {
                         }
                         connection.disconnect();
 
-
-
                         recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
-
-                                hotCommentData.clear();
-                                allCommentData.clear();
-                                hotCommentData.addAll(tempHotCommentData);
-                                allCommentData.addAll(tempAllCommentData);
-                                commentAdapter.notifyDataSetChanged();
-                                recyclerView.scheduleLayoutAnimation();
-                                loadtextView.setText("加载成功");
-                                loadtextView.setVisibility(View.GONE);
-                                loadimageView.setVisibility(View.GONE);
-                                commentHeader.setVisibility(View.VISIBLE);
-                                ((AnimationDrawable) loadimageView.getDrawable()).stop();
-                                if(allCommentData.size()!=0&&
-                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
-                                    commentAdapter.setNoMore(true);
-                                }
                                 refreshLayout.setRefreshing(false);
-                                updateSuspensionBar();
+                                Timer temp=new Timer();
+                                temp.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                                hotCommentData.clear();
+                                                allCommentData.clear();
+                                                hotCommentData.addAll(tempHotCommentData);
+                                                allCommentData.addAll(tempAllCommentData);
+                                                commentAdapter.notifyDataSetChanged();
+                                                recyclerView.scheduleLayoutAnimation();
+                                                loadtextView.setText("加载成功");
+                                                loadtextView.setVisibility(View.GONE);
+                                                loadimageView.setVisibility(View.GONE);
+                                                commentHeader.setVisibility(View.VISIBLE);
+                                                ((AnimationDrawable) loadimageView.getDrawable()).stop();
+                                                if(allCommentData.size()!=0&&
+                                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
+                                                    commentAdapter.setNoMore(true);
+                                                }
+                                                updateSuspensionBar();
+                                                if(!isFirst) {
+                                                    AppUtil.getSnackbar(getContext(), recyclerView, "评论加载成功").show();
+                                                }
+                                                isFirst=false;
+                                            }
+                                        });
+
+                                    }
+                                },200);
 
                             }
                         });
+
                     } catch (Exception e) {
                         e.printStackTrace();
                         recyclerView.post(new Runnable() {
@@ -547,6 +568,7 @@ public class CommentFragment extends Fragment {
                                 loadimageView.setImageResource(R.drawable.load_animation);
                                 loadtextView.setText("加载失败");
                                 refreshLayout.setRefreshing(false);
+                                AppUtil.getSnackbar(getContext(),recyclerView,"评论加载失败").show();
 
                             }
                         });
@@ -701,24 +723,41 @@ public class CommentFragment extends Fragment {
                         recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
-
-                                hotCommentData.clear();
-                                allCommentData.clear();
-                                hotCommentData.addAll(tempHotCommentData);
-                                allCommentData.addAll(tempAllCommentData);
-                                commentAdapter.notifyDataSetChanged();
-                                recyclerView.scheduleLayoutAnimation();
-                                loadtextView.setText("加载成功");
-                                loadtextView.setVisibility(View.GONE);
-                                loadimageView.setVisibility(View.GONE);
-                                commentHeader.setVisibility(View.VISIBLE);
-                                ((AnimationDrawable) loadimageView.getDrawable()).stop();
-                                if(allCommentData.size()!=0&&
-                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
-                                    commentAdapter.setNoMore(true);
-                                }
                                 refreshLayout.setRefreshing(false);
-                                updateSuspensionBar();
+                                Timer temp=new Timer();
+                                temp.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                                hotCommentData.clear();
+                                                allCommentData.clear();
+                                                hotCommentData.addAll(tempHotCommentData);
+                                                allCommentData.addAll(tempAllCommentData);
+                                                commentAdapter.notifyDataSetChanged();
+                                                recyclerView.scheduleLayoutAnimation();
+                                                loadtextView.setText("加载成功");
+                                                loadtextView.setVisibility(View.GONE);
+                                                loadimageView.setVisibility(View.GONE);
+                                                commentHeader.setVisibility(View.VISIBLE);
+                                                ((AnimationDrawable) loadimageView.getDrawable()).stop();
+                                                if(allCommentData.size()!=0&&
+                                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
+                                                    commentAdapter.setNoMore(true);
+                                                }
+                                                updateSuspensionBar();
+                                                if(!isFirst) {
+                                                    AppUtil.getSnackbar(getContext(), recyclerView, "评论加载成功").show();
+                                                }
+                                                isFirst=false;
+                                            }
+                                        });
+
+                                    }
+                                },200);
+
                             }
                         });
                     } catch (Exception e) {
@@ -730,6 +769,7 @@ public class CommentFragment extends Fragment {
                                 loadimageView.setImageResource(R.drawable.load_animation);
                                 loadtextView.setText("加载失败");
                                 refreshLayout.setRefreshing(false);
+                                AppUtil.getSnackbar(getContext(), recyclerView, "评论加载失败").show();
                             }
                         });
                     }

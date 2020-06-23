@@ -24,7 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
-import com.news.gamersky.customizeview.EndSwipeRefreshLayout;
 import com.news.gamersky.customizeview.MidSwipeRefreshLayout;
 import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.util.AppUtil;
@@ -46,9 +45,9 @@ import java.util.concurrent.Executors;
 
 import static com.news.gamersky.util.AppUtil.is2s;
 
-public class InterestingImagesFragment extends Fragment {
+public class EntertainmentFragment extends Fragment {
     private RecyclerView recyclerView;
-    private EndSwipeRefreshLayout midSwipeRefreshLayout;
+    private MidSwipeRefreshLayout midSwipeRefreshLayout;
     private NewsAdapter newsAdapter;
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<NewsDataBean> newsData;
@@ -63,7 +62,7 @@ public class InterestingImagesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_interesting_images, container, false);
+        return inflater.inflate(R.layout.fragment_entertainment, container, false);
     }
 
     @Override
@@ -104,7 +103,7 @@ public class InterestingImagesFragment extends Fragment {
             public void run() {
                 try {
                     final ArrayList<NewsDataBean> tempData=new ArrayList<>();
-                    Document doc= Jsoup.connect("https://www.gamersky.com/ent/qw").get();
+                    Document doc= Jsoup.connect("https://www.gamersky.com/ent/xz").get();
                     Element e=doc.getElementsByClass("pictxt contentpaging")
                             .get(0);
                     nodeId=e.attr("data-nodeId");
@@ -138,7 +137,7 @@ public class InterestingImagesFragment extends Fragment {
                             final Elements es1=document.getElementsByTag("li");
                             for(int i=0;i<es1.size();i++){
                                 Element e1=es1.get(i);
-                                String id=AppUtil.urlToId(e1.getElementsByTag("a").get(0).attr("href"));
+                                String id= AppUtil.urlToId(e1.getElementsByTag("a").get(0).attr("href"));
                                 String title=e1.getElementsByTag("a").get(1).html();
                                 String src1="https://wap.gamersky.com/news/Content-"+id;
                                 String date=e1.getElementsByClass("time").get(0).html();
@@ -248,7 +247,7 @@ public class InterestingImagesFragment extends Fragment {
                                 String src1="https://wap.gamersky.com/news/Content-"+id;
                                 String date=e1.getElementsByClass("time").get(0).html();
                                 String imageUrl=e1.getElementsByTag("img").get(0).attr("src");
-                                String sort="囧图";
+                                String sort="娱乐";
                                 String commentCount="";
                                 tempData.add(new NewsDataBean(id,imageUrl,title,src1,date,sort,commentCount));
                             }
@@ -361,7 +360,7 @@ public class InterestingImagesFragment extends Fragment {
             public void bindView(final int position){
 
                 textView2.setText(mDataset.get(position).date);
-               textView.setText(Html.fromHtml(mDataset.get(position).title));
+                textView.setText(Html.fromHtml(mDataset.get(position).title));
                 if(ReadingProgressUtil.getClick(mActivity,mDataset.get(position).id)){
                     textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
                 }else {
@@ -382,7 +381,7 @@ public class InterestingImagesFragment extends Fragment {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                       textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
+                        textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
                         System.out.println("我是第"+position);
                         ReadingProgressUtil.putClick(mActivity,mDataset.get(position).id,true);
                         Intent intent=new Intent(mActivity, ArticleActivity.class);
@@ -456,7 +455,7 @@ public class InterestingImagesFragment extends Fragment {
                 ((NewsListViewHolder)holder).bindView(position);
             }
             if(vt==1){
-                ((FooterViewHolder)holder).bindView(position);
+                ((NewsAdapter.FooterViewHolder)holder).bindView(position);
             }
 
 

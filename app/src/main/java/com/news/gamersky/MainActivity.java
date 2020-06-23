@@ -24,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.news.gamersky.fragment.ArticleFragment;
+import com.news.gamersky.fragment.EntertainmentFragment;
 import com.news.gamersky.fragment.HomePageFragment;
 import com.news.gamersky.fragment.InterestingImagesFragment;
 
@@ -58,12 +59,14 @@ public class MainActivity extends AppCompatActivity {
         tabLayout=findViewById(R.id.tabLayout);
         fragmentAdapter=new FragmentAdapter(this);
         viewPager2.setAdapter(fragmentAdapter);
+        //viewPager2.setOffscreenPageLimit(2);
         new TabLayoutMediator(tabLayout, viewPager2,
                 new TabLayoutMediator.TabConfigurationStrategy() {
                     @Override
                     public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                         if(position==0) tab.setText("首页");
-                        else if (position==1)tab.setText("囧图");
+                        if(position==1)tab.setText("娱乐");
+                        if(position==2) tab.setText("囧图");
                     }
                 }
         ).attach();
@@ -88,13 +91,22 @@ public class MainActivity extends AppCompatActivity {
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(viewPager2.getCurrentItem()==0){
-                    try {
-                        ((HomePageFragment)getSupportFragmentManager().getFragments().get(0)).upTop();
-                    }catch (Exception e){
-                        e.printStackTrace();
+                int p=viewPager2.getCurrentItem();
+                try {
+                    if(p==0) {
+                        ((HomePageFragment) getSupportFragmentManager().getFragments().get(p)).upTop();
                     }
+                    if(p==1) {
+                        ((EntertainmentFragment) getSupportFragmentManager().getFragments().get(p+1)).upTop();
+                    }
+                    if(p==2) {
+                        ((InterestingImagesFragment) getSupportFragmentManager().getFragments().get(p+1)).upTop();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
+
             }
         });
     }
@@ -127,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class FragmentAdapter extends FragmentStateAdapter{
+    public class FragmentAdapter extends FragmentStateAdapter {
 
         public FragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
             super(fragmentActivity);
@@ -140,14 +152,19 @@ public class MainActivity extends AppCompatActivity {
                 return new HomePageFragment();
             }
             if(position==1){
+                return new EntertainmentFragment();
+            }
+            if(position==2){
                 return new InterestingImagesFragment();
             }
             return null;
         }
 
+
+
         @Override
         public int getItemCount() {
-            return 1;
+            return 3;
         }
     }
 }

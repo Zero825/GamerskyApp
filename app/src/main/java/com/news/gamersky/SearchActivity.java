@@ -10,15 +10,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.news.gamersky.Util.AppUtil;
-import com.news.gamersky.Util.ReadingProgressUtil;
+import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.databean.NewsDataBean;
 
 import org.jsoup.Jsoup;
@@ -102,7 +99,7 @@ public class SearchActivity extends AppCompatActivity {
                 int dataNum=newsData.size();
                 int line=dataNum-10;
 
-                System.out.println(lastItem+"      "+flag+"       "+line);
+                //System.out.println(lastItem+"      "+flag+"       "+line);
                 if(lastItem>19&&lastItem!=flag&&lastItem==line){
                     lastFlag=flag;
                     flag=lastItem;
@@ -179,10 +176,7 @@ public class SearchActivity extends AppCompatActivity {
                     System.out.println("加载成功"+doc.toString());
                     for(int i=0;i<es1.size();i++){
                         Element e1=es1.get(i);
-                        String id=e1.getElementsByTag("a").get(0).attr("href");
-                        id=new StringBuffer(id).reverse().toString();
-                        id=id.substring(id.indexOf(".")+1,id.indexOf("/"));
-                        id=new StringBuffer(id).reverse().toString();
+                        String id=AppUtil.urlToId(e1.getElementsByTag("a").get(0).attr("href"));
                         String title=e1.getElementsByTag("a").get(0).html();
                         String src="";
                         String date=e1.getElementsByClass("time").get(0).html();
@@ -200,10 +194,7 @@ public class SearchActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            System.out.println("加载成功"+newsData.size());
                             newsData.addAll(tempData);
-                            System.out.println("加载成功"+newsData.size());
-                            //searchAdapter.notifyDataSetChanged();
                             searchAdapter.notifyItemRangeInserted(newsData.size()-tempData.size(),tempData.size());
                             if(tempData.size()==0||tempData.size()<30){
                                 searchAdapter.setNoMore(true);
@@ -306,7 +297,7 @@ public class SearchActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         textView2.setTextColor(getResources().getColor(R.color.defaultColor));
                         textView3.setTextColor(getResources().getColor(R.color.defaultColor));
-                        String s="https://wap.gamersky.com/news/Content-"+mData.get(position).id;
+                        String s="https://wap.gamersky.com/news/Content-"+mData.get(position).id+".html";
                         Intent intent=new Intent(SearchActivity.this,ArticleActivity.class);
                         intent.putExtra("data_src",s);
                         startActivity(intent);

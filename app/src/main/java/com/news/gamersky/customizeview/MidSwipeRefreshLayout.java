@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class HomePageSwipeRefreshLayout extends SwipeRefreshLayout {
+public class MidSwipeRefreshLayout extends SwipeRefreshLayout {
     float x=0;
     float y=0;
     float y1=0;
@@ -16,11 +16,11 @@ public class HomePageSwipeRefreshLayout extends SwipeRefreshLayout {
     float x1=0;
     float x2=0;
 
-    public HomePageSwipeRefreshLayout(@NonNull Context context) {
+    public MidSwipeRefreshLayout(@NonNull Context context) {
         super(context);
     }
 
-    public HomePageSwipeRefreshLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MidSwipeRefreshLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -33,7 +33,7 @@ public class HomePageSwipeRefreshLayout extends SwipeRefreshLayout {
                 float k=(y2-y1)/(x2-x1);
                 float k1=(y2-y)/(x2-x);
                 //System.out.println(k);
-                if(x2-x1<0&&Math.abs(k)<0.2&&Math.abs(k1)<0.2){
+                if(Math.abs(k)<0.2&&Math.abs(k1)<0.2){
                     getParent().requestDisallowInterceptTouchEvent(false);
                 } else{
                     getParent().requestDisallowInterceptTouchEvent(true);
@@ -50,6 +50,4 @@ public class HomePageSwipeRefreshLayout extends SwipeRefreshLayout {
         }
         return  false;
     }
-
-
 }

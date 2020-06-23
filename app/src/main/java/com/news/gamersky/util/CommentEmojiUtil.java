@@ -1,4 +1,4 @@
-package com.news.gamersky.Util;
+package com.news.gamersky.util;
 
 //https://www.jianshu.com/p/9561bc1f6253
 

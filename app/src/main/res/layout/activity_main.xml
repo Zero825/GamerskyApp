@@ -36,15 +36,19 @@
             android:layout_marginTop="16dp"
             app:layout_constraintStart_toEndOf="@+id/imageView4"
             app:layout_constraintTop_toTopOf="parent"
+            app:tabBackground="@color/tc"
             app:tabGravity="center"
+            app:tabIndicatorColor="@color/colorAccent"
             app:tabIndicatorFullWidth="false"
             app:tabMode="fixed"
             app:tabPaddingBottom="0dp"
             app:tabPaddingEnd="5dp"
             app:tabPaddingStart="5dp"
             app:tabPaddingTop="0dp"
-            app:tabBackground="@color/tc"
-            app:tabRippleColor="@color/tc">
+            app:tabRippleColor="@color/tc"
+            app:tabSelectedTextColor="@color/darkBackground"
+            app:tabTextAppearance="@style/tabStyle"
+            app:tabTextColor="@color/defaultColor">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

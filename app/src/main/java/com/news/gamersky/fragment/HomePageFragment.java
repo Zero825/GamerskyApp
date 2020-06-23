@@ -12,6 +12,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 
 
@@ -33,8 +34,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
-import com.news.gamersky.Util.AppUtil;
-import com.news.gamersky.Util.ReadingProgressUtil;
+import com.news.gamersky.util.AppUtil;
+import com.news.gamersky.util.ReadingProgressUtil;
 import com.news.gamersky.customizeview.HomePageSwipeRefreshLayout;
 import com.news.gamersky.customizeview.MyViewPager;
 import com.news.gamersky.customizeview.ZoomOutPageTransformer;
@@ -56,7 +57,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.news.gamersky.Util.AppUtil.is2s;
+import static com.news.gamersky.util.AppUtil.is2s;
 
 
 public class HomePageFragment extends Fragment {
@@ -78,7 +79,7 @@ public class HomePageFragment extends Fragment {
     private ArrayList<NewsDataBean> tempTopData;
     private ArrayList<NewsDataBean> tempNewsList;
     private NestedScrollView nestedScrollView;
-    private MyAdapter myAdapter;
+    private NewsAdapter myAdapter;
     private MyViewpagerAdapter myViewpagerAdapter;
     private String nodeId;
     private MyHandler myHandler;
@@ -123,7 +124,7 @@ public class HomePageFragment extends Fragment {
         footv.setVisibility(View.INVISIBLE);
         vp =view.findViewById(R.id.pager);
         vp.setPageTransformer(false,new ZoomOutPageTransformer());
-        vp.setOffscreenPageLimit(4);
+        vp.setOffscreenPageLimit(bannerNum);
         myViewpagerAdapter=new MyViewpagerAdapter(bannerData);
         vp.setAdapter(myViewpagerAdapter);
 
@@ -132,7 +133,7 @@ public class HomePageFragment extends Fragment {
         //recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        myAdapter=new MyAdapter(newsList);
+        myAdapter= new NewsAdapter(newsList, getActivity());
         recyclerView.setAdapter(myAdapter);
         recyclerView.setNestedScrollingEnabled(false);
 
@@ -241,10 +242,9 @@ public class HomePageFragment extends Fragment {
                 try {
 
                     doc = Jsoup.connect("https://wap.gamersky.com/").get();
+                    nodeId=doc.getElementsByAttribute("data-nodeId").attr("data-nodeId");
 
                     Elements content = doc.getElementsByAttributeValue("class","countHit");
-
-                    nodeId=doc.getElementsByAttribute("data-nodeId").attr("data-nodeId");
                     for(int i=0;i<bannerNum;i++) {
                         Elements e1 = content.get(i).getElementsByTag("img");
                         Elements e2 = content.get(i).getElementsByTag("h5");
@@ -440,94 +440,7 @@ public class HomePageFragment extends Fragment {
 
 
 
-    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-        private List<NewsDataBean> mDataset;
 
-        // Provide a reference to the views for each data item
-        // Complex data items may need more than one view per item, and
-        // you provide access to all the views for a data item in a view holder
-        public  class MyViewHolder extends RecyclerView.ViewHolder {
-            // each data item is just a string in this case
-            public TextView textView;
-            public TextView textView2;
-            public TextView textView3;
-            public TextView textView4;
-            public ImageView imageView;
-            public MyViewHolder(View v) {
-                super(v);
-                textView = v.findViewById(R.id.textView4);
-                textView2 = v.findViewById(R.id.textView5);
-                textView3 = v.findViewById(R.id.textView10);
-                textView4=v.findViewById(R.id.textView17);
-                imageView=v.findViewById(R.id.imageView3);
-            }
-        }
-
-        // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(List<NewsDataBean> myDataset) {
-            mDataset = myDataset;
-        }
-
-
-        // Create new views (invoked by the layout manager)
-        @Override
-        public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                         int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_new, parent, false);
-            return new MyViewHolder(v);
-        }
-
-        // Replace the contents of a view (invoked by the layout manager)
-        @Override
-        public void onBindViewHolder(final MyViewHolder holder, final int position) {
-
-            // - get element from your dataset at this position
-            // - replace the contents of the view with that element
-            holder.textView2.setText(mDataset.get(position).date);
-            holder.textView.setText(Html.fromHtml(mDataset.get(position).title));
-            if(ReadingProgressUtil.getClick(getContext(),mDataset.get(position).id)){
-                holder.textView.setTextColor(getResources().getColor(R.color.defaultColor));
-            }else {
-                holder.textView.setTextColor(Color.BLACK);
-            }
-            holder.textView3.setText(mDataset.get(position).sort);
-            if (!mDataset.get(position).commentCount.equals("")) {
-                holder.textView4.setText(mDataset.get(position).commentCount + "评论");
-            }else {
-                holder.textView4.setText("");
-            }
-
-            Glide.with(holder.imageView)
-                        .load(mDataset.get(position).imageUrl)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(holder.imageView);
-
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        holder.textView.setTextColor(getResources().getColor(R.color.defaultColor));
-                        System.out.println("我是第"+position);
-                        ReadingProgressUtil.putClick(getContext(),mDataset.get(position).id,true);
-                        Intent intent=new Intent(getActivity(),ArticleActivity.class);
-                        intent.putExtra("data_src",newsList.get(position).src);
-                        startActivity(intent);
-                    }
-                });
-
-
-        }
-
-
-
-        // Return the size of your dataset (invoked by the layout manager)
-        @Override
-        public int getItemCount() {
-            return mDataset.size();
-        }
-
-
-    }
 
     public class MyViewpager2Adapter extends RecyclerView.Adapter<MyViewpager2Adapter.MyViewHolder> {
         private ArrayList<NewsDataBean> myData;
@@ -628,6 +541,102 @@ public class HomePageFragment extends Fragment {
             return v;
         }
 
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+    }
+
+    public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> {
+        private List<NewsDataBean> mDataset;
+        private Activity mActivity;
+
+        // Provide a reference to the views for each data item
+        // Complex data items may need more than one view per item, and
+        // you provide access to all the views for a data item in a view holder
+        public  class MyViewHolder extends RecyclerView.ViewHolder {
+            // each data item is just a string in this case
+            public TextView textView;
+            public TextView textView2;
+            public TextView textView3;
+            public TextView textView4;
+            public ImageView imageView;
+            public MyViewHolder(View v) {
+                super(v);
+                textView = v.findViewById(R.id.textView4);
+                textView2 = v.findViewById(R.id.textView5);
+                textView3 = v.findViewById(R.id.textView10);
+                textView4=v.findViewById(R.id.textView17);
+                imageView=v.findViewById(R.id.imageView3);
+            }
+        }
+
+        // Provide a suitable constructor (depends on the kind of dataset)
+        public NewsAdapter(List<NewsDataBean> dataset,Activity activity) {
+            mDataset = dataset;
+            mActivity = activity;
+        }
+
+
+        // Create new views (invoked by the layout manager)
+        @Override
+        public NewsAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
+                                                                                     int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.recyclerview_new, parent, false);
+            return new NewsAdapter.MyViewHolder(v);
+        }
+
+        // Replace the contents of a view (invoked by the layout manager)
+        @Override
+        public void onBindViewHolder(final NewsAdapter.MyViewHolder holder, final int position) {
+
+            // - get element from your dataset at this position
+            // - replace the contents of the view with that element
+            holder.textView2.setText(mDataset.get(position).date);
+            holder.textView.setText(Html.fromHtml(mDataset.get(position).title));
+            if(ReadingProgressUtil.getClick(mActivity,mDataset.get(position).id)){
+                holder.textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
+            }else {
+                holder.textView.setTextColor(Color.BLACK);
+            }
+            holder.textView3.setText(mDataset.get(position).sort);
+            if (!mDataset.get(position).commentCount.equals("")) {
+                holder.textView4.setText(mDataset.get(position).commentCount + "评论");
+            }else {
+                holder.textView4.setText("");
+            }
+
+            Glide.with(holder.imageView)
+                    .load(mDataset.get(position).imageUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(holder.imageView);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
+                    System.out.println("我是第"+position);
+                    ReadingProgressUtil.putClick(mActivity,mDataset.get(position).id,true);
+                    Intent intent=new Intent(mActivity, ArticleActivity.class);
+                    intent.putExtra("data_src",mDataset.get(position).src);
+                    mActivity.startActivity(intent);
+                }
+            });
+
+
+        }
+
+
+
+        // Return the size of your dataset (invoked by the layout manager)
+        @Override
+        public int getItemCount() {
+            return mDataset.size();
+        }
+
+
     }
 
     public class MyHandler extends Handler{
@@ -657,7 +666,7 @@ public class HomePageFragment extends Fragment {
 
                                 System.out.println("更新ui完毕");
                                 myAdapter.notifyDataSetChanged();
-                                AppUtil.getSnackbar(getContext(),recyclerView,"数据更新成功").show();
+                                AppUtil.getSnackbar(getContext(),recyclerView,"首页加载成功").show();
                                 topiv.setVisibility(View.VISIBLE);
                                 footv.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
@@ -669,7 +678,7 @@ public class HomePageFragment extends Fragment {
 
             }
             if (msg.what==0){
-                AppUtil.getSnackbar(getContext(),recyclerView,"数据更新失败").show();
+                AppUtil.getSnackbar(getContext(),recyclerView,"首页加载失败").show();
                 progressBar.setVisibility(View.GONE);
                 refreshLayout.setRefreshing(false);
             }

@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
-import com.news.gamersky.Util.ReadingProgressUtil;
+import com.news.gamersky.util.ReadingProgressUtil;
 import com.news.gamersky.customizeview.MyWebView;
 
 import org.json.JSONArray;
