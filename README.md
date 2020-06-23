@@ -1,7 +1,7 @@
 # GamerskyApp
 一个游民星空的第三方Android客户端<br>
 <table><tr>
-<td><img src="https://user-images.githubusercontent.com/37415536/84290070-d0c02c80-ab75-11ea-821f-80288ca4bb96.png" width="200"></td>
+<td><img src="https://user-images.githubusercontent.com/37415536/85413884-fc8fd900-b59d-11ea-9185-ab45aa19cbe7.png" width="200"></td>
 <td><img src="https://user-images.githubusercontent.com/37415536/82984624-197bcf80-a025-11ea-8493-4971b574f7bc.png" width="200"></td>
 <td><img src="https://user-images.githubusercontent.com/37415536/84290088-d61d7700-ab75-11ea-9aed-25e4d39e4671.png" width="200"></td>
 <td><img src="https://user-images.githubusercontent.com/37415536/84290079-d3228680-ab75-11ea-89a6-1d7db72cff04.png" width="200"></td>
