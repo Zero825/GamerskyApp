@@ -317,11 +317,14 @@ public class ArticleFragment extends Fragment {
                     if(s.indexOf("'",i1)!=-1&&s.indexOf("'",i1)!=-1) {
                         i2 = (s.indexOf("\"", i1) < s.indexOf("'", i1)) ? s.indexOf("\"", i1) : s.indexOf("'", i1);
                     }
-                    s=s.substring(i1,i2);
-                    System.out.println("视频链接"+s);
-                    v.parent().html("<a class=\"\" target=\"_blank\" href=\""+s+"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>");
+                    try{
+                        s=s.substring(i1,i2);
+                        System.out.println("视频链接"+s);
+                        v.parent().html("<a class=\"\" target=\"_blank\" href=\""+s+"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
-
             }
             elements6.attr("style","color:#999;text-align:right;font-size:14px");
             return doc.toString();
