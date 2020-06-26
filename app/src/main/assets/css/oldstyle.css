@@ -1,0 +1,143 @@
+header.ymw-header aside a.ymw-app {display:block; position:absolute; top:50%; right:60px; width:76px; height:22px; line-height:22px; color:#fa2f35; font-size:13px; text-align:center; border:1px solid #ab3a3e; border-radius:16px; -webkit-transform:translate3d(0,-50%,0); transform:translate3d(0,-50%,0);}
+
+.title1,h2 {padding:10px; background-color:#eee; border-left:5px solid #e23703; font-size:17px; font-weight:bold; color:#333; border-radius:0 4px 4px 0;}
+/*游戏链接*/
+.gamelink {margin:0 auto; min-width:300px; max-width:550px; min-height:77.41px; max-height:100px; overflow:hidden; position:relative;}
+.gamelink img {float:right;}
+.gamelink .cont {display:-webkit-box; display:box; width:100%; height:100%; overflow:hidden; position:absolute; left:0; top:0;}
+.gamelink .img {width:auto; height:100%; overflow:hidden;}
+.gamelink .img img {float:left; height:100%;}
+.gamelink .div {-webkit-box-flex:1; box-flex:1; padding:0 10px; width:auto; height:100%; overflow:hidden;}
+.gamelink .con {display:table; width:100%; height:100%; font-family:'Microsoft YaHei'; overflow:hidden;}
+.gamelink .con .span {display:table-cell; vertical-align:middle; overflow:hidden;}
+.gamelink .con .tit {width:auto; height:34px; line-height:26px;}
+.gamelink .con .tit a {color:#e7e7e7; font-size:16px; font-weight:bold;}
+.gamelink .con .tit a:hover {color:#fff;}
+.gamelink .con .txt {width:auto; height:auto; overflow:hidden;}
+.gamelink .con .txt .lik1 {float:left; width:130px; height:24px; line-height:24px;}
+.gamelink .con .txt .lik1 a {float:left; margin-right:15px; color:#ec8b1a; font-size:13px;}
+.gamelink .con .txt .lik1 a:hover {color:#fff;}
+.gamelink .con .txt .lik2 {float:left; width:250px; height:24px; line-height:24px; color:#888; font-size:13px; font-family:SimSun;}
+.gamelink .con .txt .lik2 a {color:#ccc; font-size:12px; font-family:'Microsoft YaHei';}
+.gamelink .con .txt .lik2 a:hover {color:#fff;}
+/*专栏作者*/
+.Author_column {display:-webkit-box; width:100%; height:55px; background:#e8e8e8;}
+.Author_column .ac1 {-webkit-box-flex:0; padding:5px 0; width:60px; height:45px; text-align:center; background:#dbdbdb;}
+.Author_column .ac1 img {width:45px; height:45px; border-radius:33px; box-shadow:0 2px 5px 0 rgba(120,120,120,1);}
+.Author_column .ac2 {position: relative;-webkit-box-flex:1; padding:0 5px; width:auto; height:55px;}
+.Author_column .ac2 .tit {width:auto; height:22px; line-height:22px; color:#666; font-size:12px; font-family:'Microsoft YaHei'; font-weight:bold;}
+.Author_column .ac2 .txt {width:160px; height:auto; line-height:16px; color:#666; font-size:12px; font-family:'Microsoft YaHei';}
+.Author_column .ac2 .like {width:70px; height:auto; text-align:center; position:absolute; top:6px; right:2px;}
+.Author_column .ac2 .like a {padding:5px; display:inline-block; width:50px; height:auto; line-height:16px; color:#262626; font-size:12px;}
+.Author_column .ac2 .like a {border:1px solid #bbb; box-shadow:0 2px 5px 0 rgba(0,0,0,0.1); border-radius:5px;}
+.Author_column .ac2 .like a:hover {color:#e11d03;}
+/*游戏评测 新版*/
+.pingce {width:100%; height:auto; border-bottom:1px solid #cecece;}
+.pingce .pc1 {width:100%; height:55px; display:-webkit-box;}
+.pingce .pc1 .pc1_num {width:60px; height:55px; line-height:55px; text-align:center; color:#f2f2f3; font-size:30px; font-family:Arial; background:#f26723;}
+.pingce .pc1 .pc1_num {text-shadow:0 3px 10px rgba(0,0,0,0.5);}
+.pingce .pc1 .pc1_tit {-webkit-box-flex:1; padding:10px 0 0 10px; width:auto; height:55px;}
+.pingce .pc1 .pc1_tit {background:#202020 url(//image.gamersky.com/webimg15/pcbg.gif) right 0 no-repeat; background-size:auto 55px;}
+.pingce .pc1 .pc1_tit .t1 {width:auto; height:18px; line-height:18px; color:#f2f2f3; font-size:16px; font-family:'Microsoft YaHei';}
+.pingce .pc1 .pc1_tit .t2 {width:auto; height:14px; line-height:14px; color:#999; font-size:12px;}
+.pingce .pc2 {width:100%; height:auto; display:-webkit-box;}
+.pingce .pc2 .pc2_L {padding:15px 10px; width:40px; height:auto; text-align:center; color:#ef511c; font-size:16px; font-family:'Microsoft YaHei'; background:#f0f0f0;}
+.pingce .pc2 .pc2_L {text-shadow:1px 1px 1px #fff;}
+.pingce .pc2 .pc2_R {-webkit-box-flex:1; padding:15px 15px 5px; width:auto; height:auto; background:#f9f9fb; border-left:1px solid #f5f5f5;}
+.pingce .pc2 .pc2_R .txt {margin-bottom:5px; width:100%; height:auto; line-height:25px; font-size:14px;}
+.pingce .pc2 .pc2_R .like {margin-bottom:5px; padding:5px 0; width:100%; height:auto;}
+.pingce .pc2 .pc2_R .like span {margin:0 30px 5px 0; display:inline-block; width:100%; height:26px; line-height:26px; text-indent:25px; font-size:14px;}
+.pingce .pc2 .pc2_R .like span {background:#f2f2f3 url(//image.gamersky.com/webimg15/jj.gif) no-repeat;}
+.pingce .pc2 .pc2_R .like span.jia {color:#e03800; background-position:7px 0;}
+.pingce .pc2 .pc2_R .like span.jian {color:#262626; background-position:7px -26px;}
+/*手游下载*/
+.Mid2L_down {margin:0 0px 10px; padding:6px 0 6px 6px; background:#f5f5f5; overflow:hidden;}
+.Mid2L_down .none {display:none;}
+.Mid2L_down .img {float:left; width:56px; height:50px;}
+.Mid2L_down .img img {width:50px; height:50px; border-radius:10px;}
+.Mid2L_down .con {padding-right:5px; width:auto; height:50px;}
+.Mid2L_down .con .tit {width:auto; height:24px; line-height:24px; color:#000; font-size:16px; font-weight:bold; overflow:hidden;}
+.Mid2L_down .con .tit a {color:#000;}
+.Mid2L_down .con .txt {float:left; margin-right:10px; width:auto; height:14px; line-height:14px; color:#666; font-size:12px;}
+.Mid2L_down .con .txt a {color:#666;}
+.Mid2L_down .con .txt a:hover {color:#d3222a;}
+.Mid2L_down .dow {margin-top:5px;margin-right: 6px;height:auto;}
+.Mid2L_down .dow .code {float:left; width:0px; height:0px;}
+.Mid2L_down .dow .code div {width:100px; text-align:center;}
+.Mid2L_down .dow .code div.pic {height:100px;}
+.Mid2L_down .dow .code div.txt {margin-top:-12px; height:22px; line-height:22px; color:#888; font-size:12px; font-family:SimSun;}
+.Mid2L_down .dow .btn {display:-webkit-box; display:-webkit-flex; display:flex; width:100%; height:28px;}
+.Mid2L_down .dow .btn .btna {margin-left:2%; display:-webkit-box; width:49%; height:28px;}
+.Mid2L_down .dow .btn .btna:first-child {margin-left: 0;}
+.Mid2L_down .dow .btn a {-webkit-box-flex:1; display:block; height:28px; line-height:28px; text-align:center;}
+.Mid2L_down .dow .btn a.link1 {width:auto;}
+.Mid2L_down .dow .btn a.link1 span {padding-right:5px; display:inline-block; height:28px; line-height:28px; text-indent:23px; color:#fff; font-size:12px; word-break:break-all;}
+.Mid2L_down .dow .btn a.link1 span {background:url(//image.gamersky.com/webimg13/shouyou/new/ico2.png) no-repeat; background-size:14px 56px;}
+.Mid2L_down .dow .btn a.link1.Android {background-color:#10c75d;}
+.Mid2L_down .dow .btn a.link1.iOS {background-color:#3fa5ee;}
+.Mid2L_down .dow .btn a.link1.Android span {width:98px; background-position:6px 0;}
+.Mid2L_down .dow .btn a.link1.iOS span {width:74px; background-position:6px -28px;}
+.Mid2L_down .dow .btn a.link2 {width:44px; color:#fff; font-size:12px; font-family:SimSun; background-color:#666;}
+
+.editinfor {margin:5px 0; padding:10px 0 5px 5px; background:#f7f7f8; overflow:hidden;}
+.editinfor .head {float:left; padding:0 12px 5px; display:inline-block; text-align:center; overflow:hidden;}
+.editinfor .head a {float:left; display:inline-block; text-decoration:none; clear:left;}
+.editinfor .head a.n1 {color:#06c;}
+.editinfor .head a img {border-radius:50%;}
+.editinfor .head a img.bdr {border-radius:5%;}
+.editinfor .head a p {margin:0 -11px; padding:0; width:130%; height:20px; line-height:20px; font-size:14px; font-weight:bold; overflow:hidden;}
+.editinfor .head a:hover {text-decoration:underline;}
+.editinfor .head span {float:left; display:inline-block; width:100%; line-height:20px; font-size:14px; clear:left;}
+.editinfor .cont {padding:0 30px 0 15px; overflow:hidden;}
+
+/*预约弹窗*/
+.book-layer {margin:-2rem 0 0 -2.8rem; width:4.7rem; height:auto; background:#fff; position:fixed; top:50%; left:50%; z-index:10000;}
+.book-layer {display:none; padding:.15rem .4rem .28rem; overflow:visible; border-radius:.15rem; box-shadow:0 0 .5rem 0 rgba(0,0,0,.8);}
+.book-layer img {margin:0 auto; display:block; height:1rem;}
+.book-layer h3 {margin:0; line-height:.6rem; color:#009fe3; font-size:.38rem; text-align:center;}
+.book-layer h4 {margin:0; line-height:.6rem; color:#e6a100; font-size:.38rem; text-align:center;}
+.book-layer p {margin:0; width:4.8rem; line-height:.3rem; color:#555; font-size:.26rem;}
+.book-layer a.book-close {display:block; width:.55rem; height:.55rem; position:absolute; right:-.20rem; top:-.18rem;}
+.book-layer a.book-close {background:url(//image.gamersky.com/webimg13/shouyou/z/new/book-close.png) no-repeat; background-size:.54rem .54rem;}
+.book-layer a.book-btn {margin:.2rem 0 -.28rem -.4rem; display:block; width:5.5rem; height:.9rem; line-height:.9rem; color:#fff; font-size:.32rem; text-align:center;}
+.book-layer a.book-btn {background:#e6a100; border-radius:0 0 .15rem .15rem;}
+.book-layer a.book-btn:hover {color:#fff; background:#ffb200;}
+
+/*下载弹出*/
+.app-layer {opacity:0; width:5.5rem; height:4.6rem; text-align:center; border-radius:.12rem; box-shadow:0 0 .2rem rgba(0,0,0,.5);}
+.app-layer {position:fixed; left:50%; top:50%; z-index:100000; margin:-2.3rem 0 0 -2.75rem;}
+.app-layer {background:#fff url(//image.gamersky.com/webimg15/wap/2019/app-layer.png) center .5rem no-repeat; background-size:3.42rem 1.42rem;}
+.app-layer.cur {animation:bounceIn .5s ease-in-out 0s forwards;}
+.app-layer .app-close {display:block; width:.36rem; height:.36rem; position:absolute; right:.2rem; top:.2rem;}
+.app-layer .app-close {background:url(//image.gamersky.com/webimg15/wap/2019/app-close.png) no-repeat; background-size:.36rem .36rem;}
+.app-layer .app-text {width:100%; height:auto; position:absolute; left:0; top:2.17rem;}
+.app-layer .app-text h3 {margin:0; height:.5rem; line-height:.4rem; color:#333; font-size:.35rem;}
+.app-layer .app-text p {margin:0; height:.4rem; line-height:.4rem; color:#999; font-size:.31rem;}
+.app-layer .app-btn {display:block; width:3.46rem; height:.78rem; line-height:.78rem; color:#fff; font-size:.3rem; font-weight:700; background-color:#EB413D; border-radius:.44rem;}
+.app-layer .app-btn {position:absolute; left:50%; bottom:.38rem; margin-left:-1.73rem;}
+
+@keyframes bounceIn{
+  0%{opacity:0;transform:scale(.3);}
+  50%{opacity:1;transform:scale(1.05);}
+  70%{opacity:1;transform:scale(.9);}
+  100%{opacity:1;transform:scale(1);}
+}
+/*=====================  表格样式  ==========================*/
+table,.table1,.table2 {width:99%; height:auto; border-spacing:1px; border-collapse:collapse; border:1px solid #ddd; font-size:14px; color:#666;}
+.table1 td,.table2 td {padding:4px; border:1px solid #ddd;}
+.table1 td img,.table2 td img {display:block;}
+.tr1,.tr2 {text-align:center; background-color:#eee;}
+.tr1 td,.tr2 td {min-width:30px; width:auto;}
+/**文章顶踩**/
+aside.dingcai {position:relative; display:block; margin:10px 0; width:100%; height:40px; line-height:40px; background-color:#f7f7f8; font-size:12px; color:#333; text-indent:10px;}
+aside.dingcai a {top:7px; display:block; position:absolute; width:80px; height:26px; line-height:26px; text-align:center; font-size:12px; border:1px solid #c9c9c9; background-color:#fff; text-indent:-1px;}
+aside.dingcai .ding {right:100px; color:#e03800;}
+aside.dingcai .cai {right:10px; color:#0378a3;}
+
+figure.yu-li-txt-game {display:block; margin:0; padding:14px 14px 0; height:160px; position:relative;}
+figure.yu-li-txt-game a {width:100%; height:144px; position:absolute; top:14px; left:0;}
+figure.yu-li-txt-game img {width:115px; height:160px; position:absolute; top:14px; left:14px;}
+figure.yu-li-txt-game figcaption, figure.yu-li-txt-game p {margin-left:129px; line-height:25px; word-break:break-all;}
+figure.yu-li-txt-game figcaption {margin-bottom:5px; font-size:16px;}
+figure.yu-li-txt-game p {margin-bottom:3px; font-size:12px; color:#666; max-height:60px; line-height:20px; overflow:hidden;}
+.yu-tilev2 {margin-bottom:6px; height:30px; line-height:30px; font-size:16px; color:#333; font-weight:400;}

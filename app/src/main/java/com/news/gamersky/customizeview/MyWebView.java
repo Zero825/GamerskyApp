@@ -45,7 +45,7 @@ public class MyWebView extends WebView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev){
         ViewGroup viewGroup = (ViewGroup) this.getParent();
-        System.out.println(ev.toString());
+        //System.out.println(ev.toString());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 y2=ev.getY();

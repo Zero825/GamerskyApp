@@ -168,6 +168,7 @@ public class ArticleFragment extends Fragment {
 
                 String h= "<script src=\"file:///android_asset/js/echo.min.js\"></script>\n"+
 //                        "<script src=\"file:///android_asset/js/jquery-3.5.0.min.js\"></script>\n"+
+                        "<link rel=\"stylesheet\" type=\"text/css\" href=\"file:///android_asset/css/oldstyle.css\" />"+
                         "<script>\n" +
                         "  echo.init({\n" +
                         "    offset: 2000,\n" +

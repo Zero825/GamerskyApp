@@ -498,6 +498,7 @@ public class HomePageFragment extends Fragment {
         public int getItemCount() {
             return myData.size();
         }
+
     }
 
     public class  MyViewpagerAdapter extends PagerAdapter{
@@ -546,6 +547,10 @@ public class HomePageFragment extends Fragment {
             container.removeView((View) object);
         }
 
+//        @Override
+//        public int getItemPosition(Object object) {
+//            return POSITION_NONE;
+//        }
     }
 
     public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> {
