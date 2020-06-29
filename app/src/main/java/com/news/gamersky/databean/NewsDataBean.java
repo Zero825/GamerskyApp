@@ -1,8 +1,5 @@
 package com.news.gamersky.databean;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class NewsDataBean {
     public  String id;
     public String title;

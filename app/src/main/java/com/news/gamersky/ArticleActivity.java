@@ -19,10 +19,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
-import com.news.gamersky.fragment.HomePageFragment;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class ArticleActivity extends AppCompatActivity{

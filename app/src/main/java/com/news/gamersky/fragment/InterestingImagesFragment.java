@@ -25,7 +25,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.customizeview.EndSwipeRefreshLayout;
-import com.news.gamersky.customizeview.MidSwipeRefreshLayout;
 import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.ReadingProgressUtil;

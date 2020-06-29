@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
@@ -17,8 +16,8 @@ public class ImageDialogFragment extends DialogFragment {
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     public interface ImageDialogListener {
-        public void onDownloadClick(DialogFragment dialog);
-        public void onShareClick(DialogFragment dialog);
+        void onDownloadClick(DialogFragment dialog);
+        void onShareClick(DialogFragment dialog);
     }
 
     // Use this instance of the interface to deliver action events

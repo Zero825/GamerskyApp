@@ -304,7 +304,8 @@ public class CommentFragment extends Fragment {
                                         Element element2 = es7.get(j).getElementsByTag("i").get(0);
                                         JSONObject jsonObject2 = new JSONObject();
                                         jsonObject2.put("tinysquare", element1.attr("src"));
-                                        String origin=element1.attr("src").replace("tinysquare", "origin");
+                                        String origin=element1.attr("src").replace("tinysquare", "origin")
+                                                .replace("small", "origin");
                                         if(element2.attr("class").equals("gif")){
                                             origin=origin.replace("jpg","gif");
                                         }
@@ -424,7 +425,8 @@ public class CommentFragment extends Fragment {
                                         Element element2 = es7.get(j).getElementsByTag("i").get(0);
                                         JSONObject jsonObject2 = new JSONObject();
                                         jsonObject2.put("tinysquare", element1.attr("src"));
-                                        String origin=element1.attr("src").replace("tinysquare", "origin");
+                                        String origin=element1.attr("src").replace("tinysquare", "origin")
+                                                .replace("small", "origin");
                                         if(element2.attr("class").equals("gif")){
                                             origin=origin.replace("jpg","gif");
                                         }
@@ -844,15 +846,21 @@ public class CommentFragment extends Fragment {
                                     ArrayList<String> images = new ArrayList<>();
                                     try{
                                         Elements es7 = doc.getElementsByClass("qzcmt-picdiv").get(0)
-                                                .getElementsByTag("img");
+                                                .getElementsByTag("li");
 
                                         for (int j = 0; j < es7.size(); j++) {
-                                            Element element = es7.get(j);
+                                            Element element1 = es7.get(j).getElementsByTag("img").get(0);
+                                            Element element2 = es7.get(j).getElementsByTag("i").get(0);
                                             JSONObject jsonObject2 = new JSONObject();
-                                            jsonObject2.put("tinysquare", element.attr("src"));
-                                            jsonObject2.put("origin", element.attr("src").replace("tinysquare", "origin"));
+                                            jsonObject2.put("tinysquare", element1.attr("src"));
+                                            String origin=element1.attr("src").replace("tinysquare", "origin")
+                                                    .replace("small", "origin");
+                                            if(element2.attr("class").equals("gif")){
+                                                origin=origin.replace("jpg","gif");
+                                            }
+                                            jsonObject2.put("origin",origin);
                                             jsonArray.put(j, jsonObject2);
-                                            images.add(element.attr("src"));
+                                            images.add(element1.attr("src"));
                                         }
                                     }catch (Exception e){
                                         e.printStackTrace();
