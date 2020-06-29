@@ -1,5 +1,5 @@
 # GamerskyApp
-一个游民星空的第三方Android客户端<br>
+一个游民星空的第三方Android客户端，仅学习用途<br>
 <table><tr>
 <td><img src="https://user-images.githubusercontent.com/37415536/85413884-fc8fd900-b59d-11ea-9185-ab45aa19cbe7.png" width="200"></td>
 <td><img src="https://user-images.githubusercontent.com/37415536/82984624-197bcf80-a025-11ea-8493-4971b574f7bc.png" width="200"></td>
