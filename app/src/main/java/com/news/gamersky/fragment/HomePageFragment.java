@@ -2,6 +2,7 @@ package com.news.gamersky.fragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -72,6 +73,7 @@ public class HomePageFragment extends Fragment {
     private ImageView topiv;
     private TextView footv;
     private RecyclerView recyclerView;
+    private ConstraintLayout constraintLayout;
     private LinearLayoutManager layoutManager;
     private ArrayList<NewsDataBean> bannerData;
     private ArrayList<NewsDataBean> topData ;
@@ -115,6 +117,7 @@ public class HomePageFragment extends Fragment {
         tempBannerData=new ArrayList<>();
         tempTopData = new ArrayList<>();
         tempNewsList = new ArrayList<>();
+        constraintLayout=view.findViewById(R.id.hc);
         progressBar=view.findViewById(R.id.progressBar3);
         nestedScrollView=view.findViewById(R.id.nestedScrollView);
         toptv1=view.findViewById(R.id.textView2);
@@ -145,6 +148,11 @@ public class HomePageFragment extends Fragment {
         executor= Executors.newSingleThreadExecutor();
         sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
+        if(sharedPreferences.getBoolean("page_both_sides",true)){
+            constraintLayout.setClipChildren(false);
+        }else {
+            constraintLayout.setClipChildren(true);
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -529,11 +537,27 @@ public class HomePageFragment extends Fragment {
                 imageView.setCornerRadius(0);
             }
             textView.setText(myData.get(position).title);
-            Glide.with(imageView)
-                    .load(myData.get(position).imageUrl)
-                    //.transition(DrawableTransitionOptions.withCrossFade())
-                    .centerCrop()
-                    .into(imageView);
+            if(position!=0){
+                if(position==1){
+                    Glide.with(imageView)
+                            .load(myData.get(position).imageUrl)
+                            //.transition(DrawableTransitionOptions.withCrossFade())
+                            .centerCrop()
+                            .into(imageView);
+
+                    Glide.with(container.getChildAt(0).findViewById(R.id.imageView))
+                            .load(myData.get(position-1).imageUrl)
+                            //.transition(DrawableTransitionOptions.withCrossFade())
+                            .centerCrop()
+                            .into((RoundedImageView) container.getChildAt(0).findViewById(R.id.imageView));
+                }else {
+                    Glide.with(imageView)
+                            .load(myData.get(position).imageUrl)
+                            //.transition(DrawableTransitionOptions.withCrossFade())
+                            .centerCrop()
+                            .into(imageView);
+                }
+            }
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -680,6 +704,7 @@ public class HomePageFragment extends Fragment {
                                 toptv1.setText(topData.get(0).title);
                                 toptv2.setText(topData.get(1).title);
                                 myViewpagerAdapter.notifyDataSetChanged();
+                                vp.setCurrentItem(1);
 
                                 System.out.println("更新ui完毕");
                                 myAdapter.notifyDataSetChanged();

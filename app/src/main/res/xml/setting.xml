@@ -13,6 +13,12 @@
             android:summary="重启生效"
             android:title="资讯图片圆角"
             app:iconSpaceReserved="false" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="page_both_sides"
+            android:summary="重启生效"
+            android:title="显示两侧预览"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="资讯相关"

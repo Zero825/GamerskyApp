@@ -23,8 +23,10 @@
             app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/hc"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:clipChildren="false">
 
                 <com.news.gamersky.customizeview.BannerViewPager
                     android:id="@+id/pager"
