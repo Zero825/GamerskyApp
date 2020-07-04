@@ -2,7 +2,20 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="主页相关"
+        android:title="样式相关"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="corner"
+            android:summary="重启生效"
+            android:title="资讯图片圆角"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="资讯相关"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
@@ -11,12 +24,9 @@
             android:defaultValue="false"
             android:key="load_comments_count"
             android:summary="关闭以提高加载速度"
-            android:title="加载主页评论数量"
+            android:title="加载资讯评论数量"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
-<!--    <PreferenceCategory-->
-<!--        android:title="功能相关"-->
-<!--        app:iconSpaceReserved="false"></PreferenceCategory>-->
     <PreferenceCategory
         android:title="缓存相关"
         app:allowDividerAbove="false"
@@ -35,6 +45,19 @@
             android:key="manual_clear_cache"
             android:summary="点击清除缓存"
             android:title="清除缓存"
-            app:iconSpaceReserved="false"></Preference>
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="关于"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:key="website"
+            android:summary="https://github.com/Zero825/GamerskyApp"
+            android:title="项目地址"
+            app:iconSpaceReserved="false" >
+            <intent
+               android:data="https://github.com/Zero825/GamerskyApp"
+                android:action="android.intent.action.VIEW"/>
+        </Preference>>
     </PreferenceCategory>
 </PreferenceScreen>

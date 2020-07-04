@@ -8,10 +8,13 @@ import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -104,6 +107,28 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                for (int i=0;i<fragmentAdapter.getItemCount();i++){
+                   endAnimator(tabLayout.getTabAt(i).view);
+                }
+                startAnimator(tabLayout.getTabAt(position).view);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+            }
+        });
     }
 
     public void clearGlideDiskCache(boolean b){
@@ -118,7 +143,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void startAnimator(View view){
+        ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view, "ScaleX", view.getScaleX(),1.15f);
+        ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view, "ScaleY", view.getScaleY(), 1.15f);
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.play(objectAnimator1).with(objectAnimator2);
+        animSet.setDuration(300);
+        animSet.start();
+    }
 
+    public void endAnimator(View view){
+        ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view, "ScaleX", view.getScaleX(), 1.0f);
+        ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view, "ScaleY", view.getScaleY(), 1.0f);
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.play(objectAnimator1).with(objectAnimator2);
+        animSet.setDuration(300);
+        animSet.start();
+    }
 
     @Override
     public void onBackPressed() {

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -31,13 +32,13 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.customizeview.BannerViewPager;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.ReadingProgressUtil;
 import com.news.gamersky.customizeview.HomePageSwipeRefreshLayout;
-import com.news.gamersky.customizeview.MyViewPager;
 import com.news.gamersky.customizeview.ZoomOutPageTransformer;
 import com.news.gamersky.databean.NewsDataBean;
 
@@ -65,7 +66,7 @@ public class HomePageFragment extends Fragment {
     private Timer timer;
     private int bannerNum;
     private ProgressBar progressBar;
-    private MyViewPager vp;
+    private BannerViewPager vp;
     private TextView toptv1;
     private TextView toptv2;
     private ImageView topiv;
@@ -123,7 +124,7 @@ public class HomePageFragment extends Fragment {
         topiv.setVisibility(View.INVISIBLE);
         footv.setVisibility(View.INVISIBLE);
         vp =view.findViewById(R.id.pager);
-        vp.setPageTransformer(false,new ZoomOutPageTransformer());
+        vp.setPageTransformer(true,new ZoomOutPageTransformer());
         vp.setOffscreenPageLimit(bannerNum);
         myViewpagerAdapter=new MyViewpagerAdapter(bannerData);
         vp.setAdapter(myViewpagerAdapter);
@@ -207,6 +208,7 @@ public class HomePageFragment extends Fragment {
 
             }
         });
+
 
 
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -451,9 +453,8 @@ public class HomePageFragment extends Fragment {
         }
 
         public  class MyViewHolder extends RecyclerView.ViewHolder {
-            // each data item is just a string in this case
 
-            public ImageView imageView;
+            public RoundedImageView imageView;
             public TextView textView;
             public MyViewHolder(View v) {
                 super(v);
@@ -481,7 +482,7 @@ public class HomePageFragment extends Fragment {
             holder.textView.setText(myData.get(position).title);
             Glide.with(holder.imageView)
                     .load(myData.get(position).imageUrl)
-                    .transition(DrawableTransitionOptions.withCrossFade())
+                    //.transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(holder.imageView);
             holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -523,11 +524,14 @@ public class HomePageFragment extends Fragment {
             View v = LayoutInflater.from(container.getContext())
                     .inflate(R.layout.viewpager_banner, container, false);
             TextView textView=v.findViewById(R.id.textView);
-            ImageView imageView=v.findViewById(R.id.imageView);
+            RoundedImageView imageView=v.findViewById(R.id.imageView);
+            if(!sharedPreferences.getBoolean("corner",true)){
+                imageView.setCornerRadius(0);
+            }
             textView.setText(myData.get(position).title);
             Glide.with(imageView)
                     .load(myData.get(position).imageUrl)
-                    .transition(DrawableTransitionOptions.withCrossFade())
+                    //.transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(imageView);
             imageView.setOnClickListener(new View.OnClickListener() {
@@ -547,10 +551,15 @@ public class HomePageFragment extends Fragment {
             container.removeView((View) object);
         }
 
-//        @Override
-//        public int getItemPosition(Object object) {
-//            return POSITION_NONE;
-//        }
+        @Override
+        public int getItemPosition(Object object) {
+            if(!bannerData.get(0).title.equals(myData.get(0).title)){
+                return POSITION_NONE;
+            }else {
+                return POSITION_UNCHANGED;
+            }
+
+        }
     }
 
     public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> {
@@ -566,7 +575,7 @@ public class HomePageFragment extends Fragment {
             public TextView textView2;
             public TextView textView3;
             public TextView textView4;
-            public ImageView imageView;
+            public RoundedImageView imageView;
             public MyViewHolder(View v) {
                 super(v);
                 textView = v.findViewById(R.id.textView4);
@@ -613,9 +622,12 @@ public class HomePageFragment extends Fragment {
                 holder.textView4.setText("");
             }
 
+            if(!sharedPreferences.getBoolean("corner",true)){
+                holder.imageView.setCornerRadius(0);
+            }
             Glide.with(holder.imageView)
                     .load(mDataset.get(position).imageUrl)
-                    .transition(DrawableTransitionOptions.withCrossFade())
+                    //.transition(DrawableTransitionOptions.withCrossFade())
                     .into(holder.imageView);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {

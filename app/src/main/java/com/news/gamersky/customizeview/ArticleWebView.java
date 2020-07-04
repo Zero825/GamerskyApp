@@ -6,7 +6,7 @@ import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-public class MyWebView extends WebView {
+public class ArticleWebView extends WebView {
     float x=0;
     float y=0;
     float y1=0;
@@ -14,19 +14,19 @@ public class MyWebView extends WebView {
     float x1=0;
     float x2=0;
 
-    public MyWebView(Context context) {
+    public ArticleWebView(Context context) {
         super(context);
     }
 
-    public MyWebView(Context context, AttributeSet attrs) {
+    public ArticleWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public MyWebView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ArticleWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public MyWebView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ArticleWebView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 

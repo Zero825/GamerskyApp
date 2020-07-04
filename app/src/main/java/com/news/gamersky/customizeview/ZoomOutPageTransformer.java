@@ -3,6 +3,7 @@ package com.news.gamersky.customizeview;
 import android.view.View;
 
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -26,7 +26,7 @@ public class EndSwipeRefreshLayout extends SwipeRefreshLayout {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev){
+    public boolean onInterceptTouchEvent(MotionEvent ev){
         ViewGroup viewGroup = (ViewGroup) this.getParent();
         //System.out.println(ev.toString());
         switch (ev.getAction()) {
@@ -52,6 +52,6 @@ public class EndSwipeRefreshLayout extends SwipeRefreshLayout {
                 x=ev.getX();
                 break;
         }
-        return  super.dispatchTouchEvent(ev);
+        return  false;
     }
 }

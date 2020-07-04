@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.util.ReadingProgressUtil;
-import com.news.gamersky.customizeview.MyWebView;
+import com.news.gamersky.customizeview.ArticleWebView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +33,7 @@ import java.io.IOException;
 
 public class ArticleFragment extends Fragment {
     private String  data_src;
-    private MyWebView webView;
+    private ArticleWebView webView;
     private ProgressBar progressBar;
     private JSONArray jsonArray;
     private Thread loadThread;
@@ -228,7 +228,6 @@ public class ArticleFragment extends Fragment {
                         //System.out.println(getNewContent(finalS));
                         webView.loadDataWithBaseURL("file:///android_asset", getNewContent(finalS), "text/html", "utf-8", null);
                         progressBar.setVisibility(View.GONE);
-                        webView.setVisibility(View.VISIBLE);
 
 
                     }
@@ -267,7 +266,7 @@ public class ArticleFragment extends Fragment {
             elements2.attr("href","");
             for (int i=0;i<elements1.size();i++) {
                 Element element=elements1.get(i);
-                element.attr("style", "border-radius: 0px")
+                element.attr("style", "border-radius: 2px")
                         .attr("width", "100%")
                         .attr("height", "auto")
                         .attr("data-echo",element.attr("src"))
