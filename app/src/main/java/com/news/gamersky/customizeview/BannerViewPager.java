@@ -28,7 +28,7 @@ public class BannerViewPager extends ViewPager {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev){
         ViewGroup viewGroup = (ViewGroup) this.getParent();
-        System.out.println(ev.toString());
+        //System.out.println(ev.toString());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 y2=ev.getY();
@@ -36,11 +36,11 @@ public class BannerViewPager extends ViewPager {
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 float k=(y2-y1)/(x2-x1);
                 float k1=(y2-y)/(x2-x);
-                System.out.println(k);
-                if(Math.abs(k1)<1||Math.abs(k)<1||Float.isNaN(k)){
-                    viewGroup.requestDisallowInterceptTouchEvent(true);
-                } else{
+                //System.out.println(k);
+                if(Math.abs(k1)>1&&Math.abs(k)>1||Float.isInfinite(k)){
                     viewGroup.requestDisallowInterceptTouchEvent(false);
+                } else{
+                    viewGroup.requestDisallowInterceptTouchEvent(true);
                 }
                 y1=ev.getY();
                 x1=ev.getX();

@@ -13,6 +13,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.news.gamersky.util.AppUtil;
@@ -31,6 +32,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private SearchView searchView;
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private LinearLayoutManager linearLayoutManager;
     private SearchAdapter searchAdapter;
     private ArrayList<NewsDataBean> newsData;
@@ -51,6 +53,7 @@ public class SearchActivity extends AppCompatActivity {
     private void init(){
         getWindow().getDecorView()
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        progressBar=findViewById(R.id.progressBar4);
         searchView=findViewById(R.id.view_search);
         searchView.setIconifiedByDefault(false);
         searchView.findViewById(R.id.search_plate).setBackgroundResource(R.color.tc);
@@ -79,6 +82,7 @@ public class SearchActivity extends AppCompatActivity {
                 lastFlag=0;
                 searchAdapter.setNoMore(false);
                 searchAdapter.setKey(query);
+                progressBar.setVisibility(View.VISIBLE);
                 search(query);
                 searchView.clearFocus();
                 recyclerView.scrollToPosition(0);
@@ -148,6 +152,7 @@ public class SearchActivity extends AppCompatActivity {
                             if(tempData.size()<30){
                                 searchAdapter.setNoMore(true);
                             }
+                            progressBar.setVisibility(View.INVISIBLE);
                             searchAdapter.notifyDataSetChanged();
                             if(es1.size()==0){
                                 AppUtil.getSnackbar(SearchActivity.this,recyclerView,"搜索结果为空").show();
