@@ -619,10 +619,16 @@ public class HomePageFragment extends Fragment {
 
         // Create new views (invoked by the layout manager)
         @Override
-        public NewsAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                                     int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.recyclerview_new, parent, false);
+        public NewsAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v =null;
+            if(sharedPreferences.getBoolean("new_image_side",false)){
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recyclerview_new_left, parent, false);
+            }else {
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recyclerview_new, parent, false);
+            }
+
             return new NewsAdapter.MyViewHolder(v);
         }
 

@@ -22,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.customizeview.MidSwipeRefreshLayout;
@@ -346,7 +347,7 @@ public class EntertainmentFragment extends Fragment {
             public TextView textView2;
             public TextView textView3;
             public TextView textView4;
-            public ImageView imageView;
+            public RoundedImageView imageView;
 
             public NewsListViewHolder(View v) {
                 super(v);
@@ -372,7 +373,9 @@ public class EntertainmentFragment extends Fragment {
                 }else {
                     textView4.setText("");
                 }
-
+                if(!sharedPreferences.getBoolean("corner",true)){
+                    imageView.setCornerRadius(0);
+                }
                 Glide.with(imageView)
                         .load(mDataset.get(position).imageUrl)
                         .transition(DrawableTransitionOptions.withCrossFade())
@@ -436,8 +439,13 @@ public class EntertainmentFragment extends Fragment {
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v=null;
             if(viewType==0){
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_new, parent, false);
+                if(sharedPreferences.getBoolean("new_image_side",false)){
+                    v = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.recyclerview_new_left, parent, false);
+                }else {
+                    v = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.recyclerview_new, parent, false);
+                }
                 return new NewsListViewHolder(v);
             }
             if(viewType==1){

@@ -19,6 +19,12 @@
             android:summary="重启生效"
             android:title="显示两侧预览"
             app:iconSpaceReserved="false" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="new_image_side"
+            android:summary="重启生效"
+            android:title="左侧资讯图片"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="资讯相关"
@@ -55,7 +61,9 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="关于"
-        app:iconSpaceReserved="false">
+        app:iconSpaceReserved="false"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false">
         <Preference
             android:key="website"
             android:summary="https://github.com/Zero825/GamerskyApp"
