@@ -36,11 +36,11 @@ public class BannerViewPager extends ViewPager {
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 float k=(y2-y1)/(x2-x1);
                 float k1=(y2-y)/(x2-x);
-                //System.out.println(k);
-                if(Math.abs(k1)>1&&Math.abs(k)>1||Float.isInfinite(k)){
-                    viewGroup.requestDisallowInterceptTouchEvent(false);
-                } else{
+                //System.out.println(k+"  "+k1);
+                if(Math.abs(k1)<1||Math.abs(k)<1){
                     viewGroup.requestDisallowInterceptTouchEvent(true);
+                } else{
+                    viewGroup.requestDisallowInterceptTouchEvent(false);
                 }
                 y1=ev.getY();
                 x1=ev.getX();
@@ -48,6 +48,8 @@ public class BannerViewPager extends ViewPager {
             case MotionEvent.ACTION_DOWN:
                 y1=ev.getY();
                 x1=ev.getX();
+                y=ev.getY();
+                x=ev.getX();
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 break;
         }
