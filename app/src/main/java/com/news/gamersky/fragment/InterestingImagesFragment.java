@@ -59,6 +59,7 @@ public class InterestingImagesFragment extends Fragment {
     private  int page;
     private  int flag;
     private int lastFlag;
+    private boolean firstRun;
 
     @Nullable
     @Override
@@ -87,6 +88,7 @@ public class InterestingImagesFragment extends Fragment {
         midSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         midSwipeRefreshLayout.setRefreshing(true);
 
+        firstRun=true;
         page=1;
         flag=0;
         lastFlag=0;
@@ -189,7 +191,10 @@ public class InterestingImagesFragment extends Fragment {
                             newsData.addAll(tempData);
                             newsAdapter.notifyDataSetChanged();
                             midSwipeRefreshLayout.setRefreshing(false);
-                            AppUtil.getSnackbar(getContext(),recyclerView,"数据刷新成功").show();
+                            if(!firstRun) {
+                                AppUtil.getSnackbar(getContext(), recyclerView, "数据刷新成功").show();
+                            }
+                            firstRun=false;
                         }
                     });
                 }catch (Exception e){
@@ -198,7 +203,7 @@ public class InterestingImagesFragment extends Fragment {
                         @Override
                         public void run() {
                             midSwipeRefreshLayout.setRefreshing(false);
-                            AppUtil.getSnackbar(getContext(),recyclerView,"数据刷新失败").show();
+                            AppUtil.getSnackbar(getContext(),recyclerView,"数据加载失败").show();
                         }
                     });
 

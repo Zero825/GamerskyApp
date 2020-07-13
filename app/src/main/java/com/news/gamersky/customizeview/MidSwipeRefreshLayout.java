@@ -33,7 +33,7 @@ public class MidSwipeRefreshLayout extends SwipeRefreshLayout {
                 float k=(y2-y1)/(x2-x1);
                 float k1=(y2-y)/(x2-x);
                 //System.out.println(k);
-                if(Math.abs(k)<0.2&&Math.abs(k1)<0.2){
+                if(Math.abs(k)<0.25&&Math.abs(k1)<0.25){
                     getParent().requestDisallowInterceptTouchEvent(false);
                 } else{
                     getParent().requestDisallowInterceptTouchEvent(true);

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -248,6 +249,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
                     .inflate(R.layout.viewpager_image, container, false);
             final BigImageView imageView=v.findViewById(R.id.imageView8);
             final ProgressBar progressBar=v.findViewById(R.id.progressBar2);
+            final TextView textView=v.findViewById(R.id.textView24);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -264,7 +266,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
                         }catch (Exception e){
                             e.printStackTrace();
                         }
-                    return false;
+                    return true;
                 }
             });
             try{
@@ -282,12 +284,12 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
 
                     @Override
                     public void onStart() {
-
                     }
 
                     @Override
                     public void onProgress(int progress) {
-
+                        progressBar.setProgress(progress);
+                        textView.setText(progress+"%");
                     }
 
                     @Override
@@ -298,6 +300,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
                     @Override
                     public void onSuccess(File image) {
                         progressBar.setVisibility(View.GONE);
+                        textView.setVisibility(View.GONE);
                         v.setOnClickListener(null);
                        if(imageView.getSSIV()!=null) {
                            System.out.println(imageView.getSSIV());

@@ -37,7 +37,7 @@ public class BannerViewPager extends ViewPager {
                 float k=(y2-y1)/(x2-x1);
                 float k1=(y2-y)/(x2-x);
                 //System.out.println(k+"  "+k1);
-                if(Math.abs(k1)<1||Math.abs(k)<1){
+                if(Math.abs(k1)<1||Math.abs(k)<1||Float.isNaN(k)){
                     viewGroup.requestDisallowInterceptTouchEvent(true);
                 } else{
                     viewGroup.requestDisallowInterceptTouchEvent(false);

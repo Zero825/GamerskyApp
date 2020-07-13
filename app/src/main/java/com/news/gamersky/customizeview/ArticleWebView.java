@@ -54,7 +54,7 @@ public class ArticleWebView extends WebView {
                 float k=(y2-y1)/(x2-x1);
                 float k1=(y2-y)/(x2-x);
                 //System.out.println(k);
-                if(x2-x1<0&&Math.abs(k)<0.2&&Math.abs(k1)<0.2){
+                if(x2-x1<0&&Math.abs(k)<0.25&&Math.abs(k1)<0.25){
                     viewGroup.requestDisallowInterceptTouchEvent(false);
                 } else{
                     viewGroup.requestDisallowInterceptTouchEvent(true);

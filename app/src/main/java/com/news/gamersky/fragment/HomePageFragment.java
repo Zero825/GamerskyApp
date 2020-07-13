@@ -88,6 +88,7 @@ public class HomePageFragment extends Fragment {
     private MyHandler myHandler;
     private ExecutorService executor;
     private int flag;
+    private boolean firstRun;
     private SharedPreferences sharedPreferences;
 
     @Nullable
@@ -109,6 +110,7 @@ public class HomePageFragment extends Fragment {
 
         bannerNum=5;
         flag=0;
+        firstRun=true;
 
         timer=new Timer();
         bannerData=new ArrayList<>();
@@ -710,14 +712,20 @@ public class HomePageFragment extends Fragment {
                                 toptv1.setText(topData.get(0).title);
                                 toptv2.setText(topData.get(1).title);
                                 myViewpagerAdapter.notifyDataSetChanged();
-                                vp.setCurrentItem(1);
+                                if(firstRun) {
+                                    vp.setCurrentItem(1);
+                                }
 
                                 System.out.println("更新ui完毕");
                                 myAdapter.notifyDataSetChanged();
-                                AppUtil.getSnackbar(getContext(),recyclerView,"首页加载成功").show();
+                                if(!firstRun){
+                                    AppUtil.getSnackbar(getContext(),recyclerView,"首页刷新成功").show();
+                                }
+                                firstRun=false;
                                 topiv.setVisibility(View.VISIBLE);
                                 footv.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
+
                             }
                         });
 
