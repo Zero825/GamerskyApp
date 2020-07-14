@@ -136,7 +136,6 @@ public class HomePageFragment extends Fragment {
 
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        //recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         myAdapter= new NewsAdapter(newsList, getActivity());
@@ -171,7 +170,7 @@ public class HomePageFragment extends Fragment {
             public void onClick(View v) {
                 System.out.println("你点击的是第一条头条");
                 Intent intent=new Intent(getActivity(),ArticleActivity.class);
-                intent.putExtra("data_src",topData.get(0).src);
+                intent.putExtra("new_data",topData.get(0));
                 startActivity(intent);
             }
         });
@@ -180,7 +179,7 @@ public class HomePageFragment extends Fragment {
             public void onClick(View v) {
                 System.out.println("你点击的是第二条头条");
                 Intent intent=new Intent(getActivity(),ArticleActivity.class);
-                intent.putExtra("data_src",topData.get(1).src);
+                intent.putExtra("new_data",topData.get(1));
                 startActivity(intent);
             }
         });
@@ -535,7 +534,7 @@ public class HomePageFragment extends Fragment {
                     .inflate(R.layout.viewpager_banner, container, false);
             TextView textView=v.findViewById(R.id.textView);
             RoundedImageView imageView=v.findViewById(R.id.imageView);
-            if(!sharedPreferences.getBoolean("corner",true)){
+            if(!sharedPreferences.getBoolean("corner",false)){
                 imageView.setCornerRadius(0);
             }
             textView.setText(myData.get(position).title);
@@ -564,7 +563,7 @@ public class HomePageFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent=new Intent(getActivity(), ArticleActivity.class);
-                    intent.putExtra("data_src",myData.get(position).src);
+                    intent.putExtra("new_data",myData.get(position));
                     startActivity(intent);
                 }
             });
@@ -669,7 +668,7 @@ public class HomePageFragment extends Fragment {
                     System.out.println("我是第"+position);
                     ReadingProgressUtil.putClick(mActivity,mDataset.get(position).id,true);
                     Intent intent=new Intent(mActivity, ArticleActivity.class);
-                    intent.putExtra("data_src",mDataset.get(position).src);
+                    intent.putExtra("new_data",mDataset.get(position));
                     mActivity.startActivity(intent);
                 }
             });

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:title="样式相关"
         app:allowDividerAbove="false"
@@ -8,7 +8,7 @@
         app:iconSpaceReserved="false">
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="corner"
             android:summary="重启生效"
             android:title="资讯图片圆角"
@@ -40,6 +40,37 @@
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
+        android:title="滑动相关"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="swpie_back"
+            android:title="文章滑动返回"
+            app:iconSpaceReserved="false"/>
+        <SeekBarPreference
+            android:key="swipe_back_distance"
+            android:defaultValue="35"
+            android:max="100"
+            app:iconSpaceReserved="false"
+            app:min="20"
+            app:showSeekBarValue="true"
+            app:title="滑动返回触发距离"
+            app:summary="默认值：35"
+            app:isPreferenceVisible="false">
+        </SeekBarPreference>
+        <SeekBarPreference
+            android:defaultValue="35"
+            android:key="swipe_sides_sensitivity"
+            android:max="100"
+            app:iconSpaceReserved="false"
+            app:min="0"
+            app:showSeekBarValue="true"
+            app:summary="默认值：35"
+            app:title="左右滑动灵敏度" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:title="缓存相关"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
@@ -61,17 +92,18 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="关于"
-        app:iconSpaceReserved="false"
         app:allowDividerAbove="false"
-        app:allowDividerBelow="false">
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
         <Preference
             android:key="website"
             android:summary="https://github.com/Zero825/GamerskyApp"
             android:title="项目地址"
-            app:iconSpaceReserved="false" >
+            app:iconSpaceReserved="false">
             <intent
-               android:data="https://github.com/Zero825/GamerskyApp"
-                android:action="android.intent.action.VIEW"/>
-        </Preference>>
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/Zero825/GamerskyApp" />
+        </Preference>
+        >
     </PreferenceCategory>
 </PreferenceScreen>

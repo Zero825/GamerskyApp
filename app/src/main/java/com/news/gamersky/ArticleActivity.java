@@ -17,13 +17,14 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
 
 
 public class ArticleActivity extends AppCompatActivity{
 
-    private String  data_src;
+    private NewsDataBean new_data;
     private ImageView imageView1;
     private ImageView imageView2;
     private ViewPager2 viewPager;
@@ -42,7 +43,7 @@ public class ArticleActivity extends AppCompatActivity{
         getWindow().getDecorView()
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         Intent intent = getIntent();
-        data_src = intent.getStringExtra("data_src");
+        new_data = (NewsDataBean) intent.getSerializableExtra("new_data");
         collectionAdapter = new CollectionAdapter(getSupportFragmentManager(), getLifecycle());
         imageView1=findViewById(R.id.imageView5);
         imageView2=findViewById(R.id.imageView12);
@@ -80,7 +81,7 @@ public class ArticleActivity extends AppCompatActivity{
                 fragment = new CommentFragment();
             }
             Bundle args = new Bundle();
-            args.putString("data_src",data_src);
+            args.putString("data_src",new_data.src);
             fragment.setArguments(args);
             return fragment;
         }
@@ -106,7 +107,7 @@ public class ArticleActivity extends AppCompatActivity{
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT,data_src);
+                shareIntent.putExtra(Intent.EXTRA_TEXT,new_data.title+new_data.src);
                 startActivity(Intent.createChooser(shareIntent, "分享到"));
             }
         });

@@ -302,9 +302,11 @@ public class SearchActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         textView2.setTextColor(getResources().getColor(R.color.defaultColor));
                         textView3.setTextColor(getResources().getColor(R.color.defaultColor));
-                        String s="https://wap.gamersky.com/news/Content-"+mData.get(position).id+".html";
+                        NewsDataBean newData=mData.get(position);
+                        newData.title=Html.fromHtml(mData.get(position).title).toString();
+                        newData.src="https://wap.gamersky.com/news/Content-"+mData.get(position).id+".html";
                         Intent intent=new Intent(SearchActivity.this,ArticleActivity.class);
-                        intent.putExtra("data_src",s);
+                        intent.putExtra("new_data",mData.get(position));
                         startActivity(intent);
                     }
                 });

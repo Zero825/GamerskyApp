@@ -1,11 +1,14 @@
 package com.news.gamersky.customizeview;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MidSwipeRefreshLayout extends SwipeRefreshLayout {
@@ -15,17 +18,27 @@ public class MidSwipeRefreshLayout extends SwipeRefreshLayout {
     float y2=0;
     float x1=0;
     float x2=0;
+    float stc;
 
     public MidSwipeRefreshLayout(@NonNull Context context) {
         super(context);
+        init();
     }
 
     public MidSwipeRefreshLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
+    }
+
+    public void init(){
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        stc=sharedPreferences.getInt("swipe_sides_sensitivity",35)*0.01f;
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev){
+        ViewGroup viewGroup = (ViewGroup) this.getParent();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 y2=ev.getY();
@@ -33,10 +46,10 @@ public class MidSwipeRefreshLayout extends SwipeRefreshLayout {
                 float k=(y2-y1)/(x2-x1);
                 float k1=(y2-y)/(x2-x);
                 //System.out.println(k);
-                if(Math.abs(k)<0.25&&Math.abs(k1)<0.25){
-                    getParent().requestDisallowInterceptTouchEvent(false);
+                if(Math.abs(k)<stc&&Math.abs(k1)<stc){
+                    viewGroup.requestDisallowInterceptTouchEvent(false);
                 } else{
-                    getParent().requestDisallowInterceptTouchEvent(true);
+                    viewGroup.requestDisallowInterceptTouchEvent(true);
                 }
                 y1=ev.getY();
                 x1=ev.getX();
@@ -46,6 +59,7 @@ public class MidSwipeRefreshLayout extends SwipeRefreshLayout {
                 x1=ev.getX();
                 y=ev.getY();
                 x=ev.getX();
+                viewGroup.requestDisallowInterceptTouchEvent(true);
                 break;
         }
         return  false;

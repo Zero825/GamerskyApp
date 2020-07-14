@@ -145,7 +145,7 @@ public class EntertainmentFragment extends Fragment {
                                 String src1="https://wap.gamersky.com/news/Content-"+id;
                                 String date=e1.getElementsByClass("time").get(0).html();
                                 String imageUrl=e1.getElementsByTag("img").get(0).attr("src");
-                                String sort="囧图";
+                                String sort="娱乐";
                                 String commentCount="";
                                 tempData.add(new NewsDataBean(id,imageUrl,title,src1,date,sort,commentCount));
                             }
@@ -393,7 +393,7 @@ public class EntertainmentFragment extends Fragment {
                         System.out.println("我是第"+position);
                         ReadingProgressUtil.putClick(mActivity,mDataset.get(position).id,true);
                         Intent intent=new Intent(mActivity, ArticleActivity.class);
-                        intent.putExtra("data_src",mDataset.get(position).src);
+                        intent.putExtra("new_data",mDataset.get(position));
                         mActivity.startActivity(intent);
                     }
                 });

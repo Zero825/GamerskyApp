@@ -394,7 +394,7 @@ public class InterestingImagesFragment extends Fragment {
                         System.out.println("我是第"+position);
                         ReadingProgressUtil.putClick(mActivity,mDataset.get(position).id,true);
                         Intent intent=new Intent(mActivity, ArticleActivity.class);
-                        intent.putExtra("data_src",mDataset.get(position).src);
+                        intent.putExtra("new_data",mDataset.get(position));
                         mActivity.startActivity(intent);
                     }
                 });

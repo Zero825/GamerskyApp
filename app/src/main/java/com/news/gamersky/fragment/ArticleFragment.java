@@ -1,9 +1,12 @@
 package com.news.gamersky.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
@@ -14,6 +17,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
@@ -56,6 +60,7 @@ public class ArticleFragment extends Fragment {
         loadData();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void init(){
         jsonArray=new JSONArray();
         webView.setBackgroundColor(0);
@@ -95,6 +100,42 @@ public class ArticleFragment extends Fragment {
                 return true;
             }
         });
+
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        if(sharedPreferences.getBoolean("swpie_back",false)){
+            final float dis=sharedPreferences.getInt("swipe_back_distance",35)*8;
+            final float stc=sharedPreferences.getInt("swipe_sides_sensitivity",35)*0.01f;
+            webView.setOnTouchListener(new View.OnTouchListener() {
+                float x1 = 0;
+                float x2 = 0;
+                float y1 = 0;
+                float y2 = 0;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    System.out.println(event.toString());
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            x1=event.getX();
+                            y1=event.getY();
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            x2=event.getX();
+                            y2=event.getY();
+                            float k=(y2-y1)/(x2-x1);
+                            System.out.println(x2-x1+"  "+dis+"   "+Math.abs(k)+"  "+stc);
+                            if(x2-x1>dis&&Math.abs(k)<stc){
+                                getActivity().finish();
+                            }else {
+                                v.getParent().requestDisallowInterceptTouchEvent(true);
+                            }
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
 
 
 

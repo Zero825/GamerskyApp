@@ -7,6 +7,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SeekBarPreference;
+import androidx.preference.SwitchPreference;
 
 import com.bumptech.glide.Glide;
 import com.github.piasy.biv.BigImageViewer;
@@ -46,7 +48,23 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.setting, rootKey);
-            Preference preference=findPreference("manual_clear_cache");
+            final Preference preference=findPreference("manual_clear_cache");
+            SwitchPreference switchPreference=findPreference("swpie_back");
+            final SeekBarPreference seekBarPreference=findPreference("swipe_back_distance");
+            if(switchPreference.isChecked()){
+                seekBarPreference.setVisible(true);
+            }
+            switchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    if((boolean)newValue){
+                        seekBarPreference.setVisible(true);
+                    }else {
+                        seekBarPreference.setVisible(false);
+                    }
+                    return true;
+                }
+            });
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
