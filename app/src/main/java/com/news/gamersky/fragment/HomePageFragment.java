@@ -198,7 +198,7 @@ public class HomePageFragment extends Fragment {
                     @Override
                     public void run() {
                         final int tp=vp.getCurrentItem();
-                        getActivity().runOnUiThread(new Runnable() {
+                        recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
                                 if(vp.getCurrentItem()==bannerNum-1){
@@ -429,7 +429,7 @@ public class HomePageFragment extends Fragment {
                         }
                     }
                     connection.disconnect();
-                    getActivity().runOnUiThread(new Runnable() {
+                    recyclerView.post(new Runnable() {
                         @Override
                         public void run() {
                             newsList.addAll(tempData);
@@ -538,26 +538,26 @@ public class HomePageFragment extends Fragment {
                 imageView.setCornerRadius(0);
             }
             textView.setText(myData.get(position).title);
-            if(position!=0){
-                if(position==1){
+            if(true){
+//                if(position==1){
+//                    Glide.with(imageView)
+//                            .load(myData.get(position).imageUrl)
+//                            //.transition(DrawableTransitionOptions.withCrossFade())
+//                            .centerCrop()
+//                            .into(imageView);
+//
+//                    Glide.with(container.getChildAt(0).findViewById(R.id.imageView))
+//                            .load(myData.get(position-1).imageUrl)
+//                            //.transition(DrawableTransitionOptions.withCrossFade())
+//                            .centerCrop()
+//                            .into((RoundedImageView) container.getChildAt(0).findViewById(R.id.imageView));
+//                }else {
                     Glide.with(imageView)
                             .load(myData.get(position).imageUrl)
                             //.transition(DrawableTransitionOptions.withCrossFade())
                             .centerCrop()
                             .into(imageView);
-
-                    Glide.with(container.getChildAt(0).findViewById(R.id.imageView))
-                            .load(myData.get(position-1).imageUrl)
-                            //.transition(DrawableTransitionOptions.withCrossFade())
-                            .centerCrop()
-                            .into((RoundedImageView) container.getChildAt(0).findViewById(R.id.imageView));
-                }else {
-                    Glide.with(imageView)
-                            .load(myData.get(position).imageUrl)
-                            //.transition(DrawableTransitionOptions.withCrossFade())
-                            .centerCrop()
-                            .into(imageView);
-                }
+//                }
             }
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -750,7 +750,7 @@ public class HomePageFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                getActivity().runOnUiThread(new Runnable() {
+                recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
                         int tp=vp.getCurrentItem();

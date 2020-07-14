@@ -184,7 +184,7 @@ public class InterestingImagesFragment extends Fragment {
                         }
                     }
 
-                    getActivity().runOnUiThread(new Runnable() {
+                    recyclerView.post(new Runnable() {
                         @Override
                         public void run() {
                             newsData.clear();
@@ -199,7 +199,7 @@ public class InterestingImagesFragment extends Fragment {
                     });
                 }catch (Exception e){
                     e.printStackTrace();
-                    getActivity().runOnUiThread(new Runnable() {
+                    recyclerView.post(new Runnable() {
                         @Override
                         public void run() {
                             midSwipeRefreshLayout.setRefreshing(false);
@@ -292,7 +292,7 @@ public class InterestingImagesFragment extends Fragment {
                         }
                     }
 
-                    getActivity().runOnUiThread(new Runnable() {
+                    recyclerView.post(new Runnable() {
                         @Override
                         public void run() {
                             newsData.addAll(tempData);
