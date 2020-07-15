@@ -538,27 +538,11 @@ public class HomePageFragment extends Fragment {
                 imageView.setCornerRadius(0);
             }
             textView.setText(myData.get(position).title);
-            if(true){
-//                if(position==1){
-//                    Glide.with(imageView)
-//                            .load(myData.get(position).imageUrl)
-//                            //.transition(DrawableTransitionOptions.withCrossFade())
-//                            .centerCrop()
-//                            .into(imageView);
-//
-//                    Glide.with(container.getChildAt(0).findViewById(R.id.imageView))
-//                            .load(myData.get(position-1).imageUrl)
-//                            //.transition(DrawableTransitionOptions.withCrossFade())
-//                            .centerCrop()
-//                            .into((RoundedImageView) container.getChildAt(0).findViewById(R.id.imageView));
-//                }else {
-                    Glide.with(imageView)
-                            .load(myData.get(position).imageUrl)
-                            //.transition(DrawableTransitionOptions.withCrossFade())
-                            .centerCrop()
-                            .into(imageView);
-//                }
-            }
+            Glide.with(imageView)
+                    .load(myData.get(position).imageUrl)
+                    //.transition(DrawableTransitionOptions.withCrossFade())
+                    .centerCrop()
+                    .into(imageView);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

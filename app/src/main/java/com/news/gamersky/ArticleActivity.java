@@ -21,6 +21,8 @@ import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
 
+import java.util.HashMap;
+
 
 public class ArticleActivity extends AppCompatActivity{
 
@@ -65,9 +67,11 @@ public class ArticleActivity extends AppCompatActivity{
 
 
     public class CollectionAdapter extends FragmentStateAdapter {
+        public HashMap<Integer,Fragment> fragmentHashMap;
 
         public CollectionAdapter(FragmentManager fm, Lifecycle lifecycle) {
             super(fm,lifecycle);
+            fragmentHashMap=new HashMap<>();
         }
 
         @NonNull
@@ -83,12 +87,21 @@ public class ArticleActivity extends AppCompatActivity{
             Bundle args = new Bundle();
             args.putString("data_src",new_data.src);
             fragment.setArguments(args);
+            fragmentHashMap.put(position,fragment);
             return fragment;
         }
 
         @Override
         public int getItemCount() {
             return 2;
+        }
+
+        public Fragment getFragment(int position){
+            if(fragmentHashMap.containsKey(position)){
+                return fragmentHashMap.get(position);
+            }else {
+                return null;
+            }
         }
 
     }
@@ -116,14 +129,14 @@ public class ArticleActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 if(viewPager.getCurrentItem()==0)
-                ((ArticleFragment)getSupportFragmentManager().getFragments().get(0)).upTop();
+                    ((ArticleFragment)collectionAdapter.getFragment(0)).upTop();
             }
         });
         tabLayout.getTabAt(1).view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(viewPager.getCurrentItem()==1)
-                ((CommentFragment)getSupportFragmentManager().getFragments().get(1)).upTop();
+                ((CommentFragment)collectionAdapter.getFragment(1)).upTop();
             }
         });
 
@@ -131,33 +144,22 @@ public class ArticleActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-//        if (viewPager.getCurrentItem()==0){
-//            finish();
-//        }else {
-//            viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
-//        }
         super.onBackPressed();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        try {
-            ((ArticleFragment)getSupportFragmentManager().getFragments().get(0)).pauseWebView();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        if(collectionAdapter.getFragment(0)!=null)
+            ((ArticleFragment)collectionAdapter.getFragment(0)).pauseWebView();
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        try {
-            ((ArticleFragment)getSupportFragmentManager().getFragments().get(0)).resumeWebView();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        if(collectionAdapter.getFragment(0)!=null)
+            ((ArticleFragment)collectionAdapter.getFragment(0)).resumeWebView();
     }
 
 }

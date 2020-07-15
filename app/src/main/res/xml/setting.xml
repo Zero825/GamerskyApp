@@ -54,7 +54,7 @@
             android:defaultValue="35"
             android:max="100"
             app:iconSpaceReserved="false"
-            app:min="20"
+            app:min="10"
             app:showSeekBarValue="true"
             app:title="滑动返回触发距离"
             app:summary="默认值：35"

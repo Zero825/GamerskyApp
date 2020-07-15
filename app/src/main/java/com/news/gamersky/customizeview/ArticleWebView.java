@@ -67,7 +67,7 @@ public class ArticleWebView extends WebView {
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 float k=(y2-y1)/(x2-x1);
                 float k1=(y2-y)/(x2-x);
-                //System.out.println(k);
+
                 if(x2-x1<0&&x2-x<0&&Math.abs(k)<stc&&Math.abs(k1)<stc){
                     viewGroup.requestDisallowInterceptTouchEvent(false);
                 } else{
@@ -82,9 +82,6 @@ public class ArticleWebView extends WebView {
                 y=ev.getY();
                 x=ev.getX();
                 viewGroup.requestDisallowInterceptTouchEvent(true);
-                break;
-            case MotionEvent.ACTION_UP:
-                viewGroup.requestDisallowInterceptTouchEvent(false);
                 break;
         }
         return  super.dispatchTouchEvent(ev);

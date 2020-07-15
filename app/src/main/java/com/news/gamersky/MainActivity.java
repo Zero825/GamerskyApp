@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -26,6 +27,9 @@ import com.news.gamersky.fragment.EntertainmentFragment;
 import com.news.gamersky.fragment.HomePageFragment;
 import com.news.gamersky.fragment.InterestingImagesFragment;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
 
     private ImageView logo;
@@ -43,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         init();
         startListen();
+
     }
 
     private void init(){
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout=findViewById(R.id.tabLayout);
         fragmentAdapter=new FragmentAdapter(this);
         viewPager2.setAdapter(fragmentAdapter);
-        //viewPager2.setOffscreenPageLimit(2);
+        viewPager2.setOffscreenPageLimit(fragmentAdapter.getItemCount());
         new TabLayoutMediator(tabLayout, viewPager2,
                 new TabLayoutMediator.TabConfigurationStrategy() {
                     @Override
@@ -90,21 +95,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int p=viewPager2.getCurrentItem();
-                try {
+                if(fragmentAdapter.getFragment(p)!=null){
+                    Fragment fragment=fragmentAdapter.getFragment(p);
                     if(p==0) {
-                        ((HomePageFragment) getSupportFragmentManager().getFragments().get(p)).upTop();
+                        ((HomePageFragment) fragment).upTop();
                     }
                     if(p==1) {
-                        ((EntertainmentFragment) getSupportFragmentManager().getFragments().get(p+1)).upTop();
+                        ((EntertainmentFragment) fragment).upTop();
                     }
                     if(p==2) {
-                        ((InterestingImagesFragment) getSupportFragmentManager().getFragments().get(p+1)).upTop();
+                        ((InterestingImagesFragment) fragment).upTop();
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
                 }
-
-
             }
         });
 
@@ -176,24 +178,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class FragmentAdapter extends FragmentStateAdapter {
+        public HashMap<Integer,Fragment> fragmentHashMap;
 
         public FragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
             super(fragmentActivity);
+            fragmentHashMap=new HashMap<>();
         }
 
         @NonNull
         @Override
         public Fragment createFragment(int position) {
+            Fragment fragment=new Fragment();
             if(position==0){
-                return new HomePageFragment();
+                fragment= new HomePageFragment();
             }
             if(position==1){
-                return new EntertainmentFragment();
+                fragment= new EntertainmentFragment();
             }
             if(position==2){
-                return new InterestingImagesFragment();
+                fragment= new InterestingImagesFragment();
             }
-            return null;
+            fragmentHashMap.put(position,fragment);
+            return fragment;
         }
 
 
@@ -201,6 +207,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return 3;
+        }
+
+        public Fragment getFragment(int position){
+            if(fragmentHashMap.containsKey(position)){
+                return fragmentHashMap.get(position);
+            }else {
+                return null;
+            }
         }
     }
 }

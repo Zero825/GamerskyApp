@@ -537,7 +537,6 @@ public class CommentFragment extends Fragment {
                                                 hotCommentData.addAll(tempHotCommentData);
                                                 allCommentData.addAll(tempAllCommentData);
                                                 commentAdapter.notifyDataSetChanged();
-                                                recyclerView.scheduleLayoutAnimation();
                                                 loadtextView.setText("加载成功");
                                                 loadtextView.setVisibility(View.GONE);
                                                 loadimageView.setVisibility(View.GONE);
@@ -739,7 +738,6 @@ public class CommentFragment extends Fragment {
                                                 hotCommentData.addAll(tempHotCommentData);
                                                 allCommentData.addAll(tempAllCommentData);
                                                 commentAdapter.notifyDataSetChanged();
-                                                recyclerView.scheduleLayoutAnimation();
                                                 loadtextView.setText("加载成功");
                                                 loadtextView.setVisibility(View.GONE);
                                                 loadimageView.setVisibility(View.GONE);

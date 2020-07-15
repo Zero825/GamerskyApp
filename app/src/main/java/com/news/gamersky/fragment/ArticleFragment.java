@@ -103,6 +103,7 @@ public class ArticleFragment extends Fragment {
 
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
+        webView.loadDataWithBaseURL("file:///android_asset", "<div></div>", "text/html", "utf-8", null);
         if(sharedPreferences.getBoolean("swpie_back",false)){
             final float dis=sharedPreferences.getInt("swipe_back_distance",35)*8;
             final float stc=sharedPreferences.getInt("swipe_sides_sensitivity",35)*0.01f;
@@ -114,7 +115,7 @@ public class ArticleFragment extends Fragment {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    System.out.println(event.toString());
+                    //System.out.println(event.toString());
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             x1=event.getX();
@@ -127,8 +128,6 @@ public class ArticleFragment extends Fragment {
                             System.out.println(x2-x1+"  "+dis+"   "+Math.abs(k)+"  "+stc);
                             if(x2-x1>dis&&Math.abs(k)<stc){
                                 getActivity().finish();
-                            }else {
-                                v.getParent().requestDisallowInterceptTouchEvent(true);
                             }
                             break;
                     }
