@@ -62,7 +62,7 @@ public class HomePageSwipeRefreshLayout extends SwipeRefreshLayout {
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 break;
         }
-        return  false;
+        return  super.onInterceptTouchEvent(ev);
     }
 
 
