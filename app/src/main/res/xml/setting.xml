@@ -49,6 +49,11 @@
             android:key="swpie_back"
             android:title="文章滑动返回"
             app:iconSpaceReserved="false"/>
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="float_bottombar"
+            android:title="浮动底栏"
+            app:iconSpaceReserved="false"/>
         <SeekBarPreference
             android:key="swipe_back_distance"
             android:defaultValue="35"

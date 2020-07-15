@@ -8,6 +8,7 @@
     <color name="colorPressed">#00FFFFFF</color>
     <color name="colorOnPressed">#19ADADAD</color>
     <color name="defaultColor">#737373</color>
+    <color name="bottomNavColor">#C62828</color>
     <color name="darkMask">#4D969696</color>
-
+    <color name="LogoColorPrimary">#f01a21</color>
 </resources>

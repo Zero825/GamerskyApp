@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">游民星空</string>
     <string name="title_activity_settings">设置</string>
+    <string name="title_home">资讯</string>
+    <string name="title_game_guide">攻略</string>
+    <string name="title_game_reviews">评测</string>
+    <string name="title_user">用户</string>
 </resources>

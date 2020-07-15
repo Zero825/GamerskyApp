@@ -64,6 +64,6 @@ public class EndSwipeRefreshLayout extends SwipeRefreshLayout {
                 viewGroup.requestDisallowInterceptTouchEvent(true);
                 break;
         }
-        return  false;
+        return  super.onInterceptTouchEvent(ev);
     }
 }
