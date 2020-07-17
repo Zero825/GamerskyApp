@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.github.piasy.biv.BigImageViewer;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.news.gamersky.MainActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.SearchActivity;
 import com.news.gamersky.SettingsActivity;
@@ -110,6 +111,9 @@ public class NewsFragment extends Fragment {
                         ((InterestingImagesFragment) fragment).upTop();
                     }
                 }
+                if(getActivity()!=null){
+                    ((MainActivity)getActivity()).showNav();
+                }
             }
         });
 
@@ -152,7 +156,7 @@ public class NewsFragment extends Fragment {
         ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view, "ScaleX", view.getScaleX(),1.15f);
         ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view, "ScaleY", view.getScaleY(), 1.15f);
         AnimatorSet animSet = new AnimatorSet();
-        animSet.play(objectAnimator1).with(objectAnimator2);
+        animSet.playTogether(objectAnimator1,objectAnimator2);
         animSet.setDuration(300);
         animSet.start();
     }
@@ -161,7 +165,7 @@ public class NewsFragment extends Fragment {
         ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view, "ScaleX", view.getScaleX(), 1.0f);
         ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view, "ScaleY", view.getScaleY(), 1.0f);
         AnimatorSet animSet = new AnimatorSet();
-        animSet.play(objectAnimator1).with(objectAnimator2);
+        animSet.playTogether(objectAnimator1,objectAnimator2);
         animSet.setDuration(300);
         animSet.start();
     }
@@ -179,7 +183,7 @@ public class NewsFragment extends Fragment {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Fragment fragment=new Fragment();
+            Fragment fragment=null;
             if(position==0){
                 fragment= new HomePageFragment();
             }
@@ -189,7 +193,7 @@ public class NewsFragment extends Fragment {
             if(position==2){
                 fragment= new InterestingImagesFragment();
             }
-            fragmentHashMap.put(position,fragment);
+            if(fragment!=null) fragmentHashMap.put(position,fragment);
             return fragment;
         }
 

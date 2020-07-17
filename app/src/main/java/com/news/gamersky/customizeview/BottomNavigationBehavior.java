@@ -6,16 +6,19 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 public class BottomNavigationBehavior extends CoordinatorLayout.Behavior<View> {
 
-    private ObjectAnimator outAnimator, inAnimator;
     private boolean isFloatBottomBar;
+    private int minDis,maxDis;
 
     public BottomNavigationBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -26,6 +29,8 @@ public class BottomNavigationBehavior extends CoordinatorLayout.Behavior<View> {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
         isFloatBottomBar=sharedPreferences.getBoolean("float_bottombar",true);
+        minDis=3;
+        maxDis=9;
     }
 
     // 垂直滑动
@@ -36,25 +41,33 @@ public class BottomNavigationBehavior extends CoordinatorLayout.Behavior<View> {
 
     @Override
     public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, View child, View target, int dx, int dy, int[] consumed,int type) {
-
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type);
         if(isFloatBottomBar) {
-            if (dy > 0) {// 上滑隐藏
-                if (outAnimator == null) {
-                    outAnimator = ObjectAnimator.ofFloat(child, "translationY", 0, child.getHeight());
-                    outAnimator.setDuration(300);
+
+
+           //Log.i("onNestedPreScroll", String.valueOf(target.getScrollY())+"\t"+dy+"\t");
+            if(dy>10||dy<-10) {
+                Log.i("TAG", "onNestedPreScroll: "+"fast"+type);
+                if (dy > 0 && child.getTranslationY() + maxDis <= child.getHeight()) {
+                    child.setTranslationY(child.getTranslationY() + maxDis);
+
                 }
-                if (!outAnimator.isRunning() && child.getTranslationY() <= 0) {
-                    outAnimator.start();
+                if (dy < 0 && child.getTranslationY() - maxDis >= 0) {
+                    child.setTranslationY(child.getTranslationY() - maxDis);
                 }
-            } else if (dy < 0) {// 下滑显示
-                if (inAnimator == null) {
-                    inAnimator = ObjectAnimator.ofFloat(child, "translationY", child.getHeight(), 0);
-                    inAnimator.setDuration(300);
-                }
-                if (!inAnimator.isRunning() && child.getTranslationY() >= child.getHeight()) {
-                    inAnimator.start();
+            }else {
+                if(type==0) {
+                    if (dy > 0 && child.getTranslationY() + minDis <= child.getHeight()) {
+                        child.setTranslationY(child.getTranslationY() + minDis);
+
+                    }
+                    if (dy < 0 && child.getTranslationY() - minDis >= 0) {
+                        child.setTranslationY(child.getTranslationY() - minDis);
+                    }
                 }
             }
+
         }
+
     }
 }

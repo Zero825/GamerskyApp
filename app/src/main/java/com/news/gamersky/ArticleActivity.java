@@ -36,7 +36,7 @@ public class ArticleActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news);
+        setContentView(R.layout.activity_article);
         init();
         setListen();
     }
@@ -77,7 +77,7 @@ public class ArticleActivity extends AppCompatActivity{
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Fragment fragment=new Fragment();
+            Fragment fragment=null;
             if (position==0) {
                 fragment = new ArticleFragment();
             }
@@ -87,7 +87,7 @@ public class ArticleActivity extends AppCompatActivity{
             Bundle args = new Bundle();
             args.putString("data_src",new_data.src);
             fragment.setArguments(args);
-            fragmentHashMap.put(position,fragment);
+            if(fragment!=null) fragmentHashMap.put(position,fragment);
             return fragment;
         }
 
