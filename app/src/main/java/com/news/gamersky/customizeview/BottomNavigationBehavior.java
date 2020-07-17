@@ -47,7 +47,7 @@ public class BottomNavigationBehavior extends CoordinatorLayout.Behavior<View> {
 
            //Log.i("onNestedPreScroll", String.valueOf(target.getScrollY())+"\t"+dy+"\t");
             if(dy>10||dy<-10) {
-                Log.i("TAG", "onNestedPreScroll: "+"fast"+type);
+                //Log.i("TAG", "onNestedPreScroll: "+"fast"+type);
                 if (dy > 0 && child.getTranslationY() + maxDis <= child.getHeight()) {
                     child.setTranslationY(child.getTranslationY() + maxDis);
 
