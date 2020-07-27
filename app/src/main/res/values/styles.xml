@@ -6,17 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
     </style>
 
-
-    <style name="SettingTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
-    </style>
 
     <style name="RepliesTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -34,12 +27,13 @@
         <!-- specify enter and exit transitions -->
         <item name="android:windowEnterTransition">@transition/tnull</item>
         <item name="android:windowExitTransition">@transition/tnull</item>
-<!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
+        <!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
     </style>
 
 
     <style name="tabStyle">
         <item name="android:textSize">15sp</item>
     </style>
+
 
 </resources>

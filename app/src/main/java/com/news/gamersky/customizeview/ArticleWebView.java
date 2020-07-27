@@ -3,6 +3,7 @@ package com.news.gamersky.customizeview;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -59,7 +60,7 @@ public class ArticleWebView extends WebView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev){
         ViewGroup viewGroup = (ViewGroup) this.getParent();
-        //System.out.println(ev.toString());
+        //Log.i("TAG", "dispatchTouchEvent: "+ev.toString());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 y2=ev.getY();

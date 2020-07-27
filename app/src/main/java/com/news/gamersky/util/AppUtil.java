@@ -60,11 +60,13 @@ public class AppUtil {
         return s;
     }
 
-    public static Snackbar getSnackbar(Context context,View view,String msg){
+    public static Snackbar getSnackbar(Context context,View view,String msg,boolean setAnchorView){
         Snackbar snackbar= Snackbar.make(view,msg,1000);
-        View snackbarView = snackbar.getView();
-        ((TextView) snackbarView.findViewById(R.id.snackbar_text)).setTextColor(Color.BLACK);
         snackbar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
+        snackbar.setTextColor(Color.BLACK);
+        if(setAnchorView) {
+            snackbar.setAnchorView(R.id.nav_view);
+        }
         return snackbar;
     }
 

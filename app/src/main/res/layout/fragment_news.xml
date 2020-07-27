@@ -49,19 +49,26 @@
             app:tabRippleColor="@color/tc"
             app:tabSelectedTextColor="@color/darkBackground"
             app:tabTextAppearance="@style/tabStyle"
-            app:tabTextColor="@color/defaultColor">
+            app:tabTextColor="@color/defaultColor" >
 
             <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabItem1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="首页" />
-
+                android:text="@string/title_news_tab1" />
             <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="囧图" />
-
+                android:text="@string/title_news_tab2" />
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabItem3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_news_tab3" />
         </com.google.android.material.tabs.TabLayout>
+
+
 
         <ImageView
             android:id="@+id/imageView11"
@@ -89,7 +96,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"

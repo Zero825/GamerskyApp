@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -80,7 +81,8 @@ public class RepliesActivity extends AppCompatActivity {
 
     public void init(){
         getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        |View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         headTextView=findViewById(R.id.textView20);
         constraintLayout=findViewById(R.id.constraintLayout);
         imageButton=findViewById(R.id.imageButton);
@@ -514,6 +516,27 @@ public class RepliesActivity extends AppCompatActivity {
         animSetOut.play(objectAnimator1).with(objectAnimator2);
         animSetOut.setDuration(300);
         animSetOut.start();
+        animSetOut.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                finish();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 
 
@@ -550,6 +573,7 @@ public class RepliesActivity extends AppCompatActivity {
         });
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             int yVelocity=0;
+            int lastYVelocity=0;
             float ry=0;
             float dis=0;
             boolean canScrollVertically=false;
@@ -559,10 +583,9 @@ public class RepliesActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 //Log.i("TAG", event.toString());
-                if(velocityTracker==null) {
-                    velocityTracker = VelocityTracker.obtain();
-                }
+                velocityTracker = VelocityTracker.obtain();
                 velocityTracker.addMovement(event);
+
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         break;
@@ -573,7 +596,6 @@ public class RepliesActivity extends AppCompatActivity {
                         if(ry==0f){
                             ry=event.getY();
                         }
-                        velocityTracker.addMovement(event);
                         dis = constraintLayout.getTranslationY() + event.getY() - ry;
                         if(!recyclerView.canScrollVertically(-1)&&dis > 0) {
                             if(recyclerView.canScrollVertically(-1)==canScrollVertically) {
@@ -590,17 +612,23 @@ public class RepliesActivity extends AppCompatActivity {
                         }else {
                             canScrollVertically=false;
                         }
+                        velocityTracker.computeCurrentVelocity(1000);
+                        if(velocityTracker.getYVelocity()>0){
+                            lastYVelocity=(int) velocityTracker.getYVelocity();
+                        }
+                        if(yVelocity<(int) velocityTracker.getYVelocity()){
+                            yVelocity = (int) velocityTracker.getYVelocity();
+                        }
                         return consumed;
                     case MotionEvent.ACTION_UP:
                         ry=0f;
                         consumed=false;
-                        velocityTracker.computeCurrentVelocity(1000);
-                        yVelocity = (int) velocityTracker.getYVelocity();
+                        //Log.i("TAG", "onTouch: "+yVelocity+"\t"+lastYVelocity);
                         velocityTracker.recycle();
-                        velocityTracker=null;
-                        //Log.i("TAG", "onTouch: "+yVelocity);
-                        if(yVelocity>3000&&!recyclerView.canScrollVertically(-1)){
+                        if(yVelocity>5000&&lastYVelocity>5000&&!canScrollVertically){
                             onBackPressed();
+                            yVelocity=0;
+                            lastYVelocity=0;
                             break;
                         }
                         if (constraintLayout.getTranslationY() > constraintLayout.getHeight() / 3f) {
@@ -624,18 +652,20 @@ public class RepliesActivity extends AppCompatActivity {
             float ry=0;
             float dis=0;
             int yVelocity=0;
+            int lastYVelocity=0;
             boolean consumed=false;
             VelocityTracker velocityTracker;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(velocityTracker==null) {
-                    velocityTracker = VelocityTracker.obtain();
-                }
+
+                velocityTracker = VelocityTracker.obtain();
                 velocityTracker.addMovement(event);
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         ry=event.getY();
                         consumed=false;
+                        yVelocity=0;
+                        lastYVelocity=0;
                         break;
 
                     case MotionEvent.ACTION_MOVE:
@@ -643,16 +673,23 @@ public class RepliesActivity extends AppCompatActivity {
                         dis=constraintLayout.getTranslationY()+event.getY()-ry;
                         if(dis>0)
                         constraintLayout.setTranslationY(dis);
+                        velocityTracker.computeCurrentVelocity(1000);
+                        if(velocityTracker.getYVelocity()>0){
+                            lastYVelocity=(int) velocityTracker.getYVelocity();
+                        }
+                        if(yVelocity<(int) velocityTracker.getYVelocity()){
+                            yVelocity = (int) velocityTracker.getYVelocity();
+                        }
+
+                        //Log.i("TAG", "onTouch: "+velocityTracker.getYVelocity());
                         break;
 
                     case MotionEvent.ACTION_UP:
                         consumed=false;
-                        velocityTracker.computeCurrentVelocity(1000);
-                        yVelocity = (int) velocityTracker.getYVelocity();
+                        velocityTracker.getYVelocity();
+                        //Log.i("TAG", "onTouch: "+yVelocity+"\t"+velocityTracker.getYVelocity());
                         velocityTracker.recycle();
-                        velocityTracker=null;
-                        Log.i("TAG", "onTouch: "+yVelocity);
-                        if(yVelocity>3000){
+                        if(yVelocity>5000&&lastYVelocity>5000){
                             onBackPressed();
                             break;
                         }
@@ -672,9 +709,8 @@ public class RepliesActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         endAnimator();
-
+        //super.onBackPressed();
     }
 
     public class RepliesAdapter extends RecyclerView.Adapter {

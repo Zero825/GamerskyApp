@@ -39,7 +39,6 @@ public class CommentEmojiUtil {
         //循环直到匹配不到
         while (result) {
 
-            System.out.println(matcher.group());
             if(emojiMap.containsKey(matcher.group())) {
                 Drawable drawable = ContextCompat.getDrawable(ThisApp.getContext(), emojiMap.get(matcher.group()));
                 drawable.setBounds(0, 0, 75, 75);

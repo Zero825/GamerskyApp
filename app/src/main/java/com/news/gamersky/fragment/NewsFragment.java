@@ -3,16 +3,16 @@ package com.news.gamersky.fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.viewpager.widget.ViewPager;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,64 +21,74 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.github.piasy.biv.BigImageViewer;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.news.gamersky.MainActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.SearchActivity;
 import com.news.gamersky.SettingsActivity;
-import com.news.gamersky.fragment.EntertainmentFragment;
-import com.news.gamersky.fragment.HomePageFragment;
-import com.news.gamersky.fragment.InterestingImagesFragment;
+import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewsFragment extends Fragment {
 
     private ImageView logo;
     private ImageView searchBtn;
     private ImageView setBtn;
-    private ViewPager2 viewPager2;
+    private ViewPager viewPager;
     private TabLayout tabLayout;
-    private FragmentAdapter fragmentAdapter;
-    private SharedPreferences sharedPreferences;
-
+    private ViewPagerFragmentAdapter fragmentAdapter;
+    private List<Fragment> fragments;
+    private List<String> tabTitles;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_news, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        View view=inflater.inflate(R.layout.fragment_news, container, false);
         init(view);
         startListen();
+        return view;
     }
+
 
     private void init(View view){
 
         logo=view.findViewById(R.id.imageView4);
         searchBtn=view.findViewById(R.id.imageView11);
         setBtn=view.findViewById(R.id.imageView10);
-        viewPager2=view.findViewById(R.id.viewPager);
+        viewPager=view.findViewById(R.id.viewPager);
         tabLayout=view.findViewById(R.id.tabLayout);
-        fragmentAdapter=new FragmentAdapter(getActivity());
-        viewPager2.setAdapter(fragmentAdapter);
-        viewPager2.setOffscreenPageLimit(fragmentAdapter.getItemCount());
-        new TabLayoutMediator(tabLayout, viewPager2,
-                new TabLayoutMediator.TabConfigurationStrategy() {
-                    @Override
-                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                        if(position==0) tab.setText("首页");
-                        if(position==1)tab.setText("娱乐");
-                        if(position==2) tab.setText("囧图");
-                    }
-                }
-        ).attach();
-        sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        tabTitles=new ArrayList<>();
+        tabTitles.add(getResources().getString(R.string.title_news_tab1));
+        tabTitles.add(getResources().getString(R.string.title_news_tab2));
+        tabTitles.add(getResources().getString(R.string.title_news_tab3));
+
+        fragments=new ArrayList<>();
+        fragments.add(new HomePageFragment());
+        fragments.add(new CommonNewsFragment());
+        fragments.add(new CommonNewsFragment());
+
+        for(int i=0;i<fragments.size();i++){
+            Bundle bundle = new Bundle();
+            if(i==1){
+                bundle.putString( "src", "https://www.gamersky.com/ent/xz");
+                bundle.putInt("nodeIdPos",0);
+            }
+            if(i==2){
+                bundle.putString( "src", "https://www.gamersky.com/ent/qw");
+                bundle.putInt("nodeIdPos",0);
+            }
+            fragments.get(i).setArguments(bundle);
+        }
+
+        fragmentAdapter= new ViewPagerFragmentAdapter(getChildFragmentManager(),fragments,tabTitles,0);
+        viewPager.setAdapter(fragmentAdapter);
+        viewPager.setOffscreenPageLimit(fragmentAdapter.getCount());
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         clearGlideDiskCache(sharedPreferences.getBoolean("auto_clear_cache",true));
     }
 
@@ -98,46 +108,63 @@ public class NewsFragment extends Fragment {
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int p=viewPager2.getCurrentItem();
-                if(fragmentAdapter.getFragment(p)!=null){
-                    Fragment fragment=fragmentAdapter.getFragment(p);
-                    if(p==0) {
-                        ((HomePageFragment) fragment).upTop();
-                    }
-                    if(p==1) {
-                        ((EntertainmentFragment) fragment).upTop();
-                    }
-                    if(p==2) {
-                        ((InterestingImagesFragment) fragment).upTop();
-                    }
-                }
-                if(getActivity()!=null){
-                    ((MainActivity)getActivity()).showNav();
-                }
+                upTop();
             }
         });
 
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                for (int i=0;i<fragmentAdapter.getItemCount();i++){
-                   endAnimator(tabLayout.getTabAt(i).view);
-                }
-                startAnimator(tabLayout.getTabAt(position).view);
-
+                tabLayout.selectTab(tabLayout.getTabAt(position));
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
+
             }
         });
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                startAnimator(tab.view);
+                viewPager.setCurrentItem(tab.getPosition(),true);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                endAnimator(tab.view);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    public void upTop(){
+        int p=viewPager.getCurrentItem();
+        FragmentManager fragmentManager=getChildFragmentManager();
+        Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+p);
+        Log.i("TAG", "onClick: "+fragmentManager.getFragments()+"\n"+viewPager.getId());
+        if(fragment!=null){
+            Log.i("TAG", "onClick: "+"返回顶部");
+            if(p==0) {
+                ((HomePageFragment) fragment).upTop();
+            }
+            else  {
+                ((CommonNewsFragment) fragment).upTop();
+            }
+
+        }
+        if(getActivity()!=null){
+            ((MainActivity)getActivity()).showNav();
+        }
     }
 
     public void clearGlideDiskCache(boolean b){
@@ -170,46 +197,4 @@ public class NewsFragment extends Fragment {
         animSet.start();
     }
 
-
-
-    public class FragmentAdapter extends FragmentStateAdapter {
-        public HashMap<Integer,Fragment> fragmentHashMap;
-
-        public FragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
-            super(fragmentActivity);
-            fragmentHashMap=new HashMap<>();
-        }
-
-        @NonNull
-        @Override
-        public Fragment createFragment(int position) {
-            Fragment fragment=null;
-            if(position==0){
-                fragment= new HomePageFragment();
-            }
-            if(position==1){
-                fragment= new EntertainmentFragment();
-            }
-            if(position==2){
-                fragment= new InterestingImagesFragment();
-            }
-            if(fragment!=null) fragmentHashMap.put(position,fragment);
-            return fragment;
-        }
-
-
-
-        @Override
-        public int getItemCount() {
-            return 3;
-        }
-
-        public Fragment getFragment(int position){
-            if(fragmentHashMap.containsKey(position)){
-                return fragmentHashMap.get(position);
-            }else {
-                return null;
-            }
-        }
-    }
 }

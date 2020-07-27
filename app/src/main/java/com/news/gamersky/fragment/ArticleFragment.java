@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -40,28 +42,28 @@ public class ArticleFragment extends Fragment {
     private ArticleWebView webView;
     private ProgressBar progressBar;
     private JSONArray jsonArray;
-    private Thread loadThread;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_article, container, false);
+        View view=inflater.inflate(R.layout.fragment_article, container, false);
+        Bundle args = getArguments();
+        if (args != null) {
+            data_src=args.getString("data_src");
+            init(view);
+            loadData();
+        }
+        return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Bundle args = getArguments();
-        data_src=args.getString("data_src");
-        progressBar=view.findViewById(R.id.progressBar);
-        webView=view.findViewById(R.id.web);
-        init();
-        loadData();
-    }
 
     @SuppressLint("ClickableViewAccessibility")
-    public void init(){
+    public void init(View view){
+        progressBar=view.findViewById(R.id.progressBar);
+        webView=view.findViewById(R.id.web);
+
         jsonArray=new JSONArray();
         webView.setBackgroundColor(0);
         //webView.setInitialScale(320);
@@ -70,6 +72,7 @@ public class ArticleFragment extends Fragment {
         //webView.getSettings().setLoadsImagesAutomatically(false);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setTextZoom(110);
+        webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         //java回调js代码，不要忘了@JavascriptInterface这个注解，不然点击事件不起作用
         webView.addJavascriptInterface(new JsCallJavaObj() {
             @JavascriptInterface
@@ -112,21 +115,32 @@ public class ArticleFragment extends Fragment {
                 float x2 = 0;
                 float y1 = 0;
                 float y2 = 0;
+                boolean back=true;
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    //System.out.println(event.toString());
+                    Log.i("TAG", "onTouch: "+event.toString());
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             x1=event.getX();
                             y1=event.getY();
+                            x2 = 0;
+                            y2 = 0;
+                            back=true;
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            if(x2>event.getX()){
+                                //Log.i("TAG", "onTouch: "+back+"\t"+x2+"\t"+event.getX());
+                                back=false;
+                            }
+                            x2=event.getX();
                             break;
                         case MotionEvent.ACTION_UP:
                             x2=event.getX();
                             y2=event.getY();
                             float k=(y2-y1)/(x2-x1);
-                            System.out.println(x2-x1+"  "+dis+"   "+Math.abs(k)+"  "+stc);
-                            if(x2-x1>dis&&Math.abs(k)<stc){
+                            //Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+k+"\t"+back);
+                            if(x2-x1>dis&&Math.abs(k)<stc&&back){
                                 getActivity().finish();
                             }
                             break;
@@ -162,7 +176,7 @@ public class ArticleFragment extends Fragment {
 
     public void loadData(){
 
-        loadThread=new Thread() {
+        new Thread() {
             @Override
             public void run() {
                 try {
@@ -282,8 +296,7 @@ public class ArticleFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        };
-        loadThread.start();
+        }.start();
     }
 
 
@@ -303,6 +316,7 @@ public class ArticleFragment extends Fragment {
             Elements elements4=doc.getElementsByTag("p");
             Elements elements5=doc.getElementsByTag("script");
             Elements elements6 = doc.getElementsByClass("gs_bot_author");
+            Elements elements7 = doc.getElementsByTag("iframe");
             elements2.attr("href","");
             for (int i=0;i<elements1.size();i++) {
                 Element element=elements1.get(i);
@@ -367,6 +381,10 @@ public class ArticleFragment extends Fragment {
                 }
             }
             elements6.attr("style","color:#999;text-align:right;font-size:14px");
+            for(Element element:elements7){
+                element.attr("width", "100%")
+                        .attr("height", "120");
+            }
             return doc.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -388,10 +406,14 @@ public class ArticleFragment extends Fragment {
 
 
     public void resumeWebView() {
-        webView.resumeTimers();
+        if(webView!=null) {
+            webView.resumeTimers();
+        }
     }
 
     public void pauseWebView(){
-        webView.pauseTimers();
+        if(webView!=null) {
+            webView.pauseTimers();
+        }
     }
 }

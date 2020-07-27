@@ -35,6 +35,7 @@ import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.adapter.NewsAdapter;
 import com.news.gamersky.customizeview.BannerViewPager;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.ReadingProgressUtil;
@@ -70,7 +71,6 @@ public class HomePageFragment extends Fragment {
     private TextView toptv1;
     private TextView toptv2;
     private ImageView topiv;
-    private TextView footv;
     private RecyclerView recyclerView;
     private ConstraintLayout constraintLayout;
     private LinearLayoutManager layoutManager;
@@ -94,16 +94,13 @@ public class HomePageFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_homepage, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        View view=inflater.inflate(R.layout.fragment_homepage, container, false);
         init(view);
         loadNews();
         startListen();
-
+        return view;
     }
+
 
     public void init(View view){
 
@@ -124,9 +121,7 @@ public class HomePageFragment extends Fragment {
         toptv1=view.findViewById(R.id.textView2);
         toptv2=view.findViewById(R.id.textView3);
         topiv=view.findViewById(R.id.imageView2);
-        footv=view.findViewById(R.id.textView6);
         topiv.setVisibility(View.INVISIBLE);
-        footv.setVisibility(View.INVISIBLE);
         vp =view.findViewById(R.id.pager);
         vp.setPageTransformer(true,new ZoomOutPageTransformer());
         vp.setOffscreenPageLimit(bannerNum);
@@ -449,67 +444,6 @@ public class HomePageFragment extends Fragment {
     }
 
 
-
-
-
-    public class MyViewpager2Adapter extends RecyclerView.Adapter<MyViewpager2Adapter.MyViewHolder> {
-        private ArrayList<NewsDataBean> myData;
-
-
-        public MyViewpager2Adapter(ArrayList<NewsDataBean> myData){
-            this.myData=myData;
-        }
-
-        public  class MyViewHolder extends RecyclerView.ViewHolder {
-
-            public RoundedImageView imageView;
-            public TextView textView;
-            public MyViewHolder(View v) {
-                super(v);
-                imageView=v.findViewById(R.id.imageView);
-                textView=v.findViewById(R.id.textView);
-            }
-        }
-
-        @Override
-        public int getItemViewType(int position){
-            return position;
-        }
-
-
-        @NonNull
-        @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.viewpager_banner, parent, false);
-            return new MyViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-            holder.textView.setText(myData.get(position).title);
-            Glide.with(holder.imageView)
-                    .load(myData.get(position).imageUrl)
-                    //.transition(DrawableTransitionOptions.withCrossFade())
-                    .centerCrop()
-                    .into(holder.imageView);
-            holder.imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent=new Intent(getActivity(), ArticleActivity.class);
-                    intent.putExtra("data_src",myData.get(position).src);
-                    startActivity(intent);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return myData.size();
-        }
-
-    }
-
     public class  MyViewpagerAdapter extends PagerAdapter{
         private ArrayList<NewsDataBean> myData;
 
@@ -570,105 +504,7 @@ public class HomePageFragment extends Fragment {
         }
     }
 
-    public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> {
-        private List<NewsDataBean> mDataset;
-        private Activity mActivity;
 
-        // Provide a reference to the views for each data item
-        // Complex data items may need more than one view per item, and
-        // you provide access to all the views for a data item in a view holder
-        public  class MyViewHolder extends RecyclerView.ViewHolder {
-            // each data item is just a string in this case
-            public TextView textView;
-            public TextView textView2;
-            public TextView textView3;
-            public TextView textView4;
-            public RoundedImageView imageView;
-            public MyViewHolder(View v) {
-                super(v);
-                textView = v.findViewById(R.id.textView4);
-                textView2 = v.findViewById(R.id.textView5);
-                textView3 = v.findViewById(R.id.textView10);
-                textView4=v.findViewById(R.id.textView17);
-                imageView=v.findViewById(R.id.imageView3);
-            }
-        }
-
-        // Provide a suitable constructor (depends on the kind of dataset)
-        public NewsAdapter(List<NewsDataBean> dataset,Activity activity) {
-            mDataset = dataset;
-            mActivity = activity;
-        }
-
-
-        // Create new views (invoked by the layout manager)
-        @Override
-        public NewsAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v =null;
-            if(sharedPreferences.getBoolean("new_image_side",false)){
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_new_left, parent, false);
-            }else {
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_new, parent, false);
-            }
-
-            return new NewsAdapter.MyViewHolder(v);
-        }
-
-        // Replace the contents of a view (invoked by the layout manager)
-        @Override
-        public void onBindViewHolder(final NewsAdapter.MyViewHolder holder, final int position) {
-
-            // - get element from your dataset at this position
-            // - replace the contents of the view with that element
-            holder.textView2.setText(mDataset.get(position).date);
-            holder.textView.setText(Html.fromHtml(mDataset.get(position).title));
-            if(ReadingProgressUtil.getClick(mActivity,mDataset.get(position).id)){
-                holder.textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
-            }else {
-                holder.textView.setTextColor(Color.BLACK);
-            }
-            holder.textView3.setText(mDataset.get(position).sort);
-            if (!mDataset.get(position).commentCount.equals("")) {
-                holder.textView4.setText(mDataset.get(position).commentCount + "评论");
-            }else {
-                holder.textView4.setText("");
-            }
-
-            if(!sharedPreferences.getBoolean("corner",true)){
-                holder.imageView.setCornerRadius(0);
-            }
-            Glide.with(holder.imageView)
-                    .load(mDataset.get(position).imageUrl)
-                    //.transition(DrawableTransitionOptions.withCrossFade())
-                    .into(holder.imageView);
-
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    holder.textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
-                    System.out.println("我是第"+position);
-                    ReadingProgressUtil.putClick(mActivity,mDataset.get(position).id,true);
-                    Intent intent=new Intent(mActivity, ArticleActivity.class);
-                    intent.putExtra("new_data",mDataset.get(position));
-                    mActivity.startActivity(intent);
-                }
-            });
-
-
-        }
-
-
-
-        // Return the size of your dataset (invoked by the layout manager)
-        @Override
-        public int getItemCount() {
-            return mDataset.size();
-        }
-
-
-    }
 
     public class MyHandler extends Handler{
         @Override
@@ -701,11 +537,10 @@ public class HomePageFragment extends Fragment {
                                 System.out.println("更新ui完毕");
                                 myAdapter.notifyDataSetChanged();
                                 if(!firstRun){
-                                    AppUtil.getSnackbar(getContext(),recyclerView,"首页刷新成功").show();
+                                    AppUtil.getSnackbar(getContext(),recyclerView,"首页刷新成功",true).show();
                                 }
                                 firstRun=false;
                                 topiv.setVisibility(View.VISIBLE);
-                                footv.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
 
                             }
@@ -716,7 +551,7 @@ public class HomePageFragment extends Fragment {
 
             }
             if (msg.what==0){
-                AppUtil.getSnackbar(getContext(),recyclerView,"首页加载失败").show();
+                AppUtil.getSnackbar(getContext(),recyclerView,"首页加载失败",true).show();
                 progressBar.setVisibility(View.GONE);
                 refreshLayout.setRefreshing(false);
             }
@@ -755,8 +590,5 @@ public class HomePageFragment extends Fragment {
         super.onPause();
         timer.cancel();
     }
-
-
-
 
 }

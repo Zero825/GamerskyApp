@@ -5,6 +5,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,20 +81,18 @@ public class CommentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_comment, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        View view=inflater.inflate(R.layout.fragment_comment, container, false);
         Bundle args = getArguments();
         if (args != null) {
             data_src = args.getString("data_src");
+            Log.i("TAG", "init: 评论片接收到的链接"+data_src);
+            init(view);
+            loadComment();
+            startListener();
         }
-        System.out.println("评论片接收到的链接"+data_src);
-        init(view);
-        loadComment();
-        startListener();
+        return view;
     }
+
 
     public void init(View view){
         loadimageView=view.findViewById(R.id.imageView9);
@@ -295,26 +294,23 @@ public class CommentFragment extends Fragment {
                                 }
                                 final JSONArray jsonArray = new JSONArray();
                                 ArrayList<String> images = new ArrayList<>();
-                                try{
+                                if(doc.getElementsByClass("qzcmt-picdiv").size()!=0) {
                                     Elements es7 = doc.getElementsByClass("qzcmt-picdiv").get(0)
                                             .getElementsByTag("li");
-
                                     for (int j = 0; j < es7.size(); j++) {
                                         Element element1 = es7.get(j).getElementsByTag("img").get(0);
                                         Element element2 = es7.get(j).getElementsByTag("i").get(0);
                                         JSONObject jsonObject2 = new JSONObject();
                                         jsonObject2.put("tinysquare", element1.attr("src"));
-                                        String origin=element1.attr("src").replace("tinysquare", "origin")
+                                        String origin = element1.attr("src").replace("tinysquare", "origin")
                                                 .replace("small", "origin");
-                                        if(element2.attr("class").equals("gif")){
-                                            origin=origin.replace("jpg","gif");
+                                        if (element2.attr("class").equals("gif")) {
+                                            origin = origin.replace("jpg", "gif");
                                         }
-                                        jsonObject2.put("origin",origin);
+                                        jsonObject2.put("origin", origin);
                                         jsonArray.put(j, jsonObject2);
                                         images.add(element1.attr("src"));
                                     }
-                                }catch (Exception e){
-                                    e.printStackTrace();
                                 }
                                 JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
                                 ArrayList<CommentDataBean> replies=new ArrayList<>();
@@ -327,10 +323,8 @@ public class CommentFragment extends Fragment {
                                     String time=doc1.getElementsByClass("ccmt_time").get(0).html();
                                     String likeNum=doc1.getElementsByClass("digg-btn").get(0).html();
                                     String content=doc1.getElementsByClass("content").get(0).html();
-                                    try{
+                                    if(doc1.getElementsByClass("uname").size()>1){
                                         objectUserName=doc1.getElementsByClass("uname").get(1).html();
-                                    }catch (Exception e){
-                                        e.printStackTrace();
                                     }
                                     try {
                                         String temp=doc1.getElementsByClass("ccmt_all").attr("data-content");
@@ -348,7 +342,6 @@ public class CommentFragment extends Fragment {
                                     ));
                                     repliesCommentId.append(doc1.getElementsByClass("ccmt_reply_cont").get(0).attr("cmtid")).append(",");
                                 }
-                                System.out.println(repliesCommentId);
                                 String src1 = "https://club.gamersky.com/club/api/getcommentlike?" +
                                         "jsondata=" +
                                         "{\"commentIds\":" +"\""+ es5.attr("cmtid")+","+repliesCommentId +"\""+ "}";
@@ -416,7 +409,7 @@ public class CommentFragment extends Fragment {
                                 }
                                 final JSONArray jsonArray = new JSONArray();
                                 ArrayList<String> images = new ArrayList<>();
-                                try{
+                                if(doc.getElementsByClass("qzcmt-picdiv").size()!=0){
                                     Elements es7 = doc.getElementsByClass("qzcmt-picdiv").get(0)
                                             .getElementsByTag("li");
 
@@ -434,10 +427,7 @@ public class CommentFragment extends Fragment {
                                         jsonArray.put(j, jsonObject2);
                                         images.add(element1.attr("src"));
                                     }
-                                }catch (Exception e){
-                                    e.printStackTrace();
                                 }
-
                                 JSONArray jsonArray3 = jsonObject1.getJSONArray("replyContent");
                                 ArrayList<CommentDataBean> replies=new ArrayList<>();
                                 StringBuilder repliesCommentId= new StringBuilder();
@@ -449,10 +439,8 @@ public class CommentFragment extends Fragment {
                                     String time=doc1.getElementsByClass("ccmt_time").get(0).html();
                                     String likeNum=doc1.getElementsByClass("digg-btn").get(0).html();
                                     String content=doc1.getElementsByClass("content").get(0).html();
-                                    try{
+                                    if(doc1.getElementsByClass("uname").size()>1){
                                         objectUserName=doc1.getElementsByClass("uname").get(1).html();
-                                    }catch (Exception e){
-                                        e.printStackTrace();
                                     }
                                     try {
                                         String temp=doc1.getElementsByClass("ccmt_all").attr("data-content");
@@ -548,7 +536,7 @@ public class CommentFragment extends Fragment {
                                                 }
                                                 updateSuspensionBar();
                                                 if(!isFirst) {
-                                                    AppUtil.getSnackbar(getContext(), recyclerView, "评论加载成功").show();
+                                                    AppUtil.getSnackbar(getContext(), recyclerView, "评论加载成功",false).show();
                                                 }
                                                 isFirst=false;
                                             }
@@ -569,7 +557,7 @@ public class CommentFragment extends Fragment {
                                 loadimageView.setImageResource(R.drawable.load_animation);
                                 loadtextView.setText("加载失败");
                                 refreshLayout.setRefreshing(false);
-                                AppUtil.getSnackbar(getContext(),recyclerView,"评论加载失败").show();
+                                AppUtil.getSnackbar(getContext(),recyclerView,"评论加载失败",false).show();
 
                             }
                         });
@@ -749,7 +737,7 @@ public class CommentFragment extends Fragment {
                                                 }
                                                 updateSuspensionBar();
                                                 if(!isFirst) {
-                                                    AppUtil.getSnackbar(getContext(), recyclerView, "评论加载成功").show();
+                                                    AppUtil.getSnackbar(getContext(), recyclerView, "评论加载成功",false).show();
                                                 }
                                                 isFirst=false;
                                             }
@@ -769,7 +757,7 @@ public class CommentFragment extends Fragment {
                                 loadimageView.setImageResource(R.drawable.load_animation);
                                 loadtextView.setText("加载失败");
                                 refreshLayout.setRefreshing(false);
-                                AppUtil.getSnackbar(getContext(), recyclerView, "评论加载失败").show();
+                                AppUtil.getSnackbar(getContext(), recyclerView, "评论加载失败",false).show();
                             }
                         });
                     }
