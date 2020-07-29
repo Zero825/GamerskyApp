@@ -13,16 +13,13 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +35,6 @@ import com.news.gamersky.R;
 import com.news.gamersky.adapter.NewsAdapter;
 import com.news.gamersky.customizeview.BannerViewPager;
 import com.news.gamersky.util.AppUtil;
-import com.news.gamersky.util.ReadingProgressUtil;
-import com.news.gamersky.customizeview.HomePageSwipeRefreshLayout;
 import com.news.gamersky.customizeview.ZoomOutPageTransformer;
 import com.news.gamersky.databean.NewsDataBean;
 
@@ -53,7 +48,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -63,7 +57,7 @@ import static com.news.gamersky.util.AppUtil.is2s;
 
 
 public class HomePageFragment extends Fragment {
-    private HomePageSwipeRefreshLayout refreshLayout;
+    private SwipeRefreshLayout refreshLayout;
     private Timer timer;
     private int bannerNum;
     private ProgressBar progressBar;
@@ -137,7 +131,7 @@ public class HomePageFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(false);
 
 
-        refreshLayout= (HomePageSwipeRefreshLayout)view.findViewById(R.id.refreshLayout1);
+        refreshLayout= view.findViewById(R.id.refreshLayout1);
         refreshLayout.setColorSchemeResources(R.color.colorAccent);
         myHandler=new MyHandler();
         executor= Executors.newSingleThreadExecutor();
@@ -537,7 +531,7 @@ public class HomePageFragment extends Fragment {
                                 System.out.println("更新ui完毕");
                                 myAdapter.notifyDataSetChanged();
                                 if(!firstRun){
-                                    AppUtil.getSnackbar(getContext(),recyclerView,"首页刷新成功",true).show();
+                                    AppUtil.getSnackbar(getContext(),recyclerView,"首页刷新成功",true,true).show();
                                 }
                                 firstRun=false;
                                 topiv.setVisibility(View.VISIBLE);
@@ -551,7 +545,7 @@ public class HomePageFragment extends Fragment {
 
             }
             if (msg.what==0){
-                AppUtil.getSnackbar(getContext(),recyclerView,"首页加载失败",true).show();
+                AppUtil.getSnackbar(getContext(),recyclerView,"首页加载失败",true,true).show();
                 progressBar.setVisibility(View.GONE);
                 refreshLayout.setRefreshing(false);
             }

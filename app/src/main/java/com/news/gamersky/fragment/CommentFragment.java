@@ -29,7 +29,6 @@ import com.news.gamersky.R;
 import com.news.gamersky.RepliesActivity;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.CommentEmojiUtil;
-import com.news.gamersky.customizeview.EndSwipeRefreshLayout;
 import com.news.gamersky.databean.CommentDataBean;
 
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +66,7 @@ public class CommentFragment extends Fragment {
     private LinearLayout commentHeader;
     private int mSuspensionHeight;
     private int mCurrentPosition;
-    private EndSwipeRefreshLayout refreshLayout;
+    private SwipeRefreshLayout refreshLayout;
     private  Document doc;
     private  String srcUrl;
     private  int page;
@@ -536,7 +535,7 @@ public class CommentFragment extends Fragment {
                                                 }
                                                 updateSuspensionBar();
                                                 if(!isFirst) {
-                                                    AppUtil.getSnackbar(getContext(), recyclerView, "评论加载成功",false).show();
+                                                    AppUtil.getSnackbar(getContext(), recyclerView, getResources().getString(R.string.succeed_comment_load),true,false).show();
                                                 }
                                                 isFirst=false;
                                             }
@@ -557,7 +556,7 @@ public class CommentFragment extends Fragment {
                                 loadimageView.setImageResource(R.drawable.load_animation);
                                 loadtextView.setText("加载失败");
                                 refreshLayout.setRefreshing(false);
-                                AppUtil.getSnackbar(getContext(),recyclerView,"评论加载失败",false).show();
+                                AppUtil.getSnackbar(getContext(),recyclerView,getResources().getString(R.string.error_comment_load),true,false).show();
 
                             }
                         });
@@ -737,7 +736,7 @@ public class CommentFragment extends Fragment {
                                                 }
                                                 updateSuspensionBar();
                                                 if(!isFirst) {
-                                                    AppUtil.getSnackbar(getContext(), recyclerView, "评论加载成功",false).show();
+                                                    AppUtil.getSnackbar(getContext(), recyclerView, getResources().getString(R.string.succeed_comment_load),true,false).show();
                                                 }
                                                 isFirst=false;
                                             }
@@ -757,7 +756,7 @@ public class CommentFragment extends Fragment {
                                 loadimageView.setImageResource(R.drawable.load_animation);
                                 loadtextView.setText("加载失败");
                                 refreshLayout.setRefreshing(false);
-                                AppUtil.getSnackbar(getContext(), recyclerView, "评论加载失败",false).show();
+                                AppUtil.getSnackbar(getContext(), recyclerView, getResources().getString(R.string.error_comment_load),true,false).show();
                             }
                         });
                     }

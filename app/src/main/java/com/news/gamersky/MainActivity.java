@@ -1,16 +1,19 @@
 package com.news.gamersky;
 
 import android.animation.ObjectAnimator;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.news.gamersky.fragment.CommentFragment;
 import com.news.gamersky.fragment.HomePageFragment;
 import com.news.gamersky.fragment.NewsFragment;
+import com.news.gamersky.util.AppUtil;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +23,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navView;
     private ObjectAnimator showAnimator;
     private FragmentManager fragmentManager;
+    private FrameLayout hostContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +49,17 @@ public class MainActivity extends AppCompatActivity {
         getWindow().getDecorView()
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         navView = findViewById(R.id.nav_view);
+        hostContainer=findViewById(R.id.nav_host_container);
 
         fragmentManager=getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.nav_host_container, new NewsFragment(), "newsFragment");
+        fragmentTransaction.commit();
 
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sharedPreferences.getBoolean("no_bottombar",true)){
+            navView.setVisibility(View.GONE);
+        }
     }
 
     public void startListen(){
@@ -75,8 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         });
-
-        navView.setSelectedItemId(R.id.navigation_home);
 
         navView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
             @Override
@@ -107,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void exitApp() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Snackbar.make(navView,"再按一次退出应用",1000).show();
+            AppUtil.getSnackbar(this,hostContainer,"首页刷新成功",false,true).show();
             exitTime = System.currentTimeMillis();
         } else {
             finish();

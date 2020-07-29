@@ -119,7 +119,7 @@ public class ArticleFragment extends Fragment {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    Log.i("TAG", "onTouch: "+event.toString());
+                    //Log.i("TAG", "onTouch: "+event.toString());
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             x1=event.getX();
@@ -227,7 +227,7 @@ public class ArticleFragment extends Fragment {
                         "  echo.init({\n" +
                         "    offset: 2000,\n" +
                         "    throttle: 250,\n" +
-                        "    unload: false,\n" +
+                        "    unload: true,\n" +
                         "  });\n" +
 //                        "   $(function() {\n" +
 //                        "       $(\"div\").fadeIn(300);\n"+
@@ -383,7 +383,7 @@ public class ArticleFragment extends Fragment {
             elements6.attr("style","color:#999;text-align:right;font-size:14px");
             for(Element element:elements7){
                 element.attr("width", "100%")
-                        .attr("height", "120");
+                        .attr("height", "auto");
             }
             return doc.toString();
         } catch (Exception e) {
@@ -399,7 +399,6 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onDestroy() {
         ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
-        webView.clearCache(true);
         webView.destroy();
         super.onDestroy();
     }

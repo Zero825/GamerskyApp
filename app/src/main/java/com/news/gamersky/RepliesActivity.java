@@ -625,7 +625,7 @@ public class RepliesActivity extends AppCompatActivity {
                         consumed=false;
                         //Log.i("TAG", "onTouch: "+yVelocity+"\t"+lastYVelocity);
                         velocityTracker.recycle();
-                        if(yVelocity>5000&&lastYVelocity>5000&&!canScrollVertically){
+                        if(yVelocity>3000&&lastYVelocity>3000&&!canScrollVertically){
                             onBackPressed();
                             yVelocity=0;
                             lastYVelocity=0;
@@ -689,7 +689,7 @@ public class RepliesActivity extends AppCompatActivity {
                         velocityTracker.getYVelocity();
                         //Log.i("TAG", "onTouch: "+yVelocity+"\t"+velocityTracker.getYVelocity());
                         velocityTracker.recycle();
-                        if(yVelocity>5000&&lastYVelocity>5000){
+                        if(yVelocity>3000&&lastYVelocity>3000){
                             onBackPressed();
                             break;
                         }

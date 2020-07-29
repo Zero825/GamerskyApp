@@ -28,7 +28,7 @@ public class BottomNavigationBehavior extends CoordinatorLayout.Behavior<View> {
     public void init(Context context){
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
-        isFloatBottomBar=sharedPreferences.getBoolean("float_bottombar",true);
+        isFloatBottomBar=sharedPreferences.getBoolean("float_bottombar",false);
     }
     
     // 垂直滑动

@@ -2,6 +2,7 @@ package com.news.gamersky.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -9,6 +10,8 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.news.gamersky.R;
@@ -60,11 +63,14 @@ public class AppUtil {
         return s;
     }
 
-    public static Snackbar getSnackbar(Context context,View view,String msg,boolean setAnchorView){
+    public static Snackbar getSnackbar(Context context,View view,String msg,boolean primaryColor,boolean setAnchorView){
         Snackbar snackbar= Snackbar.make(view,msg,1000);
-        snackbar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
-        snackbar.setTextColor(Color.BLACK);
-        if(setAnchorView) {
+        if(primaryColor){
+            snackbar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
+            snackbar.setTextColor(Color.BLACK);
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if(!sharedPreferences.getBoolean("no_bottombar",true)&&setAnchorView){
             snackbar.setAnchorView(R.id.nav_view);
         }
         return snackbar;

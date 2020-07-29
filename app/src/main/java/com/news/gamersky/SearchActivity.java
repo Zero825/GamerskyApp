@@ -155,7 +155,7 @@ public class SearchActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.INVISIBLE);
                             searchAdapter.notifyDataSetChanged();
                             if(es1.size()==0){
-                                AppUtil.getSnackbar(SearchActivity.this,recyclerView,"搜索结果为空",false).show();
+                                AppUtil.getSnackbar(SearchActivity.this,recyclerView,getResources().getString(R.string.no_search_result),true,false).show();
                             }
                         }
                     });

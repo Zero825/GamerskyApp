@@ -2,7 +2,6 @@ package com.news.gamersky.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.news.gamersky.R;
 import com.news.gamersky.adapter.NewsAdapter;
-import com.news.gamersky.customizeview.MidSwipeRefreshLayout;
 import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.util.AppUtil;
 
@@ -38,7 +36,7 @@ import static com.news.gamersky.util.AppUtil.is2s;
 
 public class CommonNewsFragment extends Fragment {
     private RecyclerView recyclerView;
-    private MidSwipeRefreshLayout midSwipeRefreshLayout;
+    private SwipeRefreshLayout midSwipeRefreshLayout;
     private NewsAdapter newsAdapter;
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<NewsDataBean> newsData;
@@ -185,7 +183,7 @@ public class CommonNewsFragment extends Fragment {
                             newsAdapter.notifyDataSetChanged();
                             midSwipeRefreshLayout.setRefreshing(false);
                             if(!firstRun) {
-                                AppUtil.getSnackbar(getContext(), recyclerView, "数据刷新成功",true).show();
+                                AppUtil.getSnackbar(getContext(), recyclerView, "数据刷新成功",true,true).show();
                             }
                             firstRun=false;
                         }
@@ -196,7 +194,7 @@ public class CommonNewsFragment extends Fragment {
                         @Override
                         public void run() {
                             midSwipeRefreshLayout.setRefreshing(false);
-                            AppUtil.getSnackbar(getContext(),recyclerView,"数据加载失败",true).show();
+                            AppUtil.getSnackbar(getContext(),recyclerView,"数据加载失败",true,true).show();
                         }
                     });
 

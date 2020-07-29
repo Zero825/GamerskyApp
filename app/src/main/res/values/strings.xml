@@ -10,4 +10,7 @@
     <string name="title_news_tab3">囧图</string>
     <string name="title_article_tab1">正文</string>
     <string name="title_article_tab2">评论</string>
+    <string name="succeed_comment_load">评论加载成功</string>
+    <string name="error_comment_load">评论加载失败</string>
+    <string name="no_search_result">搜索结果为空</string>
 </resources>

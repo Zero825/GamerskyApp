@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -176,6 +177,7 @@ public class NewsFragment extends Fragment {
                     BigImageViewer.imageLoader().cancelAll();
                 }
             }).start();
+            new WebView(getContext()).clearCache(true);
         }
     }
 

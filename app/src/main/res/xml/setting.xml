@@ -25,6 +25,18 @@
             android:summary="重启生效"
             android:title="左侧资讯图片"
             app:iconSpaceReserved="false" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="no_bottombar"
+            android:summary="无底栏"
+            android:title="简洁模式"
+            app:iconSpaceReserved="false"/>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="float_bottombar"
+            android:title="浮动底栏"
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="资讯相关"
@@ -49,11 +61,6 @@
             android:key="swpie_back"
             android:title="文章滑动返回"
             app:iconSpaceReserved="false"/>
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="float_bottombar"
-            android:title="浮动底栏"
-            app:iconSpaceReserved="false"/>
         <SeekBarPreference
             android:key="swipe_back_distance"
             android:defaultValue="35"
@@ -73,7 +80,8 @@
             app:min="0"
             app:showSeekBarValue="true"
             app:summary="默认值：35"
-            app:title="左右滑动灵敏度" />
+            app:title="滑动返回触发高度"
+            app:isPreferenceVisible="false"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="缓存相关"
