@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void exitApp() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            AppUtil.getSnackbar(this,hostContainer,"首页刷新成功",false,true).show();
+            AppUtil.getSnackbar(this,hostContainer,"再次点击退出应用",false,true).show();
             exitTime = System.currentTimeMillis();
         } else {
             finish();
