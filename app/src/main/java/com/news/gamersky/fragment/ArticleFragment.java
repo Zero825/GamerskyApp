@@ -107,9 +107,9 @@ public class ArticleFragment extends Fragment {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
         webView.loadDataWithBaseURL("file:///android_asset", "<div></div>", "text/html", "utf-8", null);
-        if(sharedPreferences.getBoolean("swpie_back",false)){
-            final float dis=sharedPreferences.getInt("swipe_back_distance",35)*8;
-            final float stc=sharedPreferences.getInt("swipe_sides_sensitivity",35)*0.01f;
+        if(sharedPreferences.getBoolean("swpie_back",true)){
+            final float dis=sharedPreferences.getInt("swipe_back_distance",10)*8;
+            final float stc=sharedPreferences.getInt("swipe_sides_sensitivity",50)*0.01f;
             webView.setOnTouchListener(new View.OnTouchListener() {
                 float x1 = 0;
                 float x2 = 0;

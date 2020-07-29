@@ -77,12 +77,6 @@ public class CommonNewsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.i("TAG", "onResume: "+getLifecycle().getCurrentState());
-    }
-
     public void init(View view){
         newsData=new ArrayList<>();
         newsAdapter=new NewsAdapter(newsData,getActivity());

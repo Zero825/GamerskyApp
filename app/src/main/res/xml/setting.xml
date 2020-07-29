@@ -57,31 +57,29 @@
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="swpie_back"
             android:title="文章滑动返回"
             app:iconSpaceReserved="false"/>
         <SeekBarPreference
             android:key="swipe_back_distance"
-            android:defaultValue="35"
+            android:defaultValue="10"
             android:max="100"
             app:iconSpaceReserved="false"
             app:min="10"
             app:showSeekBarValue="true"
             app:title="滑动返回触发距离"
-            app:summary="默认值：35"
-            app:isPreferenceVisible="false">
+            app:summary="默认值：10">
         </SeekBarPreference>
         <SeekBarPreference
-            android:defaultValue="35"
+            android:defaultValue="50"
             android:key="swipe_sides_sensitivity"
             android:max="100"
             app:iconSpaceReserved="false"
             app:min="0"
             app:showSeekBarValue="true"
-            app:summary="默认值：35"
-            app:title="滑动返回触发高度"
-            app:isPreferenceVisible="false"/>
+            app:summary="默认值：50"
+            app:title="滑动返回触发高度" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="缓存相关"

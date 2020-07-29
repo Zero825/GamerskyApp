@@ -577,6 +577,7 @@ public class RepliesActivity extends AppCompatActivity {
             float ry=0;
             float dis=0;
             boolean canScrollVertically=false;
+            boolean isCanScrollVertically=false;
             boolean consumed=false;
             VelocityTracker velocityTracker;
 
@@ -595,6 +596,7 @@ public class RepliesActivity extends AppCompatActivity {
                         if(animSetIn.isRunning()||animSetOut.isRunning()) break;
                         if(ry==0f){
                             ry=event.getY();
+                            isCanScrollVertically=recyclerView.canScrollVertically(-1);
                         }
                         dis = constraintLayout.getTranslationY() + event.getY() - ry;
                         if(!recyclerView.canScrollVertically(-1)&&dis > 0) {
@@ -625,11 +627,14 @@ public class RepliesActivity extends AppCompatActivity {
                         consumed=false;
                         //Log.i("TAG", "onTouch: "+yVelocity+"\t"+lastYVelocity);
                         velocityTracker.recycle();
-                        if(yVelocity>3000&&lastYVelocity>3000&&!canScrollVertically){
+                        if(yVelocity>3000&&lastYVelocity>3000&&!isCanScrollVertically){
                             onBackPressed();
                             yVelocity=0;
                             lastYVelocity=0;
                             break;
+                        }else {
+                            yVelocity=0;
+                            lastYVelocity=0;
                         }
                         if (constraintLayout.getTranslationY() > constraintLayout.getHeight() / 3f) {
                             onBackPressed();
