@@ -6,12 +6,17 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -62,6 +67,8 @@ public class RepliesActivity extends AppCompatActivity {
     private  int flag;
     private int lastFlag;
     private ExecutorService executor;
+    private AnimatorSet animSetIn;
+    private AnimatorSet animSetOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +81,8 @@ public class RepliesActivity extends AppCompatActivity {
 
     public void init(){
         getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        |View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         headTextView=findViewById(R.id.textView20);
         constraintLayout=findViewById(R.id.constraintLayout);
         imageButton=findViewById(R.id.imageButton);
@@ -89,6 +97,7 @@ public class RepliesActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getRealSize(point);
         constraintLayout.setY(point.y);
         mask.setAlpha(0f);
+        constraintLayout.setTranslationY(point.y);
         repliesData=new ArrayList<>();
 
         recyclerView=findViewById(R.id.replies_recycler_view);
@@ -102,7 +111,8 @@ public class RepliesActivity extends AppCompatActivity {
         flag=0;
         lastFlag=0;
         executor= Executors.newSingleThreadExecutor();
-
+        animSetIn = new AnimatorSet();
+        animSetOut = new AnimatorSet();
     }
 
     public void loadReplies(){
@@ -263,7 +273,7 @@ public class RepliesActivity extends AppCompatActivity {
                                         jsonObject1.getString("userName"),
                                         format(jsonObject1.getLong("createTime")),
                                         "赞:" + jsonObject1.getString("praisesCount"),
-                                         jsonObject1.getString("replyContent"),
+                                        jsonObject1.getString("replyContent"),
                                         jsonObject1.getString("objectUserName")
 
                                 ));
@@ -489,14 +499,13 @@ public class RepliesActivity extends AppCompatActivity {
     }
 
     public void startAnimator(){
-        ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(constraintLayout, "translationY", point.y, 0f);
-        ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(mask, "alpha", 0f, 1f);
+        ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(constraintLayout, "translationY", constraintLayout.getTranslationY(), 0f);
+        ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(mask, "alpha", mask.getAlpha(), 1f);
         objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
-        AnimatorSet animSet = new AnimatorSet();
-        animSet.play(objectAnimator1).with(objectAnimator2);
-        animSet.setDuration(300);
-        animSet.start();
+        animSetIn.play(objectAnimator1).with(objectAnimator2);
+        animSetIn.setDuration(300);
+        animSetIn.start();
     }
 
     public void endAnimator(){
@@ -504,14 +513,35 @@ public class RepliesActivity extends AppCompatActivity {
         ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(mask, "alpha", mask.getAlpha(), 0f);
         objectAnimator1.setInterpolator(new AccelerateDecelerateInterpolator());
         objectAnimator2.setInterpolator(new AccelerateDecelerateInterpolator());
-        AnimatorSet animSet = new AnimatorSet();
-        animSet.play(objectAnimator1).with(objectAnimator2);
-        animSet.setDuration(300);
-        animSet.start();
+        animSetOut.play(objectAnimator1).with(objectAnimator2);
+        animSetOut.setDuration(300);
+        animSetOut.start();
+        animSetOut.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                finish();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 
 
 
+    @SuppressLint("ClickableViewAccessibility")
     public void startListen(){
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -541,6 +571,76 @@ public class RepliesActivity extends AppCompatActivity {
             }
 
         });
+        recyclerView.setOnTouchListener(new View.OnTouchListener() {
+            int yVelocity=0;
+            int lastYVelocity=0;
+            float ry=0;
+            float dis=0;
+            boolean canScrollVertically=false;
+            boolean consumed=false;
+            VelocityTracker velocityTracker;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //Log.i("TAG", event.toString());
+                velocityTracker = VelocityTracker.obtain();
+                velocityTracker.addMovement(event);
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        consumed=false;
+                        if(animSetIn.isRunning()||animSetOut.isRunning()) break;
+                        if(ry==0f){
+                            ry=event.getY();
+                        }
+                        dis = constraintLayout.getTranslationY() + event.getY() - ry;
+                        if(!recyclerView.canScrollVertically(-1)&&dis > 0) {
+                            if(recyclerView.canScrollVertically(-1)==canScrollVertically) {
+                                constraintLayout.setTranslationY(dis);
+                                consumed=true;
+                            }else {
+                                ry=event.getY();
+                            }
+                        }else if(!recyclerView.canScrollVertically(-1)&&dis < 0){
+                            constraintLayout.setTranslationY(0);
+                        }
+                        if(recyclerView.canScrollVertically(-1)){
+                            canScrollVertically=true;
+                        }else {
+                            canScrollVertically=false;
+                        }
+                        velocityTracker.computeCurrentVelocity(1000);
+                        if(velocityTracker.getYVelocity()>0){
+                            lastYVelocity=(int) velocityTracker.getYVelocity();
+                        }
+                        if(yVelocity<(int) velocityTracker.getYVelocity()){
+                            yVelocity = (int) velocityTracker.getYVelocity();
+                        }
+                        return consumed;
+                    case MotionEvent.ACTION_UP:
+                        ry=0f;
+                        consumed=false;
+                        //Log.i("TAG", "onTouch: "+yVelocity+"\t"+lastYVelocity);
+                        velocityTracker.recycle();
+                        if(yVelocity>3000&&lastYVelocity>3000&&!canScrollVertically){
+                            onBackPressed();
+                            yVelocity=0;
+                            lastYVelocity=0;
+                            break;
+                        }
+                        if (constraintLayout.getTranslationY() > constraintLayout.getHeight() / 3f) {
+                            onBackPressed();
+                        } else {
+                            startAnimator();
+                        }
+                        break;
+                }
+                return consumed;
+            }
+        });
 
         headTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -548,14 +648,69 @@ public class RepliesActivity extends AppCompatActivity {
                 upTop();
             }
         });
+        headTextView.setOnTouchListener(new View.OnTouchListener() {
+            float ry=0;
+            float dis=0;
+            int yVelocity=0;
+            int lastYVelocity=0;
+            boolean consumed=false;
+            VelocityTracker velocityTracker;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                velocityTracker = VelocityTracker.obtain();
+                velocityTracker.addMovement(event);
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ry=event.getY();
+                        consumed=false;
+                        yVelocity=0;
+                        lastYVelocity=0;
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        consumed=true;
+                        dis=constraintLayout.getTranslationY()+event.getY()-ry;
+                        if(dis>0)
+                            constraintLayout.setTranslationY(dis);
+                        velocityTracker.computeCurrentVelocity(1000);
+                        if(velocityTracker.getYVelocity()>0){
+                            lastYVelocity=(int) velocityTracker.getYVelocity();
+                        }
+                        if(yVelocity<(int) velocityTracker.getYVelocity()){
+                            yVelocity = (int) velocityTracker.getYVelocity();
+                        }
+
+                        //Log.i("TAG", "onTouch: "+velocityTracker.getYVelocity());
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        consumed=false;
+                        velocityTracker.getYVelocity();
+                        //Log.i("TAG", "onTouch: "+yVelocity+"\t"+velocityTracker.getYVelocity());
+                        velocityTracker.recycle();
+                        if(yVelocity>3000&&lastYVelocity>3000){
+                            onBackPressed();
+                            break;
+                        }
+                        if(constraintLayout.getTranslationY()>constraintLayout.getHeight()/3f){
+                            onBackPressed();
+                        }else {
+                            startAnimator();
+                        }
+                        break;
+                }
+
+                return consumed;
+            }
+        });
 
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         endAnimator();
-
+        //super.onBackPressed();
     }
 
     public class RepliesAdapter extends RecyclerView.Adapter {
@@ -599,25 +754,25 @@ public class RepliesActivity extends AppCompatActivity {
             }
 
             public void bindView(int position){
-                 textView1.setText( commentData.userName);
+                textView1.setText( commentData.userName);
                 if( commentData.content.equals("")){
                     textView2.setVisibility(View.GONE);
                 }else {
-                     textView2.setVisibility(View.VISIBLE);
-                     textView2.setText(CommentEmojiUtil.getEmojiString( commentData.content));
+                    textView2.setVisibility(View.VISIBLE);
+                    textView2.setText(CommentEmojiUtil.getEmojiString( commentData.content));
                 }
                 textView6.setVisibility(View.GONE);
 
                 textView3.setText( commentData.time);
-                 textView4.setText( commentData.floor);
-                 textView5.setText( commentData.likeNum);
+                textView4.setText( commentData.floor);
+                textView5.setText( commentData.likeNum);
                 if(! commentData.userImage.equals("")) {
                     Glide.with( imageView)
                             .load( commentData.userImage)
                             .centerCrop()
                             .into( imageView);
                 }
-                 gridLayout.removeAllViews();
+                gridLayout.removeAllViews();
                 final ImageView[] imageViews=new ImageView[ commentData.images.size()];
                 for (int i=0;i< commentData.images.size();i++){
                     View ic = LayoutInflater.from(RepliesActivity.this)
@@ -640,7 +795,7 @@ public class RepliesActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-                     gridLayout.addView(ic);
+                    gridLayout.addView(ic);
                 }
                 if(commentData.images.size()==0){
                     gridLayout.setVisibility(View.GONE);
