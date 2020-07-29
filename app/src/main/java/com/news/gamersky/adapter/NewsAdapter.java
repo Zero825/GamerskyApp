@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,8 @@ public class NewsAdapter extends RecyclerView.Adapter {
     private List<NewsDataBean> mDataset;
     private Context context;
     private boolean moreData;
-    private SharedPreferences sharedPreferences;
+    private boolean corner;
+    private boolean imageSide;
 
     public  class NewsListViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
@@ -61,12 +63,11 @@ public class NewsAdapter extends RecyclerView.Adapter {
             }else {
                 textView4.setText("");
             }
-            if(!sharedPreferences.getBoolean("corner",true)){
+            if(!corner){
                 imageView.setCornerRadius(0);
             }
             Glide.with(imageView)
                     .load(mDataset.get(position).imageUrl)
-                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imageView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -112,8 +113,11 @@ public class NewsAdapter extends RecyclerView.Adapter {
         this.mDataset = dataset;
         this.context = context;
         this.moreData=true;
-        sharedPreferences =
+        SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
+        corner=sharedPreferences.getBoolean("corner",false);
+        imageSide=sharedPreferences.getBoolean("new_image_side",false);
+        //Log.i("TAG", "NewsAdapter: "+corner+"\t"+imageSide);
     }
 
     @Override
@@ -129,7 +133,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v=null;
         if(viewType==0){
-            if(sharedPreferences.getBoolean("new_image_side",false)){
+            if(imageSide){
                 v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.recyclerview_new_left, parent, false);
             }else {

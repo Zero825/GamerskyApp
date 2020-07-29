@@ -10,19 +10,19 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="corner"
-            android:summary="重启生效"
+            android:summary="重启应用生效"
             android:title="资讯图片圆角"
             app:iconSpaceReserved="false" />
         <SwitchPreference
             android:defaultValue="true"
             android:key="page_both_sides"
-            android:summary="重启生效"
+            android:summary="重启应用生效"
             android:title="显示两侧预览"
             app:iconSpaceReserved="false" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="new_image_side"
-            android:summary="重启生效"
+            android:summary="重启应用生效"
             android:title="左侧资讯图片"
             app:iconSpaceReserved="false" />
         <SwitchPreference

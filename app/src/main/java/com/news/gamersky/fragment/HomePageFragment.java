@@ -460,16 +460,35 @@ public class HomePageFragment extends Fragment {
             View v = LayoutInflater.from(container.getContext())
                     .inflate(R.layout.viewpager_banner, container, false);
             TextView textView=v.findViewById(R.id.textView);
-            RoundedImageView imageView=v.findViewById(R.id.imageView);
+            final RoundedImageView imageView=v.findViewById(R.id.imageView);
             if(!sharedPreferences.getBoolean("corner",false)){
                 imageView.setCornerRadius(0);
             }
             textView.setText(myData.get(position).title);
-            Glide.with(imageView)
-                    .load(myData.get(position).imageUrl)
-                    //.transition(DrawableTransitionOptions.withCrossFade())
-                    .centerCrop()
-                    .into(imageView);
+            if(firstRun&&position==0){
+                Timer timer=new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        imageView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Glide.with(imageView)
+                                        .load(myData.get(position).imageUrl)
+                                        //.transition(DrawableTransitionOptions.withCrossFade())
+                                        .centerCrop()
+                                        .into(imageView);
+                            }
+                        });
+                    }
+                },200);
+            }else {
+                Glide.with(imageView)
+                        .load(myData.get(position).imageUrl)
+                        //.transition(DrawableTransitionOptions.withCrossFade())
+                        .centerCrop()
+                        .into(imageView);
+            }
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
