@@ -5,23 +5,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
-
+import androidx.viewpager.widget.ViewPager;
 
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
 import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ArticleActivity extends AppCompatActivity{
@@ -29,82 +26,54 @@ public class ArticleActivity extends AppCompatActivity{
     private NewsDataBean new_data;
     private ImageView imageView1;
     private ImageView imageView2;
-    private ViewPager2 viewPager;
-    private CollectionAdapter collectionAdapter;
+    private ViewPager viewPager;
+    private ViewPagerFragmentAdapter viewPagerFragmentAdapter;
+    private List<Fragment> fragments;
+    private List<String> tabTitles;
     private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news);
+        setContentView(R.layout.activity_article);
         init();
         setListen();
     }
 
     public void init(){
         getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         Intent intent = getIntent();
         new_data = (NewsDataBean) intent.getSerializableExtra("new_data");
-        collectionAdapter = new CollectionAdapter(getSupportFragmentManager(), getLifecycle());
+
         imageView1=findViewById(R.id.imageView5);
         imageView2=findViewById(R.id.imageView12);
         viewPager = findViewById(R.id.pager2);
-        viewPager.setAdapter(collectionAdapter);
-        viewPager.setOffscreenPageLimit(2);
         tabLayout = findViewById(R.id.tab_layout);
+
+        tabTitles=new ArrayList<>();
+        tabTitles.add(getResources().getString(R.string.title_article_tab1));
+        tabTitles.add(getResources().getString(R.string.title_article_tab2));
+
+        fragments=new ArrayList<>();
+        fragments.add(new ArticleFragment());
+        fragments.add(new CommentFragment());
+
+        Bundle bundle = new Bundle();
+        bundle.putString( "data_src", new_data.src);
+        for(int i=0;i<fragments.size();i++){
+            fragments.get(i).setArguments(bundle);
+        }
+
+        viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(),fragments,tabTitles,0);
+        viewPager.setAdapter(viewPagerFragmentAdapter);
+        viewPager.setOffscreenPageLimit(viewPagerFragmentAdapter.getCount());
         tabLayout.setTabIndicatorFullWidth(false);
-        new TabLayoutMediator(tabLayout, viewPager,
-                new TabLayoutMediator.TabConfigurationStrategy() {
-                    @Override
-                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                        if(position==0) tab.setText("正文");
-                        else if (position==1)tab.setText("评论");
-                    }
-                }
-        ).attach();
+        tabLayout.setupWithViewPager(viewPager);
     }
 
 
-    public class CollectionAdapter extends FragmentStateAdapter {
-        public HashMap<Integer,Fragment> fragmentHashMap;
 
-        public CollectionAdapter(FragmentManager fm, Lifecycle lifecycle) {
-            super(fm,lifecycle);
-            fragmentHashMap=new HashMap<>();
-        }
-
-        @NonNull
-        @Override
-        public Fragment createFragment(int position) {
-            Fragment fragment=new Fragment();
-            if (position==0) {
-                fragment = new ArticleFragment();
-            }
-            if(position==1) {
-                fragment = new CommentFragment();
-            }
-            Bundle args = new Bundle();
-            args.putString("data_src",new_data.src);
-            fragment.setArguments(args);
-            fragmentHashMap.put(position,fragment);
-            return fragment;
-        }
-
-        @Override
-        public int getItemCount() {
-            return 2;
-        }
-
-        public Fragment getFragment(int position){
-            if(fragmentHashMap.containsKey(position)){
-                return fragmentHashMap.get(position);
-            }else {
-                return null;
-            }
-        }
-
-    }
 
     public void setListen(){
 
@@ -125,20 +94,23 @@ public class ArticleActivity extends AppCompatActivity{
             }
         });
 
-        tabLayout.getTabAt(0).view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(viewPager.getCurrentItem()==0)
-                    ((ArticleFragment)collectionAdapter.getFragment(0)).upTop();
-            }
-        });
-        tabLayout.getTabAt(1).view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(viewPager.getCurrentItem()==1)
-                ((CommentFragment)collectionAdapter.getFragment(1)).upTop();
-            }
-        });
+        for(int i=0;i<tabLayout.getTabCount();i++){
+            final int p = i;
+            tabLayout.getTabAt(i).view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
+                    Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+p);
+                    if(p==0&&p==viewPager.getCurrentItem()) {
+                        ((ArticleFragment) fragment).upTop();
+                    }
+                    if(p==1&&p==viewPager.getCurrentItem()) {
+                        ((CommentFragment) fragment).upTop();
+                    }
+                }
+            });
+        }
+
 
     }
 
@@ -150,16 +122,16 @@ public class ArticleActivity extends AppCompatActivity{
     @Override
     public void onPause() {
         super.onPause();
-        if(collectionAdapter.getFragment(0)!=null)
-            ((ArticleFragment)collectionAdapter.getFragment(0)).pauseWebView();
+        if(fragments.get(0)!=null)
+            ((ArticleFragment)fragments.get(0)).pauseWebView();
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(collectionAdapter.getFragment(0)!=null)
-            ((ArticleFragment)collectionAdapter.getFragment(0)).resumeWebView();
+        if(fragments.get(0)!=null)
+            ((ArticleFragment)fragments.get(0)).resumeWebView();
     }
 
 }

@@ -30,7 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportActionBar().setElevation(0);
         }
         getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 
 
     }
@@ -51,16 +51,38 @@ public class SettingsActivity extends AppCompatActivity {
             final Preference preference=findPreference("manual_clear_cache");
             SwitchPreference switchPreference=findPreference("swpie_back");
             final SeekBarPreference seekBarPreference=findPreference("swipe_back_distance");
+            final SeekBarPreference seekBarPreference1=findPreference("swipe_sides_sensitivity");
+            final SwitchPreference switchPreference1=findPreference("no_bottombar");
+            final SwitchPreference switchPreference2=findPreference("float_bottombar");
             if(switchPreference.isChecked()){
                 seekBarPreference.setVisible(true);
+                seekBarPreference1.setVisible(true);
+            }
+            if(!switchPreference1.isChecked()){
+                switchPreference2.setVisible(true);
             }
             switchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     if((boolean)newValue){
                         seekBarPreference.setVisible(true);
+                        seekBarPreference1.setVisible(true);
                     }else {
                         seekBarPreference.setVisible(false);
+                        seekBarPreference1.setVisible(false);
+                    }
+                    return true;
+                }
+            });
+            switchPreference1.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    if((boolean)newValue){
+                        switchPreference2.setVisible(false);
+                        switchPreference2.setChecked(false);
+                    }else {
+                        switchPreference2.setVisible(true);
+                        switchPreference2.setChecked(true);
                     }
                     return true;
                 }

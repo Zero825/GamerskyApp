@@ -46,7 +46,7 @@
             android:id="@+id/imageButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="7dp"
             android:background="@drawable/pressed_circle"
             android:padding="8dp"
             android:scaleType="fitCenter"

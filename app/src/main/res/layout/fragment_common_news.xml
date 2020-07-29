@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.news.gamersky.customizeview.MidSwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -19,5 +19,5 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-    </com.news.gamersky.customizeview.MidSwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

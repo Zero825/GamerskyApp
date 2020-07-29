@@ -13,8 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
-        <activity android:name=".SearchActivity" />
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SearchActivity" />
         <activity
             android:name=".RepliesActivity"
             android:launchMode="singleTop"
@@ -30,7 +31,7 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:launchMode="singleTop"
-            android:theme="@style/SettingTheme" />
+            android:theme="@style/SettingsTheme" />
         <activity
             android:name=".ArticleActivity"
             android:launchMode="singleTop" />

@@ -1,16 +1,10 @@
 package com.news.gamersky.fragment;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,15 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.makeramen.roundedimageview.RoundedImageView;
-import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
-import com.news.gamersky.customizeview.EndSwipeRefreshLayout;
+import com.news.gamersky.adapter.NewsAdapter;
 import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.util.AppUtil;
-import com.news.gamersky.util.ReadingProgressUtil;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -39,17 +28,15 @@ import org.jsoup.select.Elements;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.acl.Group;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.news.gamersky.util.AppUtil.is2s;
 
-public class InterestingImagesFragment extends Fragment {
+public class CommonNewsFragment extends Fragment {
     private RecyclerView recyclerView;
-    private EndSwipeRefreshLayout midSwipeRefreshLayout;
+    private SwipeRefreshLayout midSwipeRefreshLayout;
     private NewsAdapter newsAdapter;
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<NewsDataBean> newsData;
@@ -60,21 +47,25 @@ public class InterestingImagesFragment extends Fragment {
     private  int flag;
     private int lastFlag;
     private boolean firstRun;
+    private String src;
+    private int nodeIdPos;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_interesting_images, container, false);
+        View view=inflater.inflate(R.layout.fragment_common_news, container, false);
+        Bundle args = getArguments();
+        if (args != null) {
+            src=args.getString("src");
+            nodeIdPos=args.getInt("nodeIdPos");
+            init(view);
+            loadNews();
+            startListen();
+        }
+        return view;
     }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        init(view);
-        loadNews();
-        startListen();
-    }
-
 
 
     public void init(View view){
@@ -107,9 +98,9 @@ public class InterestingImagesFragment extends Fragment {
             public void run() {
                 try {
                     final ArrayList<NewsDataBean> tempData=new ArrayList<>();
-                    Document doc= Jsoup.connect("https://www.gamersky.com/ent/qw").get();
+                    Document doc= Jsoup.connect(src).get();
                     Element e=doc.getElementsByClass("pictxt contentpaging")
-                            .get(0);
+                            .get(nodeIdPos);
                     nodeId=e.attr("data-nodeId");
                     if(nodeId!=null) {
                         String src = "https://db2.gamersky.com/LabelJsonpAjax.aspx?" +
@@ -141,12 +132,12 @@ public class InterestingImagesFragment extends Fragment {
                             final Elements es1=document.getElementsByTag("li");
                             for(int i=0;i<es1.size();i++){
                                 Element e1=es1.get(i);
-                                String id=AppUtil.urlToId(e1.getElementsByTag("a").get(0).attr("href"));
+                                String id= AppUtil.urlToId(e1.getElementsByTag("a").get(0).attr("href"));
                                 String title=e1.getElementsByTag("a").get(1).html();
                                 String src1="https://wap.gamersky.com/news/Content-"+id;
                                 String date=e1.getElementsByClass("time").get(0).html();
                                 String imageUrl=e1.getElementsByTag("img").get(0).attr("src");
-                                String sort="囧图";
+                                String sort="娱乐";
                                 String commentCount="";
                                 tempData.add(new NewsDataBean(id,imageUrl,title,src1,date,sort,commentCount));
                             }
@@ -192,7 +183,7 @@ public class InterestingImagesFragment extends Fragment {
                             newsAdapter.notifyDataSetChanged();
                             midSwipeRefreshLayout.setRefreshing(false);
                             if(!firstRun) {
-                                AppUtil.getSnackbar(getContext(), recyclerView, "数据刷新成功").show();
+                                AppUtil.getSnackbar(getContext(), recyclerView, "数据刷新成功",true,true).show();
                             }
                             firstRun=false;
                         }
@@ -203,7 +194,7 @@ public class InterestingImagesFragment extends Fragment {
                         @Override
                         public void run() {
                             midSwipeRefreshLayout.setRefreshing(false);
-                            AppUtil.getSnackbar(getContext(),recyclerView,"数据加载失败").show();
+                            AppUtil.getSnackbar(getContext(),recyclerView,"数据加载失败",true,true).show();
                         }
                     });
 
@@ -254,7 +245,7 @@ public class InterestingImagesFragment extends Fragment {
                                 String src1="https://wap.gamersky.com/news/Content-"+id;
                                 String date=e1.getElementsByClass("time").get(0).html();
                                 String imageUrl=e1.getElementsByTag("img").get(0).attr("src");
-                                String sort="囧图";
+                                String sort="娱乐";
                                 String commentCount="";
                                 tempData.add(new NewsDataBean(id,imageUrl,title,src1,date,sort,commentCount));
                             }
@@ -341,149 +332,6 @@ public class InterestingImagesFragment extends Fragment {
 
     public void upTop(){
         recyclerView.smoothScrollToPosition(0);
-    }
-
-    public class NewsAdapter extends RecyclerView.Adapter {
-        private List<NewsDataBean> mDataset;
-        private Activity mActivity;
-        private boolean moreData;
-
-        public  class NewsListViewHolder extends RecyclerView.ViewHolder {
-            public TextView textView;
-            public TextView textView2;
-            public TextView textView3;
-            public TextView textView4;
-            public RoundedImageView imageView;
-
-            public NewsListViewHolder(View v) {
-                super(v);
-                textView = v.findViewById(R.id.textView4);
-                textView2 = v.findViewById(R.id.textView5);
-                textView3 = v.findViewById(R.id.textView10);
-                textView4=v.findViewById(R.id.textView17);
-                imageView=v.findViewById(R.id.imageView3);
-            }
-
-            public void bindView(final int position){
-
-                textView2.setText(mDataset.get(position).date);
-               textView.setText(Html.fromHtml(mDataset.get(position).title));
-                if(ReadingProgressUtil.getClick(mActivity,mDataset.get(position).id)){
-                    textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
-                }else {
-                    textView.setTextColor(Color.BLACK);
-                }
-                textView3.setText(mDataset.get(position).sort);
-                if (!mDataset.get(position).commentCount.equals("")) {
-                    textView4.setText(mDataset.get(position).commentCount + "评论");
-                }else {
-                    textView4.setText("");
-                }
-                if(!sharedPreferences.getBoolean("corner",true)){
-                    imageView.setCornerRadius(0);
-                }
-                Glide.with(imageView)
-                        .load(mDataset.get(position).imageUrl)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(imageView);
-
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                       textView.setTextColor(mActivity.getResources().getColor(R.color.defaultColor));
-                        System.out.println("我是第"+position);
-                        ReadingProgressUtil.putClick(mActivity,mDataset.get(position).id,true);
-                        Intent intent=new Intent(mActivity, ArticleActivity.class);
-                        intent.putExtra("new_data",mDataset.get(position));
-                        mActivity.startActivity(intent);
-                    }
-                });
-            }
-        }
-
-        public  class FooterViewHolder extends RecyclerView.ViewHolder {
-
-            public TextView textView;
-
-            public FooterViewHolder(View v) {
-                super(v);
-                textView=v.findViewById(R.id.textView8);
-            }
-
-            public void bindView(int position){
-
-                if(mDataset.size()==0){
-                    textView.setVisibility(View.GONE);
-                }
-                else {
-                    textView.setVisibility(View.VISIBLE);
-                    if(moreData) {
-                        textView.setText("请稍等");
-                    }else {
-                        textView.setText("没有了，没有奇迹了");
-                    }
-                }
-            }
-        }
-
-        public NewsAdapter(List<NewsDataBean> dataset,Activity activity) {
-            mDataset = dataset;
-            mActivity = activity;
-            moreData=true;
-        }
-
-        @Override
-        public int getItemViewType(int position){
-            int i=0;
-            if(position==mDataset.size()){
-                i=1;
-            }
-            return i;
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v=null;
-            if(viewType==0){
-                if(sharedPreferences.getBoolean("new_image_side",false)){
-                    v = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.recyclerview_new_left, parent, false);
-                }else {
-                    v = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.recyclerview_new, parent, false);
-                }
-                return new NewsListViewHolder(v);
-            }
-            if(viewType==1){
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_header, parent, false);
-                return new FooterViewHolder(v);
-            }
-            return new NewsListViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-            int vt=holder.getItemViewType();
-            if(vt==0){
-                ((NewsListViewHolder)holder).bindView(position);
-            }
-            if(vt==1){
-                ((FooterViewHolder)holder).bindView(position);
-            }
-
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return mDataset.size()+1;
-        }
-
-        public void setNoMore(boolean b){
-            moreData=!b;
-        }
-
     }
 
 }

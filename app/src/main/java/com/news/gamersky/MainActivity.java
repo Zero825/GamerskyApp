@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view, "ScaleX", view.getScaleX(),1.15f);
         ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view, "ScaleY", view.getScaleY(), 1.15f);
         AnimatorSet animSet = new AnimatorSet();
-        animSet.playTogether(objectAnimator1,objectAnimator2);
+        animSet.play(objectAnimator1).with(objectAnimator2);
         animSet.setDuration(300);
         animSet.start();
     }
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view, "ScaleX", view.getScaleX(), 1.0f);
         ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view, "ScaleY", view.getScaleY(), 1.0f);
         AnimatorSet animSet = new AnimatorSet();
-        animSet.playTogether(objectAnimator1,objectAnimator2);
+        animSet.play(objectAnimator1).with(objectAnimator2);
         animSet.setDuration(300);
         animSet.start();
     }
