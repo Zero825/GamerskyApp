@@ -2,6 +2,7 @@ package com.news.gamersky.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,12 +62,26 @@ public class CommonNewsFragment extends Fragment {
             src=args.getString("src");
             nodeIdPos=args.getInt("nodeIdPos");
             init(view);
-            loadNews();
+            //loadNews();
             startListen();
         }
         return view;
     }
 
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(firstRun&&isVisibleToUser){
+            loadNews();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("TAG", "onResume: "+getLifecycle().getCurrentState());
+    }
 
     public void init(View view){
         newsData=new ArrayList<>();
