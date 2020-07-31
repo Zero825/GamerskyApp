@@ -51,8 +51,8 @@ public class SearchActivity extends AppCompatActivity {
     }
     
     private void init(){
-        getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+//        getWindow().getDecorView()
+//                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         progressBar=findViewById(R.id.progressBar4);
         searchView=findViewById(R.id.view_search);
         searchView.setIconifiedByDefault(false);

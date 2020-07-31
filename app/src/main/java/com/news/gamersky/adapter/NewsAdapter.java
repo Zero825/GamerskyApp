@@ -55,7 +55,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
             if(ReadingProgressUtil.getClick(context,mDataset.get(position).id)){
                 textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
             }else {
-                textView.setTextColor(Color.BLACK);
+                textView.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
             }
             textView3.setText(mDataset.get(position).sort);
             if (!mDataset.get(position).commentCount.equals("")) {

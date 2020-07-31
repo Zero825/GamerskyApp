@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <PreferenceCategory
-        android:title="样式相关"
+        android:title="主题相关"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
+
+        <ListPreference
+            android:defaultValue="2"
+            android:entries="@array/night_mode"
+            android:entryValues="@array/night_mode_values"
+            android:key="night_mode"
+            android:title="@string/night_mode"
+            app:iconSpaceReserved="false" />
 
         <SwitchPreference
             android:defaultValue="false"

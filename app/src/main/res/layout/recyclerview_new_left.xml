@@ -41,7 +41,7 @@
                 android:ellipsize="end"
                 android:lineSpacingExtra="2sp"
                 android:text="TextView"
-                android:textColor="#000000"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="normal" />
 

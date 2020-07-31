@@ -41,8 +41,8 @@ public class ArticleActivity extends AppCompatActivity{
     }
 
     public void init(){
-        getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+//        getWindow().getDecorView()
+//                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         Intent intent = getIntent();
         new_data = (NewsDataBean) intent.getSerializableExtra("new_data");
 
@@ -119,19 +119,5 @@ public class ArticleActivity extends AppCompatActivity{
         super.onBackPressed();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(fragments.get(0)!=null)
-            ((ArticleFragment)fragments.get(0)).pauseWebView();
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(fragments.get(0)!=null)
-            ((ArticleFragment)fragments.get(0)).resumeWebView();
-    }
 
 }

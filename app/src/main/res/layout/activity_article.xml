@@ -8,6 +8,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal">
 
 
@@ -22,7 +23,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/back" />
+            app:srcCompat="@drawable/icon_back" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -32,8 +33,8 @@
             app:layout_constraintEnd_toStartOf="@+id/imageView12"
             app:layout_constraintStart_toEndOf="@id/imageView5"
             app:layout_constraintTop_toTopOf="parent"
-            app:tabMode="auto"
             app:tabBackground="@color/tc"
+            app:tabMode="auto"
             app:tabRippleColor="@color/tc">
 
             <com.google.android.material.tabs.TabItem

@@ -13,6 +13,6 @@
       android:fillType="evenOdd"/>
   <path
       android:pathData="M2,2h11v4L2,6L2,2zM2,8h11v4L2,12L2,8z"
-      android:fillColor="#f01a21"
+      android:fillColor="@color/LogoColorPrimary"
       android:fillType="evenOdd"/>
 </vector>

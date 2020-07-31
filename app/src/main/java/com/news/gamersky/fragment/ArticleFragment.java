@@ -119,7 +119,7 @@ public class ArticleFragment extends Fragment {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    //Log.i("TAG", "onTouch: "+event.toString());
+                    Log.i("TAG", "onTouch: "+event.toString());
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             x1=event.getX();
@@ -130,7 +130,7 @@ public class ArticleFragment extends Fragment {
                             break;
                         case MotionEvent.ACTION_MOVE:
                             if(x2>event.getX()){
-                                //Log.i("TAG", "onTouch: "+back+"\t"+x2+"\t"+event.getX());
+                                //Log.i("TAG", "onTouch: "+icon_back+"\t"+x2+"\t"+event.getX());
                                 back=false;
                             }
                             x2=event.getX();
@@ -187,10 +187,11 @@ public class ArticleFragment extends Fragment {
                 String srcUrl=content4.get(0).getElementsByTag("script").html();
                 String a=content.html();
                 boolean pinye=true;
-                if(!srcUrl.equals("")){
+                //Log.i("TAG", "run: "+srcUrl);
+                int i1=srcUrl.indexOf("http");
+                int i2=srcUrl.indexOf("\"",i1);
+                if(i1!=-1&&i2!=-1&&!srcUrl.equals("")){
                     pinye=false;
-                    int i1=srcUrl.indexOf("h");
-                    int i2=srcUrl.indexOf("\"",i1);
                     srcUrl=srcUrl.substring(i1,i2);
                     System.out.println("跳转链接"+srcUrl);
                     try {
@@ -278,8 +279,7 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void run() {
                         System.out.println("正文载入");
-                        //System.out.println(finalS);
-                        //System.out.println(getNewContent(finalS));
+                        //Log.i("TAG", "run: "+getNewContent(finalS));
                         webView.loadDataWithBaseURL("file:///android_asset", getNewContent(finalS), "text/html", "utf-8", null);
                         progressBar.setVisibility(View.GONE);
 
@@ -301,15 +301,16 @@ public class ArticleFragment extends Fragment {
 
 
     /**
-     * 将html文本内容中包含img标签的图片，宽度变为屏幕宽度，高度根据宽度比例自适应
+     * 格式化
      **/
     public String getNewContent(String htmltext) {
         try {
 
             Document doc = Jsoup.parse(htmltext);
-
+            String textColor="#"+Integer.toHexString(getResources().getColor(R.color.textColorPrimary)).substring(2);
+            Log.i("TAG", "getNewContent: "+textColor);
             Elements elements2=doc.getElementsByTag("body");
-            elements2.html("<div style=\"margin:0px 10px\">"+doc.body().children()+"</div>");
+            elements2.html("<div style=\"color:"+textColor+";margin:0px 10px\">"+doc.body().children()+"</div>");
             Elements elements = doc.getElementsByTag("a");
             Elements elements1=doc.getElementsByTag("img");
             Elements elements3 = doc.getElementsByTag("span");
@@ -403,16 +404,4 @@ public class ArticleFragment extends Fragment {
         super.onDestroy();
     }
 
-
-    public void resumeWebView() {
-        if(webView!=null) {
-            webView.resumeTimers();
-        }
-    }
-
-    public void pauseWebView(){
-        if(webView!=null) {
-            webView.pauseTimers();
-        }
-    }
 }

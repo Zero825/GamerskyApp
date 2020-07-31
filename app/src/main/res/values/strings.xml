@@ -13,4 +13,9 @@
     <string name="succeed_comment_load">评论加载成功</string>
     <string name="error_comment_load">评论加载失败</string>
     <string name="no_search_result">搜索结果为空</string>
+
+    <string name="night_mode">深色模式</string>
+    <string name="night_mode_light">浅色</string>
+    <string name="night_mode_night">深色</string>
+    <string name="night_mode_default">系统默认(跟随系统)</string>
 </resources>

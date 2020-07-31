@@ -38,15 +38,17 @@ public class MainActivity extends AppCompatActivity {
     public void init(){
         exitTime=0;
 
-        getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+//        getWindow().getDecorView()
+//                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         navView = findViewById(R.id.nav_view);
         hostContainer=findViewById(R.id.nav_host_container);
 
         fragmentManager=getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.nav_host_container, new NewsFragment(), "newsFragment");
-        fragmentTransaction.commit();
+        if(fragmentManager.findFragmentByTag("newsFragment")==null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.nav_host_container, new NewsFragment(), "newsFragment");
+            fragmentTransaction.commit();
+        }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(sharedPreferences.getBoolean("no_bottombar",true)){

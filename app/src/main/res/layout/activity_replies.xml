@@ -36,7 +36,7 @@
             android:layout_marginEnd="8dp"
             android:gravity="center"
             android:text="回复"
-            android:textColor="#000000"
+            android:textColor="@color/textColorPrimary"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,13 +46,13 @@
             android:id="@+id/imageButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="6dp"
             android:background="@drawable/pressed_circle"
             android:padding="8dp"
             android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="@id/textView20"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/btn_x" />
+            app:srcCompat="@drawable/icon_close" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/replies_recycler_view"

@@ -3,6 +3,10 @@
     <color name="colorPrimary">#FAFAFA</color>
     <color name="colorPrimaryDark">#FAFAFA</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorBackground" >#FAFAFA</color>
+    <color name="textColorPrimary">#000000</color>
+    <color name="textColorBanner">#FAFAFA</color>
+
     <color name="darkBackground">#000000</color>
     <color name="tc">#00000000</color>
     <color name="colorPressed">#00FFFFFF</color>

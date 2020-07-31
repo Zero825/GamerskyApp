@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#252525</color>
+    <color name="colorPrimaryDark">#252525</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorBackground" >#1B1B1B</color>
+    <color name="textColorPrimary">#D2D2D2</color>
+    <color name="textColorBanner">#D2D2D2</color>
+    
+    <color name="darkBackground">#000000</color>
+    <color name="tc">#00000000</color>
+    <color name="colorPressed">#00FFFFFF</color>
+    <color name="colorOnPressed">#19ADADAD</color>
+    <color name="defaultColor">#737373</color>
+    <color name="bottomNavColor">#B71C1C</color>
+    <color name="darkMask">#1A737373</color>
+    <color name="LogoColorPrimary">#B71C1C</color>
+</resources>

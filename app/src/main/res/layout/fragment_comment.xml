@@ -33,7 +33,7 @@
                 android:id="@+id/comment_head"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorBackground"
                 android:orientation="vertical"
                 android:visibility="invisible">
 
@@ -59,7 +59,6 @@
                     android:layout_width="100dp"
                     android:layout_height="60dp"
                     android:layout_gravity="center"
-                    android:background="@color/colorPrimary"
                     android:scaleType="fitCenter"
                     android:src="@drawable/load_animation"
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -67,7 +67,7 @@ public class AppUtil {
         Snackbar snackbar= Snackbar.make(view,msg,1000);
         if(primaryColor){
             snackbar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
-            snackbar.setTextColor(Color.BLACK);
+            snackbar.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         if(!sharedPreferences.getBoolean("no_bottombar",true)&&setAnchorView){

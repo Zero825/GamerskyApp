@@ -23,7 +23,7 @@
         android:layout_marginBottom="16dp"
         android:gravity="left"
         android:text="TextView"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/textColorBanner"
         android:textSize="18sp"
         android:textStyle="bold" />
 
