@@ -16,6 +16,7 @@ import androidx.preference.SwitchPreference;
 import com.bumptech.glide.Glide;
 import com.github.piasy.biv.BigImageViewer;
 import com.google.android.material.snackbar.Snackbar;
+import com.news.gamersky.util.NightModeUtil;
 
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
@@ -113,16 +114,7 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     //Log.i("TAG", "onPreferenceChange: "+newValue);
-                    if(((String)newValue).equals("0")){
-                        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
-                    }
-                    if(((String)newValue).equals("1")){
-                        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
-                    }
-                    if(((String)newValue).equals("2")){
-                        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM);
-                    }
-
+                    NightModeUtil.changeNightMode(Integer.parseInt((String)newValue));
                     return true;
                 }
             });

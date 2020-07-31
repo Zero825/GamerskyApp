@@ -31,6 +31,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.util.CommentEmojiUtil;
 import com.news.gamersky.databean.CommentDataBean;
+import com.news.gamersky.util.NightModeUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -82,8 +83,7 @@ public class RepliesActivity extends AppCompatActivity {
 
     public void init(){
 
-        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if(currentNightMode == Configuration.UI_MODE_NIGHT_NO){
+        if(NightModeUtil.isNightMode(this)){
             getWindow().getDecorView()
                     .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             |View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
