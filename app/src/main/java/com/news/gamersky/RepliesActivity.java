@@ -83,7 +83,7 @@ public class RepliesActivity extends AppCompatActivity {
 
     public void init(){
 
-        if(NightModeUtil.isNightMode(this)){
+        if(!NightModeUtil.isNightMode(this)){
             getWindow().getDecorView()
                     .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             |View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
