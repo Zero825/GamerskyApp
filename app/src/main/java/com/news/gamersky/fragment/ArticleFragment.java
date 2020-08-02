@@ -95,11 +95,14 @@ public class ArticleFragment extends Fragment {
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url){
-                Intent intent = new Intent();
-                Uri content_url = Uri.parse(url);
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(content_url);
-                startActivity(intent);
+                //Log.i("TAG", "shouldOverrideUrlLoading: "+url);
+                if(url.contains("http")){
+                    Intent intent = new Intent();
+                    Uri content_url = Uri.parse(url);
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setData(content_url);
+                    startActivity(intent);
+                }
                 return true;
             }
         });
@@ -119,7 +122,7 @@ public class ArticleFragment extends Fragment {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    Log.i("TAG", "onTouch: "+event.toString());
+                    //Log.i("TAG", "onTouch: "+event.toString());
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             x1=event.getX();
