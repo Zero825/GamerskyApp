@@ -3,7 +3,6 @@ package com.news.gamersky.fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -60,12 +59,12 @@ public class HomePageFragment extends Fragment {
     private SwipeRefreshLayout refreshLayout;
     private Timer timer;
     private int bannerNum;
-    private ProgressBar progressBar;
     private BannerViewPager vp;
     private TextView toptv1;
     private TextView toptv2;
     private ImageView topiv;
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private ConstraintLayout constraintLayout;
     private LinearLayoutManager layoutManager;
     private ArrayList<NewsDataBean> bannerData;
@@ -74,13 +73,13 @@ public class HomePageFragment extends Fragment {
     private ArrayList<NewsDataBean> tempBannerData;
     private ArrayList<NewsDataBean> tempTopData;
     private ArrayList<NewsDataBean> tempNewsList;
-    private NestedScrollView nestedScrollView;
     private NewsAdapter myAdapter;
     private MyViewpagerAdapter myViewpagerAdapter;
     private String nodeId;
     private MyHandler myHandler;
     private ExecutorService executor;
     private int flag;
+    private int lastFlag;
     private boolean firstRun;
     private SharedPreferences sharedPreferences;
 
@@ -89,17 +88,19 @@ public class HomePageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_homepage, container, false);
-        init(view);
+        View headerView=inflater.inflate(R.layout.recyclerview_home_header, container, false);
+        init(view,headerView);
         loadNews();
         startListen();
         return view;
     }
 
 
-    public void init(View view){
+    public void init(View view,View headerView){
 
         bannerNum=5;
         flag=0;
+        lastFlag=0;
         firstRun=true;
 
         timer=new Timer();
@@ -109,30 +110,31 @@ public class HomePageFragment extends Fragment {
         tempBannerData=new ArrayList<>();
         tempTopData = new ArrayList<>();
         tempNewsList = new ArrayList<>();
-        constraintLayout=view.findViewById(R.id.hc);
+
         progressBar=view.findViewById(R.id.progressBar3);
-        nestedScrollView=view.findViewById(R.id.nestedScrollView);
-        toptv1=view.findViewById(R.id.textView2);
-        toptv2=view.findViewById(R.id.textView3);
-        topiv=view.findViewById(R.id.imageView2);
-        topiv.setVisibility(View.INVISIBLE);
-        vp =view.findViewById(R.id.pager);
+
+        constraintLayout=headerView.findViewById(R.id.hc);
+        vp =headerView.findViewById(R.id.pager);
         vp.setPageTransformer(true,new ZoomOutPageTransformer());
         vp.setOffscreenPageLimit(bannerNum);
         myViewpagerAdapter=new MyViewpagerAdapter(bannerData);
         vp.setAdapter(myViewpagerAdapter);
+        toptv1=headerView.findViewById(R.id.textView2);
+        toptv2=headerView.findViewById(R.id.textView3);
+        topiv=headerView.findViewById(R.id.imageView2);
+        topiv.setVisibility(View.INVISIBLE);
 
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        myAdapter= new NewsAdapter(newsList, getActivity());
+        myAdapter= new NewsAdapter(newsList, getActivity(),headerView);
         recyclerView.setAdapter(myAdapter);
-        recyclerView.setNestedScrollingEnabled(false);
 
 
         refreshLayout= view.findViewById(R.id.refreshLayout1);
         refreshLayout.setColorSchemeResources(R.color.colorAccent);
+
         myHandler=new MyHandler();
         executor= Executors.newSingleThreadExecutor();
         sharedPreferences =
@@ -206,32 +208,29 @@ public class HomePageFragment extends Fragment {
             }
         });
 
-
-
-        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                int line=(recyclerView.getMeasuredHeight()-5000);
-                if(flag==0&&scrollY>line){
-                    flag=1;
-                    System.out.println("更新装载");
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int lastItem=layoutManager.findLastVisibleItemPosition();
+                int dataNum=newsList.size();
+                int line=dataNum-5;
+                
+                if(lastItem>100&&lastItem!=flag&&lastItem==line){
+                    lastFlag=flag;
+                    flag=lastItem;
                     executor.submit(loadMoreNews());
                 }
             }
         });
-
-
-
-
-
-
     }
 
     public void loadNews(){
         tempBannerData.clear();
         tempTopData.clear();
         tempNewsList.clear();
+        flag=0;
+        lastFlag=0;
 
         new Thread(){
             @Override
@@ -422,19 +421,18 @@ public class HomePageFragment extends Fragment {
                         public void run() {
                             newsList.addAll(tempData);
                             myAdapter.notifyItemRangeInserted(myAdapter.getItemCount(),tempData.size());
-                            flag=0;
                         }
                     });
                 }catch (Exception e){
                     e.printStackTrace();
-                    flag=0;
+                    flag=lastFlag;
                 }
             }
         });
     }
 
     public void upTop(){
-        nestedScrollView.smoothScrollTo(0,0);
+        recyclerView.scrollToPosition(0);
     }
 
 
@@ -523,45 +521,30 @@ public class HomePageFragment extends Fragment {
         @Override
         public void handleMessage(Message msg){
             if(msg.what==1){
-
                 refreshLayout.setRefreshing(false);
-                Timer temp=new Timer();
-                temp.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        recyclerView.post(new Runnable() {
-                            @Override
-                            public void run() {
 
-                                bannerData.clear();
-                                topData.clear();
-                                newsList.clear();
-                                bannerData.addAll(tempBannerData);
-                                topData.addAll(tempTopData);
-                                newsList.addAll(tempNewsList);
-                                System.out.println("更新ui");
-                                toptv1.setText(topData.get(0).title);
-                                toptv2.setText(topData.get(1).title);
-                                myViewpagerAdapter.notifyDataSetChanged();
-                                if(firstRun) {
-                                    vp.setCurrentItem(1);
-                                }
+                bannerData.clear();
+                topData.clear();
+                newsList.clear();
+                bannerData.addAll(tempBannerData);
+                topData.addAll(tempTopData);
+                newsList.addAll(tempNewsList);
+                System.out.println("更新ui");
+                toptv1.setText(topData.get(0).title);
+                toptv2.setText(topData.get(1).title);
+                myViewpagerAdapter.notifyDataSetChanged();
+                if(firstRun) {
+                    vp.setCurrentItem(1);
+                }
 
-                                System.out.println("更新ui完毕");
-                                myAdapter.notifyDataSetChanged();
-                                if(!firstRun){
-                                    AppUtil.getSnackbar(getContext(),recyclerView,"首页刷新成功",true,true).show();
-                                }
-                                firstRun=false;
-                                topiv.setVisibility(View.VISIBLE);
-                                progressBar.setVisibility(View.GONE);
-
-                            }
-                        });
-
-                    }
-                },200);
-
+                System.out.println("更新ui完毕");
+                myAdapter.notifyDataSetChanged();
+                if(!firstRun){
+                    AppUtil.getSnackbar(getContext(),recyclerView,"首页刷新成功",true,true).show();
+                }
+                firstRun=false;
+                topiv.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
             if (msg.what==0){
                 AppUtil.getSnackbar(getContext(),recyclerView,"首页加载失败",true,true).show();

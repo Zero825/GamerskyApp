@@ -102,7 +102,6 @@ public class CommentFragment extends Fragment {
         refreshLayout.setColorSchemeResources(R.color.colorAccent);
         hotCommentData=new ArrayList<>();
         allCommentData=new ArrayList<>();
-       // recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         commentAdapter=new CommentAdapter(hotCommentData,allCommentData);
@@ -116,6 +115,7 @@ public class CommentFragment extends Fragment {
         executor= Executors.newSingleThreadExecutor();
 
     }
+
     @SuppressLint("ClickableViewAccessibility")
     public void startListener(){
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -1088,6 +1088,7 @@ public class CommentFragment extends Fragment {
             public MyViewHolder(View v) {
                 super(v);
                 textView=v.findViewById(R.id.textView8);
+
                 textView1=v.findViewById(R.id.textView9);
                 textView2=v.findViewById(R.id.textView11);
                 textView3=v.findViewById(R.id.textView12);
@@ -1134,7 +1135,7 @@ public class CommentFragment extends Fragment {
             }
             if(viewType==3){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_header, parent, false);
+                        .inflate(R.layout.recyclerview_footer, parent, false);
             }
             return new MyViewHolder(v);
         }

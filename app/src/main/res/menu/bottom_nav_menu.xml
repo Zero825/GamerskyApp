@@ -16,10 +16,10 @@
         android:icon="@drawable/icon_game_reviews"
         android:title="@string/title_game_reviews" />
 
-    <item
-        android:id="@+id/navigation_user"
-        android:icon="@drawable/icon_user"
-        android:title="@string/title_user" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_user"-->
+<!--        android:icon="@drawable/icon_user"-->
+<!--        android:title="@string/title_user" />-->
 
 
 </menu>

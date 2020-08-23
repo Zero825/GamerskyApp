@@ -48,6 +48,7 @@ public class CommonNewsFragment extends Fragment {
     private  int flag;
     private int lastFlag;
     private boolean firstRun;
+    private boolean firstVisible;
     private String src;
     private int nodeIdPos;
 
@@ -72,14 +73,15 @@ public class CommonNewsFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(firstRun&&isVisibleToUser){
+        if(firstVisible&&isVisibleToUser){
+            firstVisible=false;
             loadNews();
         }
     }
 
     public void init(View view){
         newsData=new ArrayList<>();
-        newsAdapter=new NewsAdapter(newsData,getActivity());
+        newsAdapter=new NewsAdapter(newsData,getActivity(),null);
         recyclerView=view.findViewById(R.id.recyclerView);
         linearLayoutManager=new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -89,6 +91,7 @@ public class CommonNewsFragment extends Fragment {
         midSwipeRefreshLayout.setRefreshing(true);
 
         firstRun=true;
+        firstVisible=true;
         page=1;
         flag=0;
         lastFlag=0;

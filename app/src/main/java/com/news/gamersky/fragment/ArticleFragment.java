@@ -14,6 +14,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -41,7 +42,9 @@ public class ArticleFragment extends Fragment {
     private String  data_src;
     private ArticleWebView webView;
     private ProgressBar progressBar;
+    private LinearLayout navView;
     private JSONArray jsonArray;
+    private boolean pinye;
 
 
     @Nullable
@@ -63,7 +66,9 @@ public class ArticleFragment extends Fragment {
     public void init(View view){
         progressBar=view.findViewById(R.id.progressBar);
         webView=view.findViewById(R.id.web);
+        navView=view.findViewById(R.id.article_nav);
 
+        pinye=true;
         jsonArray=new JSONArray();
         webView.setBackgroundColor(0);
         //webView.setInitialScale(320);
@@ -106,10 +111,10 @@ public class ArticleFragment extends Fragment {
                 return true;
             }
         });
+        webView.loadDataWithBaseURL("file:///android_asset", "<div></div>", "text/html", "utf-8", null);
 
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
-        webView.loadDataWithBaseURL("file:///android_asset", "<div></div>", "text/html", "utf-8", null);
         if(sharedPreferences.getBoolean("swpie_back",true)){
             final float dis=sharedPreferences.getInt("swipe_back_distance",10)*8;
             final float stc=sharedPreferences.getInt("swipe_sides_sensitivity",50)*0.01f;
@@ -189,8 +194,8 @@ public class ArticleFragment extends Fragment {
                 Elements content4=doc.getElementsByClass("gsAreaContextArt");
                 String srcUrl=content4.get(0).getElementsByTag("script").html();
                 String a=content.html();
-                boolean pinye=true;
                 //Log.i("TAG", "run: "+srcUrl);
+                pinye=true;
                 int i1=srcUrl.indexOf("http");
                 int i2=srcUrl.indexOf("\"",i1);
                 if(i1!=-1&&i2!=-1&&!srcUrl.equals("")){
@@ -242,6 +247,25 @@ public class ArticleFragment extends Fragment {
 
                 String s=h+a;
                 Elements elements1 = doc.getElementsByClass("yu-btnwrap");
+                Elements articleNav = doc.getElementsByClass("ymw-article-nav-in");
+                if(!articleNav.toString().equals("")){
+                    navView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            navView.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    pinye=false;
+                }else {
+                    navView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            navView.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    pinye=true;
+                }
+
                 if(pinye) {
                     if (!elements1.toString().equals("")) {
                         Elements elements2 = elements1.get(0).getElementsByTag("span");
@@ -313,7 +337,11 @@ public class ArticleFragment extends Fragment {
             String textColor="#"+Integer.toHexString(getResources().getColor(R.color.textColorPrimary)).substring(2);
             Log.i("TAG", "getNewContent: "+textColor);
             Elements elements2=doc.getElementsByTag("body");
-            elements2.html("<div style=\"color:"+textColor+";margin:0px 10px\">"+doc.body().children()+"</div>");
+            if(pinye) {
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px \">" + doc.body().children() + "</div>");
+            }else {
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px 50px\">" + doc.body().children() + "</div>");
+            }
             Elements elements = doc.getElementsByTag("a");
             Elements elements1=doc.getElementsByTag("img");
             Elements elements3 = doc.getElementsByTag("span");

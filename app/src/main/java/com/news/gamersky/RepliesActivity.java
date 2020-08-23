@@ -77,7 +77,7 @@ public class RepliesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_replies);
         init();
-        loadReplies();
+        //loadReplies();
         startListen();
     }
 
@@ -110,7 +110,6 @@ public class RepliesActivity extends AppCompatActivity {
         repliesData=new ArrayList<>();
 
         recyclerView=findViewById(R.id.replies_recycler_view);
-        //recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         repliesAdapter=new RepliesAdapter(comment,repliesData);
@@ -122,6 +121,31 @@ public class RepliesActivity extends AppCompatActivity {
         executor= Executors.newSingleThreadExecutor();
         animSetIn = new AnimatorSet();
         animSetOut = new AnimatorSet();
+        animSetIn.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                loadReplies();
+                animSetIn.removeAllListeners();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        startAnimator();
+
+
     }
 
     public void loadReplies(){
@@ -230,18 +254,11 @@ public class RepliesActivity extends AppCompatActivity {
                                     if(repliesData.size()<10){
                                         repliesAdapter.setNoMore(true);
                                     }
-                                    startAnimator();
                                 }
                             });
                         }
                     }catch (Exception e){
                         e.printStackTrace();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                startAnimator();
-                            }
-                        });
                     }
                 }
             }).start();
@@ -712,6 +729,9 @@ public class RepliesActivity extends AppCompatActivity {
                         }else {
                             startAnimator();
                         }
+                        if(constraintLayout.getTranslationY()!=0f){
+                            consumed=true;
+                        }
                         break;
                 }
 
@@ -858,11 +878,11 @@ public class RepliesActivity extends AppCompatActivity {
                 if(tempCommentDataBean.objectUserName.equals(commentData.userName)){
                     textView2.setText("");
                     textView6.setVisibility(View.INVISIBLE);
-                    textView1.setMaxEms(14);
+                    textView1.setMaxEms(16);
                 }else {
                     textView2.setText(tempCommentDataBean.objectUserName);
                     textView6.setVisibility(View.VISIBLE);
-                    textView1.setMaxEms(7);
+                    textView1.setMaxEms(8);
                 }
 
                 textView3.setText(CommentEmojiUtil.getEmojiString(tempCommentDataBean.content));
@@ -925,7 +945,7 @@ public class RepliesActivity extends AppCompatActivity {
             }
             if(viewType==2){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_header, parent, false);
+                        .inflate(R.layout.recyclerview_footer, parent, false);
                 return new RepliesAdapter.FooterViewHolder(v);
             }
 

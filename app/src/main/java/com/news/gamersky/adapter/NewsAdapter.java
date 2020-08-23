@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +29,7 @@ import java.util.List;
 public class NewsAdapter extends RecyclerView.Adapter {
     private List<NewsDataBean> mDataset;
     private Context context;
+    private View hasheader;
     private boolean moreData;
     private boolean corner;
     private boolean imageSide;
@@ -101,17 +103,25 @@ public class NewsAdapter extends RecyclerView.Adapter {
             else {
                 textView.setVisibility(View.VISIBLE);
                 if(moreData) {
-                    textView.setText("请稍等...");
+                    textView.setText(context.getResources().getString(R.string.wait));
                 }else {
-                    textView.setText("没有了，没有奇迹了");
+                    textView.setText(context.getResources().getString(R.string.no_more));
                 }
             }
         }
     }
 
-    public NewsAdapter(List<NewsDataBean> dataset,Context context) {
+    public class HeaderViewHolder extends RecyclerView.ViewHolder{
+
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
+
+    public NewsAdapter(List<NewsDataBean> dataset,Context context,View hasHeader) {
         this.mDataset = dataset;
         this.context = context;
+        this.hasheader=hasHeader;
         this.moreData=true;
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -123,7 +133,11 @@ public class NewsAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position){
         int i=0;
-        if(position==mDataset.size()){
+
+        if(hasheader!=null){
+            if(position==0) i=2;
+            if(position==mDataset.size()+1) i=1;
+        }else if(position==mDataset.size()){
             i=1;
         }
         return i;
@@ -144,8 +158,11 @@ public class NewsAdapter extends RecyclerView.Adapter {
         }
         if(viewType==1){
             v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.recyclerview_header, parent, false);
+                    .inflate(R.layout.recyclerview_footer, parent, false);
             return new FooterViewHolder(v);
+        }
+        if(viewType==2){
+            return new HeaderViewHolder(hasheader);
         }
         return new NewsListViewHolder(v);
     }
@@ -153,18 +170,25 @@ public class NewsAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         int vt=holder.getItemViewType();
+        //Log.i("TAG", "onBindViewHolder: "+vt+"    "+position);
         if(vt==0){
-            ((NewsListViewHolder)holder).bindView(position);
+            if(hasheader!=null){
+                ((NewsListViewHolder) holder).bindView(position-1);
+            }else {
+                ((NewsListViewHolder) holder).bindView(position);
+            }
         }
         if(vt==1){
-            ((NewsAdapter.FooterViewHolder)holder).bindView(position);
+            ((FooterViewHolder)holder).bindView(position);
         }
-
 
     }
 
     @Override
     public int getItemCount() {
+        if(hasheader!=null){
+            return mDataset.size()+2;
+        }
         return mDataset.size()+1;
     }
 

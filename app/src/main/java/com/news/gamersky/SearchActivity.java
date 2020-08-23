@@ -250,7 +250,7 @@ public class SearchActivity extends AppCompatActivity {
             View v=null;
             if(viewType==0){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_header, parent, false);
+                        .inflate(R.layout.recyclerview_footer, parent, false);
                 return new FooterViewHolder(v);
             }
             if(viewType==1){
