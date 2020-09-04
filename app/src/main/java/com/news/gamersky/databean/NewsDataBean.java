@@ -13,6 +13,8 @@ public class NewsDataBean implements Serializable {
     public String content;
 
 
+    public NewsDataBean(){}
+
     public NewsDataBean(String imageUrl, String title, String src) {
         this.imageUrl = imageUrl;
         this.title = title;

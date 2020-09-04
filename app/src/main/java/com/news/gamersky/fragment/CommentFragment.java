@@ -27,6 +27,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.RepliesActivity;
+import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.CommentEmojiUtil;
 import com.news.gamersky.databean.CommentDataBean;
@@ -48,7 +49,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.news.gamersky.util.AppUtil.format;
 import static com.news.gamersky.util.AppUtil.is2s;
@@ -1081,7 +1081,7 @@ public class CommentFragment extends Fragment {
             public TextView textView4;
             public TextView textView5;
             public TextView textView6;
-            public CircleImageView imageView;
+            public RoundImageView imageView;
             public GridLayout gridLayout;
             public LinearLayout linearLayout;
 
@@ -1204,14 +1204,15 @@ public class CommentFragment extends Fragment {
                 if(!tempData.userImage.equals("")) {
                     Glide.with(holder.imageView)
                             .load(tempData.userImage)
+                            .transition(DrawableTransitionOptions.withCrossFade())
                             .centerCrop()
                             .into(holder.imageView);
                 }
                 holder.gridLayout.removeAllViews();
-                final ImageView[] imageViews=new ImageView[tempData.images.size()];
+                final RoundImageView[] imageViews=new RoundImageView[tempData.images.size()];
                 for (int i=0;i<tempData.images.size();i++){
                     View ic = LayoutInflater.from(getContext())
-                            .inflate(R.layout.gridlayout_image, null, false);
+                            .inflate(R.layout.gridlayout_comment_image, null, false);
                     imageViews[i]=ic.findViewById(R.id.imageView7);
                     Glide.with(imageViews[i])
                             .load(tempData.images.get(i))

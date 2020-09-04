@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import androidx.core.view.NestedScrollingChild;
 import androidx.preference.PreferenceManager;
 
 public class ArticleWebView extends WebView {

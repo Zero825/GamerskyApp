@@ -18,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.makeramen.roundedimageview.RoundedImageView;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.util.ReadingProgressUtil;
 
@@ -39,7 +39,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
         public TextView textView2;
         public TextView textView3;
         public TextView textView4;
-        public RoundedImageView imageView;
+        public RoundImageView imageView;
 
         public NewsListViewHolder(View v) {
             super(v);
@@ -66,10 +66,11 @@ public class NewsAdapter extends RecyclerView.Adapter {
                 textView4.setText("");
             }
             if(!corner){
-                imageView.setCornerRadius(0);
+                imageView.setRound(0);
             }
             Glide.with(imageView)
                     .load(mDataset.get(position).imageUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(imageView);
 
             itemView.setOnClickListener(new View.OnClickListener() {

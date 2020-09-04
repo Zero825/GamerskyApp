@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.news.gamersky.fragment.HandBookFragment;
 import com.news.gamersky.fragment.NewsFragment;
 import com.news.gamersky.util.AppUtil;
 
@@ -71,8 +72,13 @@ public class MainActivity extends AppCompatActivity {
                         }else {
                             fragmentTransaction.add(R.id.nav_host_container, new NewsFragment(), "newsFragment");
                         }
-
                         break;
+                    case R.id.navigation_game_guide:
+                        if(fragmentManager.findFragmentByTag("HandBookFragment")!=null){
+                            fragmentTransaction.show(fragmentManager.findFragmentByTag("HandBookFragment"));
+                        }else {
+                            fragmentTransaction.add(R.id.nav_host_container, new HandBookFragment(), "HandBookFragment");
+                        }
                 }
                 Log.i("TAG", "onNavigationItemSelected: "+item+item.getItemId());
                 fragmentTransaction.commit();
@@ -92,6 +98,12 @@ public class MainActivity extends AppCompatActivity {
                             ((NewsFragment) fragment).upTop();
                         }
                         break;
+                    case R.id.navigation_game_guide:
+                        if(fragmentManager.findFragmentByTag("HandBookFragment")!=null){
+                            Fragment fragment=fragmentManager.findFragmentByTag("HandBookFragment");
+                            ((HandBookFragment) fragment).upTop();
+                        }
+                        break;
                 }
             }
         });
@@ -101,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
     private void hideAllFragment(FragmentTransaction fragmentTransaction){
         if(fragmentManager.findFragmentByTag("newsFragment")!=null){
             fragmentTransaction.hide(fragmentManager.findFragmentByTag("newsFragment"));
+        }
+        if(fragmentManager.findFragmentByTag("HandBookFragment")!=null){
+            fragmentTransaction.hide(fragmentManager.findFragmentByTag("HandBookFragment"));
         }
     }
 

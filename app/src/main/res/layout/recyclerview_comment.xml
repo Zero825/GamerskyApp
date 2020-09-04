@@ -7,13 +7,14 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.news.gamersky.customizeview.RoundImageView
         android:id="@+id/imageView6"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:src="@drawable/avatar"
+        app:isCircle="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,12 +65,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:columnCount="3"
-        android:orientation="horizontal"
         android:paddingBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageView6"
-        app:layout_constraintTop_toBottomOf="@id/l1"></GridLayout>
+        app:layout_constraintTop_toBottomOf="@id/l1"
+        android:orientation="horizontal"
+        android:columnCount="3"/>
 
     <TextView
         android:id="@+id/textView12"

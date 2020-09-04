@@ -1,6 +1,9 @@
 package com.news.gamersky.fragment;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -14,16 +17,20 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.databean.NewsDataBean;
 import com.news.gamersky.util.ReadingProgressUtil;
 import com.news.gamersky.customizeview.ArticleWebView;
 
@@ -35,16 +42,24 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ArticleFragment extends Fragment {
     private String  data_src;
     private ArticleWebView webView;
+    private ConstraintLayout navListView;
+    private RecyclerView recyclerView;
     private ProgressBar progressBar;
-    private LinearLayout navView;
+    private ConstraintLayout navView;
     private JSONArray jsonArray;
     private boolean pinye;
+    private int page;
+    private int maxPage;
+    private List<NewsDataBean> listData;
+    private boolean listShowed;
+    private AnimatorSet listAnimator;;
 
 
     @Nullable
@@ -56,7 +71,8 @@ public class ArticleFragment extends Fragment {
         if (args != null) {
             data_src=args.getString("data_src");
             init(view);
-            loadData();
+            startListen();
+            loadData(data_src);
         }
         return view;
     }
@@ -67,9 +83,20 @@ public class ArticleFragment extends Fragment {
         progressBar=view.findViewById(R.id.progressBar);
         webView=view.findViewById(R.id.web);
         navView=view.findViewById(R.id.article_nav);
+        recyclerView=view.findViewById(R.id.recyclerView);
+        navListView=view.findViewById(R.id.nav_list);
 
+        listShowed=false;
+        listAnimator=new AnimatorSet();
+        page=0;
         pinye=true;
         jsonArray=new JSONArray();
+        listData=new ArrayList<>();
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.hasFixedSize();
+        recyclerView.setAdapter(new RecyclerViewAdapter(getContext(),listData));
+
         webView.setBackgroundColor(0);
         //webView.setInitialScale(320);
         webView.setHorizontalScrollBarEnabled(false);//水平不显示
@@ -83,11 +110,12 @@ public class ArticleFragment extends Fragment {
             @JavascriptInterface
             @Override
             public void showBigImg(int i) {
-                System.out.println("我是第几张图片"+i);
                 Intent intent=new Intent(getActivity(), ImagesBrowserActivity.class);
                 intent.putExtra("imagesSrc",jsonArray.toString());
                 intent.putExtra("imagePosition",i);
-                startActivity(intent);
+                if(!listAnimator.isRunning()){
+                    startActivity(intent);
+                }
                 //startActivity(intent,ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
             }
         },"jsCallJavaObj");
@@ -113,50 +141,7 @@ public class ArticleFragment extends Fragment {
         });
         webView.loadDataWithBaseURL("file:///android_asset", "<div></div>", "text/html", "utf-8", null);
 
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(getContext());
-        if(sharedPreferences.getBoolean("swpie_back",true)){
-            final float dis=sharedPreferences.getInt("swipe_back_distance",10)*8;
-            final float stc=sharedPreferences.getInt("swipe_sides_sensitivity",50)*0.01f;
-            webView.setOnTouchListener(new View.OnTouchListener() {
-                float x1 = 0;
-                float x2 = 0;
-                float y1 = 0;
-                float y2 = 0;
-                boolean back=true;
 
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    //Log.i("TAG", "onTouch: "+event.toString());
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            x1=event.getX();
-                            y1=event.getY();
-                            x2 = 0;
-                            y2 = 0;
-                            back=true;
-                            break;
-                        case MotionEvent.ACTION_MOVE:
-                            if(x2>event.getX()){
-                                //Log.i("TAG", "onTouch: "+icon_back+"\t"+x2+"\t"+event.getX());
-                                back=false;
-                            }
-                            x2=event.getX();
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            x2=event.getX();
-                            y2=event.getY();
-                            float k=(y2-y1)/(x2-x1);
-                            //Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+k+"\t"+back);
-                            if(x2-x1>dis&&Math.abs(k)<stc&&back){
-                                getActivity().finish();
-                            }
-                            break;
-                    }
-                    return false;
-                }
-            });
-        }
 
 
 
@@ -182,13 +167,13 @@ public class ArticleFragment extends Fragment {
         void showBigImg(int i);
     }
 
-    public void loadData(){
+    public void loadData(final String link){
 
         new Thread() {
             @Override
             public void run() {
                 try {
-                Document doc = Jsoup.connect(data_src).get();
+                Document doc = Jsoup.connect(link).get();
                 final Elements content = doc.getElementsByTag("article");
                 final Elements content1 = doc.getElementsByClass("ymw-contxt-aside");
                 Elements content4=doc.getElementsByClass("gsAreaContextArt");
@@ -210,6 +195,13 @@ public class ArticleFragment extends Fragment {
                         if(elements3.attr("data-sitename").equals("bilibili")){
                             elements3.html(elements3.html()
                                     + "<a class=\"\" target=\"_blank\" href=\""+"https://www.bilibili.com/video/"
+                                    +elements3.attr("data-vid")
+                                    +"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>");
+                            elements3.attr("style","text-align:center;");
+                        }
+                        if(elements3.attr("data-sitename").equals("youku")){
+                            elements3.html(elements3.html()
+                                    + "<a class=\"\" target=\"_blank\" href=\""+"https://v.youku.com/v_show/id_"
                                     +elements3.attr("data-vid")
                                     +"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>");
                             elements3.attr("style","text-align:center;");
@@ -236,7 +228,7 @@ public class ArticleFragment extends Fragment {
                         "  echo.init({\n" +
                         "    offset: 2000,\n" +
                         "    throttle: 250,\n" +
-                        "    unload: true,\n" +
+                        "    unload: false,\n" +
                         "  });\n" +
 //                        "   $(function() {\n" +
 //                        "       $(\"div\").fadeIn(300);\n"+
@@ -245,22 +237,56 @@ public class ArticleFragment extends Fragment {
                         "<b style=\"font-size:22px;margin:0;\">"+content1.get(0).getElementsByTag("h1").text()+"</b >"+
                         "<p class=\"author\" style=\"font-size:13px;margin:0;color:#808080\">"+"&nbsp;"+content1.get(0).getElementsByTag("span").text()+"</p >";
 
+                if(doc.getElementById("ymwTopVideoInfos")!=null){
+                    h=h+doc.getElementById("ymwTopVideoInfos").toString();
+                }
                 String s=h+a;
+
                 Elements elements1 = doc.getElementsByClass("yu-btnwrap");
                 Elements articleNav = doc.getElementsByClass("ymw-article-nav-in");
                 if(!articleNav.toString().equals("")){
+                    Element eSelected=articleNav.get(0)
+                            .getElementById("SelectPage")
+                            .getElementsByAttributeValue("selected","selected").get(0);
+                    Elements eOptions=articleNav.get(0)
+                            .getElementById("SelectPage").getElementsByTag("option");
+                    listData.clear();
+                    for(int i=0;i<eOptions.size();i++){
+                        Element eOption=eOptions.get(i);
+                        String title=eOption.html();
+                        String page=eOption.attr("value");
+                        title="第"+page+"页:\t\t"+title;
+                        String link;
+                        if(i==0) {
+                            link= data_src;
+                        }else {
+                            link= data_src.substring(0, data_src.indexOf(".html")) + "_" + (i + 1) + ".html";
+                        }
+                        listData.add(new NewsDataBean(title,link));
+                    }
+
+                    final String title=eSelected.html();
+                    final String sPage=eSelected.attr("value");
                     navView.post(new Runnable() {
                         @Override
                         public void run() {
+                            TextView textView=navView.findViewById(R.id.textView6);
+                            textView.setText("第"+sPage+"页:\t\t"+title);
+                            recyclerView.getAdapter().notifyDataSetChanged();
                             navView.setVisibility(View.VISIBLE);
+                            navListView.setVisibility(View.VISIBLE);
                         }
                     });
+                    maxPage=articleNav.get(0)
+                            .getElementById("SelectPage").getElementsByTag("option").size();
+                    page=Integer.parseInt(sPage);
                     pinye=false;
                 }else {
                     navView.post(new Runnable() {
                         @Override
                         public void run() {
-                            navView.setVisibility(View.VISIBLE);
+                            navView.setVisibility(View.INVISIBLE);
+                            navListView.setVisibility(View.INVISIBLE);
                         }
                     });
                     pinye=true;
@@ -301,6 +327,7 @@ public class ArticleFragment extends Fragment {
                 }
 
 
+
                 final String finalS = s;
                 webView.post(new Runnable() {
                     @Override
@@ -326,6 +353,120 @@ public class ArticleFragment extends Fragment {
         }.start();
     }
 
+    public void startListen(){
+        navView.findViewById(R.id.imageView14).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOrHideList();
+            }
+        });
+        navView.findViewById(R.id.imageView15).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOrHideList();
+            }
+        });
+        navView.findViewById(R.id.imageView16).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(page>1){
+                    if(page==2){
+                        loadData(data_src);
+                    }else {
+                        String nextLink = data_src.substring(0, data_src.indexOf(".html")) + "_" + (page - 1) + ".html";
+                        Log.i("TAG", "onClick: " + nextLink);
+                        loadData(nextLink);
+                        ((RecyclerViewAdapter)recyclerView.getAdapter()).setCurrentSelected(page);
+                    }
+                }
+            }
+        });
+        navView.findViewById(R.id.imageView17).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(page<maxPage){
+                    String nextLink=data_src.substring(0,data_src.indexOf(".html"))+"_"+(page+1)+".html";
+                    Log.i("TAG", "onClick: "+nextLink);
+                    loadData(nextLink);
+                    ((RecyclerViewAdapter)recyclerView.getAdapter()).setCurrentSelected(page);
+                }
+            }
+        });
+        navView.findViewById(R.id.textView6).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOrHideList();
+            }
+        });
+
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        if(sharedPreferences.getBoolean("swpie_back",true)){
+            final float dis=sharedPreferences.getInt("swipe_back_distance",10)*8;
+            final float stc=sharedPreferences.getInt("swipe_sides_sensitivity",50)*0.01f;
+            webView.setOnTouchListener(new View.OnTouchListener() {
+                float x1 = 0;
+                float x2 = 0;
+                float y1 = 0;
+                float y2 = 0;
+                boolean back=true;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    //Log.i("TAG", "onTouch: "+event.toString());
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            x1=event.getX();
+                            y1=event.getY();
+                            x2 = 0;
+                            y2 = 0;
+                            back=true;
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            if(x2>event.getX()){
+                                //Log.i("TAG", "onTouch: "+icon_back+"\t"+x2+"\t"+event.getX());
+                                back=false;
+                            }
+                            x2=event.getX();
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            x2=event.getX();
+                            y2=event.getY();
+                            float k=(y2-y1)/(x2-x1);
+                            //Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+k+"\t"+back);
+                            if(x2-x1>dis&&Math.abs(k)<stc&&back){
+                                getActivity().finish();
+                            }
+                            if(listShowed){
+                                showOrHideList();
+                            }
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
+    }
+
+    public void showOrHideList(){
+        if(!listAnimator.isRunning()) {
+            ObjectAnimator objectAnimator1=new ObjectAnimator();
+            ObjectAnimator objectAnimator2 = new ObjectAnimator();
+            if(!listShowed) {
+                objectAnimator1 = ObjectAnimator.ofFloat(navListView, "translationY", 0f,-navListView.getHeight());
+                objectAnimator2 = ObjectAnimator.ofFloat(navView.findViewById(R.id.imageView15), "rotation", 0f,180f);
+                listShowed = true;
+            }else if(listShowed){
+                objectAnimator1 = ObjectAnimator.ofFloat(navListView, "translationY", -navListView.getHeight(), 0f);
+                objectAnimator2 = ObjectAnimator.ofFloat(navView.findViewById(R.id.imageView15), "rotation", 180f, 0f);
+                listShowed=false;
+            }
+            listAnimator.playTogether(objectAnimator1, objectAnimator2);
+            listAnimator.setDuration(300);
+            listAnimator.start();
+        }
+    }
+
 
     /**
      * 格式化
@@ -335,7 +476,6 @@ public class ArticleFragment extends Fragment {
 
             Document doc = Jsoup.parse(htmltext);
             String textColor="#"+Integer.toHexString(getResources().getColor(R.color.textColorPrimary)).substring(2);
-            Log.i("TAG", "getNewContent: "+textColor);
             Elements elements2=doc.getElementsByTag("body");
             if(pinye) {
                 elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px \">" + doc.body().children() + "</div>");
@@ -349,6 +489,7 @@ public class ArticleFragment extends Fragment {
             Elements elements5=doc.getElementsByTag("script");
             Elements elements6 = doc.getElementsByClass("gs_bot_author");
             Elements elements7 = doc.getElementsByTag("iframe");
+            Elements elements8= doc.getElementsByClass("recommend-app-btn-wrap");
             elements2.attr("href","");
             for (int i=0;i<elements1.size();i++) {
                 Element element=elements1.get(i);
@@ -389,6 +530,7 @@ public class ArticleFragment extends Fragment {
             }
             for (int i=0;i<elements5.size();i++){
                 Element element=elements5.get(i);
+                Log.i("TAG", "getNewContent: "+element.toString());
                 if (element.attr("src").equals("//j.gamersky.com/g/gsVideo.js")){
                     Element v=elements5.get(i+1);
                     String s=v.html();
@@ -405,8 +547,7 @@ public class ArticleFragment extends Fragment {
                     }
                     try{
                         s=s.substring(i1,i2);
-                        System.out.println("视频链接"+s);
-                        v.parent().html("<a class=\"\" target=\"_blank\" href=\""+s+"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>");
+                        v.parent().html("<p style=\"text-align: center;\">"+"<a class=\"\" target=\"_blank\" href=\""+s+"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>"+"</p>");
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -417,6 +558,7 @@ public class ArticleFragment extends Fragment {
                 element.attr("width", "100%")
                         .attr("height", "auto");
             }
+            elements8.html("");
             return doc.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -433,6 +575,63 @@ public class ArticleFragment extends Fragment {
         ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
         webView.destroy();
         super.onDestroy();
+    }
+
+    public class RecyclerViewAdapter extends RecyclerView.Adapter{
+        private List<NewsDataBean> data;
+        private Context context;
+        private int currentSelected;
+
+        public class VH extends RecyclerView.ViewHolder{
+            private  TextView textView;
+
+            public VH(@NonNull View itemView) {
+                super(itemView);
+                textView=itemView.findViewById(R.id.textView28);
+            }
+        }
+
+        public RecyclerViewAdapter(Context context,List<NewsDataBean> data){
+            this.context=context;
+            this.data=data;
+            currentSelected=0;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view=LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.recyclerview_nav_list,parent,false);
+            return new VH(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+            ((VH)holder).textView.setText(data.get(position).title);
+            if(position==currentSelected){
+                ((VH)holder).textView.setTextColor(getResources().getColor(R.color.colorAccent));
+            }else {
+                ((VH)holder).textView.setTextColor(getResources().getColor(R.color.textColorPrimary));
+            }
+            ((VH)holder).textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loadData(data.get(position).src);
+                    setCurrentSelected(position);
+                    showOrHideList();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return data.size();
+        }
+
+        public void setCurrentSelected(int currentSelected) {
+            this.currentSelected = currentSelected;
+            notifyDataSetChanged();
+        }
     }
 
 }

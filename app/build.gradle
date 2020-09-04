@@ -42,10 +42,8 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.piasy:BigImageViewer:1.6.5'
     implementation 'com.github.piasy:GlideImageLoader:1.6.5'
     implementation 'com.github.piasy:GlideImageViewFactory:1.6.5'
-    implementation 'com.makeramen:roundedimageview:2.3.0'
 
 }

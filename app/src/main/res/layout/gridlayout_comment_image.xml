@@ -5,10 +5,10 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <ImageView
+    <com.news.gamersky.customizeview.RoundImageView
         android:id="@+id/imageView7"
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:layout_margin="2dp"
-        app:srcCompat="@color/colorAccent" />
+        android:foreground="@drawable/pressed_image" />
 </LinearLayout>

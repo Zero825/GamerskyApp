@@ -20,6 +20,8 @@ public class CommentDataBean implements Serializable {
     public String repliesCount;
 
 
+    public CommentDataBean(){}
+
     public CommentDataBean(String commentId,String userImage, String userName, String time, String likeNum, String content, String floor, ArrayList<String> images,String imagesJson,ArrayList<CommentDataBean> replies,String repliesCount) {
         this.commentId=commentId;
         this.userImage = userImage;

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,13 @@ public class SearchActivity extends AppCompatActivity {
     private  int flag;
     private int lastFlag;
     private String key;
+    private String category;
+    //value "hot" or "time"
+    private String type;
+    //value "asc" or "des"
+    private String sort;
+    private String hotSort;
+    private String timeSort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +56,18 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         init();
         setListen();
+        autoSearch();
     }
     
     private void init(){
 //        getWindow().getDecorView()
 //                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+
+
         progressBar=findViewById(R.id.progressBar4);
         searchView=findViewById(R.id.view_search);
+
+
         searchView.setIconifiedByDefault(false);
         searchView.findViewById(R.id.search_plate).setBackgroundResource(R.color.tc);
         searchView.requestFocus();
@@ -64,12 +77,17 @@ public class SearchActivity extends AppCompatActivity {
         newsData=new ArrayList<>();
         searchAdapter=new SearchAdapter(newsData);
         recyclerView.setAdapter(searchAdapter);
+        executor= Executors.newSingleThreadExecutor();
 
+        category="news";
         key="";
         page=1;
         flag=0;
         lastFlag=0;
-        executor= Executors.newSingleThreadExecutor();
+        type="hot";
+        sort="des";
+        hotSort="des";
+        timeSort="des";
     }
 
     private void setListen(){
@@ -112,6 +130,70 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         });
+
+        final TextView hotSortBtn=findViewById(R.id.textView25);
+        final TextView timeSortBtn=findViewById(R.id.textView26);
+        hotSortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(type.equals("hot")) {
+                    if (hotSort.equals("des")) {
+                        sort = "asc";
+                        hotSort = "asc";
+                        hotSortBtn.setText(R.string.sort_hot_asc);
+                    } else {
+                        sort = "des";
+                        hotSort = "des";
+                        hotSortBtn.setText(R.string.sort_hot_des);
+                    }
+                }else {
+                    type="hot";
+                    sort=hotSort;
+                    hotSortBtn.setTextColor(getResources().getColor(R.color.colorAccent));
+                    timeSortBtn.setTextColor(getResources().getColor(R.color.defaultColor));
+                }
+                searchView.setQuery(key,true);
+            }
+        });
+        timeSortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(type.equals("time")) {
+
+                    if (timeSort.equals("des")) {
+                        sort = "asc";
+                        timeSort = "asc";
+                        timeSortBtn.setText(R.string.sort_time_asc);
+                    } else {
+                        sort = "des";
+                        timeSort = "des";
+                        timeSortBtn.setText(R.string.sort_time_des);
+                    }
+
+                }else {
+                    type = "time";
+                    sort=timeSort;
+                    timeSortBtn.setTextColor(getResources().getColor(R.color.colorAccent));
+                    hotSortBtn.setTextColor(getResources().getColor(R.color.defaultColor));
+                }
+                searchView.setQuery(key,true);
+            }
+        });
+    }
+
+    public void autoSearch(){
+        if(getIntent().getStringExtra("category")!=null) {
+            category = getIntent().getStringExtra("category");
+        }
+        Log.i("TAG", "autoSearch: "+category);
+        if(getIntent().getStringExtra("key")!=null){
+            key=getIntent().getStringExtra("key");
+            searchView.setQuery(key,true);
+            searchView.clearFocus();
+        }
+        if(category.equals("news")){
+            findViewById(R.id.type_sort).setVisibility(View.GONE);
+        }
     }
 
     private void search(final String query){
@@ -121,7 +203,9 @@ public class SearchActivity extends AppCompatActivity {
                 Document doc = null;
                 try {
                     final ArrayList<NewsDataBean> tempData=new ArrayList<>();
-                    doc= Jsoup.connect("http://so.gamersky.com/all/news?s="+query).get();
+                    doc= Jsoup.connect("http://so.gamersky.com/all/"
+                            +category+"?s="+query
+                            +"&type="+type+"&sort="+sort+"&p="+page).get();
                     final Elements es1=doc.getElementsByClass("txtlist contentpaging")
                             .get(0).getElementsByTag("li");
                     for(int i=0;i<es1.size();i++){
@@ -175,10 +259,10 @@ public class SearchActivity extends AppCompatActivity {
                 page++;
                 try {
                     final ArrayList<NewsDataBean> tempData=new ArrayList<>();
-                    doc= Jsoup.connect("http://so.gamersky.com/all/news?s="+key+"&p="+page).get();
+                    doc= Jsoup.connect("http://so.gamersky.com/all/"
+                            +category+"?s="+key+"&type="+type+"&sort="+sort+"&p="+page).get();
                     final Elements es1=doc.getElementsByClass("txtlist contentpaging")
                             .get(0).getElementsByTag("li");
-                    System.out.println("加载成功"+doc.toString());
                     for(int i=0;i<es1.size();i++){
                         Element e1=es1.get(i);
                         String id=AppUtil.urlToId(e1.getElementsByTag("a").get(0).attr("href"));

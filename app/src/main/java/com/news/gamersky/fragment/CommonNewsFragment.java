@@ -335,7 +335,6 @@ public class CommonNewsFragment extends Fragment {
                 if(lastItem>8&&lastItem!=flag&&lastItem==line){
                     lastFlag=flag;
                     flag=lastItem;
-                    System.out.println("加载搜索数据");
                     executor.submit(loadMoreNews());
                 }
             }

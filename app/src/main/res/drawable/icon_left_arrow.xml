@@ -3,9 +3,12 @@
     android:height="128dp"
     android:viewportWidth="1024"
     android:viewportHeight="1024"
-    android:tint="@color/textColorPrimary"
+    android:tint="@color/defaultColor"
     >
-  <group>
+  <group
+      android:pivotX="512"
+      android:pivotY="512"
+      android:rotation="270.0">
     <path
         android:fillColor="#FF000000"
         android:pathData="M832.52,669.95c0,-8.78 -3.24,-17.57 -9.71,-24.27L535.64,348.2c-12.93,-13.41 -33.92,-13.41 -46.86,0l-287.17,297.49c-12.94,13.41 -12.94,35.13 0,48.54 12.93,13.41 33.92,13.41 46.86,0l263.74,-273.22 263.75,273.22c12.93,13.41 33.92,13.41 46.86,0C829.29,687.52 832.52,678.73 832.52,669.95z"/>

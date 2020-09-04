@@ -11,10 +11,8 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -29,6 +27,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.util.CommentEmojiUtil;
 import com.news.gamersky.databean.CommentDataBean;
 import com.news.gamersky.util.NightModeUtil;
@@ -47,7 +46,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.news.gamersky.util.AppUtil.format;
 import static com.news.gamersky.util.AppUtil.is2s;
@@ -770,7 +768,7 @@ public class RepliesActivity extends AppCompatActivity {
             public TextView textView4;
             public TextView textView5;
             public TextView textView6;
-            public CircleImageView imageView;
+            public RoundImageView imageView;
             public GridLayout gridLayout;
             public LinearLayout linearLayout;
 
@@ -810,7 +808,7 @@ public class RepliesActivity extends AppCompatActivity {
                 final ImageView[] imageViews=new ImageView[ commentData.images.size()];
                 for (int i=0;i< commentData.images.size();i++){
                     View ic = LayoutInflater.from(RepliesActivity.this)
-                            .inflate(R.layout.gridlayout_image, null, false);
+                            .inflate(R.layout.gridlayout_comment_image, null, false);
                     imageViews[i]=ic.findViewById(R.id.imageView7);
                     Glide.with(imageViews[i])
                             .load( commentData.images.get(i))
@@ -849,7 +847,7 @@ public class RepliesActivity extends AppCompatActivity {
             public TextView textView4;
             public TextView textView5;
             public TextView textView6;
-            public CircleImageView imageView;
+            public RoundImageView imageView;
 
             public RepliesViewHolder(View v) {
                 super(v);

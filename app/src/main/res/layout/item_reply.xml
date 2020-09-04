@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.news.gamersky.customizeview.RoundImageView
         android:id="@+id/imageView6_2"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:src="@drawable/avatar"
+        app:isCircle="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -2,6 +2,7 @@ package com.news.gamersky.fragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -16,6 +17,7 @@ import android.content.Intent;
 
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,11 +30,12 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
-import com.makeramen.roundedimageview.RoundedImageView;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.adapter.NewsAdapter;
 import com.news.gamersky.customizeview.BannerViewPager;
+import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.customizeview.ZoomOutPageTransformer;
 import com.news.gamersky.databean.NewsDataBean;
@@ -76,7 +79,7 @@ public class HomePageFragment extends Fragment {
     private NewsAdapter myAdapter;
     private MyViewpagerAdapter myViewpagerAdapter;
     private String nodeId;
-    private MyHandler myHandler;
+    private RefreshHandler refreshHandler;
     private ExecutorService executor;
     private int flag;
     private int lastFlag;
@@ -135,7 +138,7 @@ public class HomePageFragment extends Fragment {
         refreshLayout= view.findViewById(R.id.refreshLayout1);
         refreshLayout.setColorSchemeResources(R.color.colorAccent);
 
-        myHandler=new MyHandler();
+        refreshHandler=new RefreshHandler();
         executor= Executors.newSingleThreadExecutor();
         sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -315,14 +318,14 @@ public class HomePageFragment extends Fragment {
 
                     Message message=Message.obtain();
                     message.what=1;
-                    myHandler.sendMessage(message);
+                    refreshHandler.sendMessage(message);
 
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     Message message=Message.obtain();
                     message.what=0;
-                    myHandler.sendMessage(message);
+                    refreshHandler.sendMessage(message);
 
                 }
 
@@ -458,9 +461,12 @@ public class HomePageFragment extends Fragment {
             View v = LayoutInflater.from(container.getContext())
                     .inflate(R.layout.viewpager_banner, container, false);
             TextView textView=v.findViewById(R.id.textView);
-            final RoundedImageView imageView=v.findViewById(R.id.imageView);
+            final RoundImageView imageView=v.findViewById(R.id.imageView);
             if(!sharedPreferences.getBoolean("corner",false)){
-                imageView.setCornerRadius(0);
+                imageView.setRound(0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    imageView.setForeground(getResources().getDrawable(R.drawable.pressed_image));
+                }
             }
             textView.setText(myData.get(position).title);
             if(firstRun&&position==0){
@@ -473,7 +479,7 @@ public class HomePageFragment extends Fragment {
                             public void run() {
                                 Glide.with(imageView)
                                         .load(myData.get(position).imageUrl)
-                                        //.transition(DrawableTransitionOptions.withCrossFade())
+                                        .transition(DrawableTransitionOptions.withCrossFade())
                                         .centerCrop()
                                         .into(imageView);
                             }
@@ -483,7 +489,7 @@ public class HomePageFragment extends Fragment {
             }else {
                 Glide.with(imageView)
                         .load(myData.get(position).imageUrl)
-                        //.transition(DrawableTransitionOptions.withCrossFade())
+                        .transition(DrawableTransitionOptions.withCrossFade())
                         .centerCrop()
                         .into(imageView);
             }
@@ -506,18 +512,18 @@ public class HomePageFragment extends Fragment {
 
         @Override
         public int getItemPosition(Object object) {
-            if(!bannerData.get(0).title.equals(myData.get(0).title)){
-                return POSITION_NONE;
-            }else {
-                return POSITION_UNCHANGED;
-            }
-
+//            if(!bannerData.get(0).title.equals(myData.get(0).title)){
+//                return POSITION_NONE;
+//            }else {
+//                return POSITION_UNCHANGED;
+//            }
+            return POSITION_NONE;
         }
     }
 
 
 
-    public class MyHandler extends Handler{
+    public class RefreshHandler extends Handler{
         @Override
         public void handleMessage(Message msg){
             if(msg.what==1){
@@ -533,9 +539,9 @@ public class HomePageFragment extends Fragment {
                 toptv1.setText(topData.get(0).title);
                 toptv2.setText(topData.get(1).title);
                 myViewpagerAdapter.notifyDataSetChanged();
-                if(firstRun) {
-                    vp.setCurrentItem(1);
-                }
+//                if(firstRun) {
+//                    vp.setCurrentItem(1);
+//                }
 
                 System.out.println("更新ui完毕");
                 myAdapter.notifyDataSetChanged();
@@ -558,8 +564,8 @@ public class HomePageFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //System.out.println("开始定时");
 
+        //图片轮播
         timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
