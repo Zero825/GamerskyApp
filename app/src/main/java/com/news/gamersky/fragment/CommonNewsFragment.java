@@ -2,7 +2,6 @@ package com.news.gamersky.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.news.gamersky.R;
-import com.news.gamersky.adapter.NewsAdapter;
-import com.news.gamersky.databean.NewsDataBean;
+import com.news.gamersky.adapter.NewsRecyclerViewAdapter;
+import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.util.AppUtil;
 
 import org.json.JSONObject;
@@ -38,9 +37,9 @@ import static com.news.gamersky.util.AppUtil.is2s;
 public class CommonNewsFragment extends Fragment {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout midSwipeRefreshLayout;
-    private NewsAdapter newsAdapter;
+    private NewsRecyclerViewAdapter newsAdapter;
     private LinearLayoutManager linearLayoutManager;
-    private ArrayList<NewsDataBean> newsData;
+    private ArrayList<NewDataBean> newsData;
     private String nodeId;
     private SharedPreferences sharedPreferences;
     private ExecutorService executor;
@@ -81,7 +80,7 @@ public class CommonNewsFragment extends Fragment {
 
     public void init(View view){
         newsData=new ArrayList<>();
-        newsAdapter=new NewsAdapter(newsData,getActivity(),null);
+        newsAdapter=new NewsRecyclerViewAdapter(newsData,getActivity(),null);
         recyclerView=view.findViewById(R.id.recyclerView);
         linearLayoutManager=new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -109,7 +108,7 @@ public class CommonNewsFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    final ArrayList<NewsDataBean> tempData=new ArrayList<>();
+                    final ArrayList<NewDataBean> tempData=new ArrayList<>();
                     Document doc= Jsoup.connect(src).get();
                     Element e=doc.getElementsByClass("pictxt contentpaging")
                             .get(nodeIdPos);
@@ -151,7 +150,7 @@ public class CommonNewsFragment extends Fragment {
                                 String imageUrl=e1.getElementsByTag("img").get(0).attr("src");
                                 String sort="娱乐";
                                 String commentCount="";
-                                tempData.add(new NewsDataBean(id,imageUrl,title,src1,date,sort,commentCount));
+                                tempData.add(new NewDataBean(id,imageUrl,title,src1,date,sort,commentCount));
                             }
                         }
                     }
@@ -183,8 +182,9 @@ public class CommonNewsFragment extends Fragment {
                                 String s = jsonObject.getJSONObject(tempData.get(i).id).getString("comments");
                                 tempData.get(i).setCommentCount(s);
                             }
-                            connection.disconnect();
+
                         }
+                        connection.disconnect();
                     }
 
                     recyclerView.post(new Runnable() {
@@ -195,7 +195,7 @@ public class CommonNewsFragment extends Fragment {
                             newsAdapter.notifyDataSetChanged();
                             midSwipeRefreshLayout.setRefreshing(false);
                             if(!firstRun) {
-                                AppUtil.getSnackbar(getContext(), recyclerView, "数据刷新成功",true,true).show();
+                                AppUtil.getSnackbar(getContext(), recyclerView, getString(R.string.updata_successed),true,true).show();
                             }
                             firstRun=false;
                         }
@@ -206,7 +206,7 @@ public class CommonNewsFragment extends Fragment {
                         @Override
                         public void run() {
                             midSwipeRefreshLayout.setRefreshing(false);
-                            AppUtil.getSnackbar(getContext(),recyclerView,"数据加载失败",true,true).show();
+                            AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_failed),true,true).show();
                         }
                     });
 
@@ -221,7 +221,7 @@ public class CommonNewsFragment extends Fragment {
             public void run() {
                 page++;
                 try{
-                    final ArrayList<NewsDataBean> tempData=new ArrayList<>();
+                    final ArrayList<NewDataBean> tempData=new ArrayList<>();
                     if(nodeId!=null) {
                         String src = "https://db2.gamersky.com/LabelJsonpAjax.aspx?" +
                                 "jsondata=" +
@@ -259,7 +259,7 @@ public class CommonNewsFragment extends Fragment {
                                 String imageUrl=e1.getElementsByTag("img").get(0).attr("src");
                                 String sort="娱乐";
                                 String commentCount="";
-                                tempData.add(new NewsDataBean(id,imageUrl,title,src1,date,sort,commentCount));
+                                tempData.add(new NewDataBean(id,imageUrl,title,src1,date,sort,commentCount));
                             }
                         }
                     }

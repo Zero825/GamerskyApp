@@ -16,4 +16,9 @@
     <color name="bottomNavColor">#C62828</color>
     <color name="darkMask">#4D969696</color>
     <color name="LogoColorPrimary">#f01a21</color>
+
+    <color name="selectedColor">#2aae68</color>
+    <color name="ratingAverageGood">#2aae68</color>
+    <color name="ratingAverageMid">#FDD835</color>
+    <color name="ratingAverageBad">#F4511E</color>
 </resources>

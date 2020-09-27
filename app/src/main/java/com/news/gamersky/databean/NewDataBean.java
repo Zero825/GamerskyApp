@@ -2,7 +2,7 @@ package com.news.gamersky.databean;
 
 import java.io.Serializable;
 
-public class NewsDataBean implements Serializable {
+public class NewDataBean implements Serializable {
     public  String id;
     public String title;
     public String imageUrl;
@@ -13,20 +13,20 @@ public class NewsDataBean implements Serializable {
     public String content;
 
 
-    public NewsDataBean(){}
+    public NewDataBean(){}
 
-    public NewsDataBean(String imageUrl, String title, String src) {
+    public NewDataBean(String imageUrl, String title, String src) {
         this.imageUrl = imageUrl;
         this.title = title;
         this.src = src;
 
     }
-    public NewsDataBean(String title, String src) {
+    public NewDataBean(String title, String src) {
         this.title = title;
         this.src = src;
 
     }
-    public NewsDataBean(String id,String imageUrl, String title, String src, String date, String sort,String commentCount) {
+    public NewDataBean(String id, String imageUrl, String title, String src, String date, String sort, String commentCount) {
         this.id=id;
         this.imageUrl = imageUrl;
         this.title = title;
@@ -36,7 +36,7 @@ public class NewsDataBean implements Serializable {
         this.commentCount=commentCount;
     }
 
-    public NewsDataBean(String id,String title, String src, String date, String sort,String content) {
+    public NewDataBean(String id, String title, String src, String date, String sort, String content) {
         this.id=id;
         this.title = title;
         this.src = src;

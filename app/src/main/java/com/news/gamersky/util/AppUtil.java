@@ -1,5 +1,6 @@
 package com.news.gamersky.util;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -64,11 +65,12 @@ public class AppUtil {
     }
 
     public static Snackbar getSnackbar(Context context,View view,String msg,boolean primaryColor,boolean setAnchorView){
-        Snackbar snackbar= Snackbar.make(view,msg,1000);
+        Snackbar snackbar= Snackbar.make(view,msg,1500);
         if(primaryColor){
             snackbar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
             snackbar.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
         }
+        snackbar.getView().setElevation(0f);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         if(!sharedPreferences.getBoolean("no_bottombar",true)&&setAnchorView){
             snackbar.setAnchorView(R.id.nav_view);
@@ -124,4 +126,22 @@ public class AppUtil {
         //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return  sdf2.format(new Date(timeStamp));
     }
+
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    public static int px2dip(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static ObjectAnimator rockObjectAnimator(View view){
+        float f1=0,f2=10,f3=-10,f4=10,f5=0;
+        ObjectAnimator objectAnimator=ObjectAnimator.ofFloat(view,"translationX",f1,f2,f3,f4,f5);
+        objectAnimator.setDuration(100);
+        return objectAnimator;
+    }
+
 }

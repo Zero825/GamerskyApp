@@ -31,6 +31,8 @@ import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
+
 public class NewsFragment extends Fragment {
 
     private ImageView logo;
@@ -85,7 +87,7 @@ public class NewsFragment extends Fragment {
             fragments.get(i).setArguments(bundle);
         }
 
-        fragmentAdapter= new ViewPagerFragmentAdapter(getChildFragmentManager(),fragments,tabTitles,0);
+        fragmentAdapter= new ViewPagerFragmentAdapter(getChildFragmentManager(),fragments,tabTitles,BEHAVIOR_SET_USER_VISIBLE_HINT);
         viewPager.setAdapter(fragmentAdapter);
         viewPager.setOffscreenPageLimit(fragmentAdapter.getCount());
 

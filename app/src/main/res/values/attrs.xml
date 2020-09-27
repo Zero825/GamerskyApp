@@ -3,5 +3,6 @@
     <declare-styleable name="RoundImageView">
         <attr name="isCircle" format="boolean"></attr>
         <attr name="round" format="dimension"></attr>
+        <attr name="isAntiAlias" format="boolean"></attr>
     </declare-styleable>
 </resources>

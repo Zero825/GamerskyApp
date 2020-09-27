@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.news.gamersky.util.AppUtil;
-import com.news.gamersky.databean.NewsDataBean;
+import com.news.gamersky.databean.NewDataBean;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,7 +36,7 @@ public class SearchActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private LinearLayoutManager linearLayoutManager;
     private SearchAdapter searchAdapter;
-    private ArrayList<NewsDataBean> newsData;
+    private ArrayList<NewDataBean> newsData;
     private ExecutorService executor;
     private  int page;
     private  int flag;
@@ -55,7 +55,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         init();
-        setListen();
+        startListen();
         autoSearch();
     }
     
@@ -63,21 +63,6 @@ public class SearchActivity extends AppCompatActivity {
 //        getWindow().getDecorView()
 //                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 
-
-        progressBar=findViewById(R.id.progressBar4);
-        searchView=findViewById(R.id.view_search);
-
-
-        searchView.setIconifiedByDefault(false);
-        searchView.findViewById(R.id.search_plate).setBackgroundResource(R.color.tc);
-        searchView.requestFocus();
-        recyclerView=findViewById(R.id.list_search);
-        linearLayoutManager=new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        newsData=new ArrayList<>();
-        searchAdapter=new SearchAdapter(newsData);
-        recyclerView.setAdapter(searchAdapter);
-        executor= Executors.newSingleThreadExecutor();
 
         category="news";
         key="";
@@ -88,9 +73,28 @@ public class SearchActivity extends AppCompatActivity {
         sort="des";
         hotSort="des";
         timeSort="des";
+        if(getIntent().getStringExtra("category")!=null) {
+            category = getIntent().getStringExtra("category");
+        }
+
+        progressBar=findViewById(R.id.progressBar4);
+        searchView=findViewById(R.id.view_search);
+
+        searchView.setIconifiedByDefault(false);
+        searchView.findViewById(R.id.search_plate).setBackgroundResource(R.color.tc);
+        searchView.requestFocus();
+        recyclerView=findViewById(R.id.list_search);
+        linearLayoutManager=new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        newsData=new ArrayList<>();
+        searchAdapter=new SearchAdapter(newsData,category);
+        recyclerView.setAdapter(searchAdapter);
+        executor= Executors.newSingleThreadExecutor();
+
+
     }
 
-    private void setListen(){
+    private void startListen(){
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -179,12 +183,10 @@ public class SearchActivity extends AppCompatActivity {
                 searchView.setQuery(key,true);
             }
         });
+
     }
 
     public void autoSearch(){
-        if(getIntent().getStringExtra("category")!=null) {
-            category = getIntent().getStringExtra("category");
-        }
         Log.i("TAG", "autoSearch: "+category);
         if(getIntent().getStringExtra("key")!=null){
             key=getIntent().getStringExtra("key");
@@ -202,7 +204,7 @@ public class SearchActivity extends AppCompatActivity {
             public void run() {
                 Document doc = null;
                 try {
-                    final ArrayList<NewsDataBean> tempData=new ArrayList<>();
+                    final ArrayList<NewDataBean> tempData=new ArrayList<>();
                     doc= Jsoup.connect("http://so.gamersky.com/all/"
                             +category+"?s="+query
                             +"&type="+type+"&sort="+sort+"&p="+page).get();
@@ -219,7 +221,7 @@ public class SearchActivity extends AppCompatActivity {
                         String date=e1.getElementsByClass("time").get(0).html();
                         String sort=e1.getElementsByTag("span").get(0).html();
                         String content=e1.getElementsByClass("con").get(0).html();
-                        tempData.add(new NewsDataBean(
+                        tempData.add(new NewDataBean(
                                 id,
                                 title,
                                 src,
@@ -258,7 +260,7 @@ public class SearchActivity extends AppCompatActivity {
                 Document doc = null;
                 page++;
                 try {
-                    final ArrayList<NewsDataBean> tempData=new ArrayList<>();
+                    final ArrayList<NewDataBean> tempData=new ArrayList<>();
                     doc= Jsoup.connect("http://so.gamersky.com/all/"
                             +category+"?s="+key+"&type="+type+"&sort="+sort+"&p="+page).get();
                     final Elements es1=doc.getElementsByClass("txtlist contentpaging")
@@ -271,7 +273,7 @@ public class SearchActivity extends AppCompatActivity {
                         String date=e1.getElementsByClass("time").get(0).html();
                         String sort=e1.getElementsByTag("span").get(0).html();
                         String content=e1.getElementsByClass("con").get(0).html();
-                        tempData.add(new NewsDataBean(
+                        tempData.add(new NewDataBean(
                                 id,
                                 title,
                                 src,
@@ -302,13 +304,15 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-        ArrayList<NewsDataBean> mData;
+        ArrayList<NewDataBean> mData;
         private String key;
         private boolean moreData;
+        private String category;
 
-        public SearchAdapter(ArrayList<NewsDataBean> mData){
+        public SearchAdapter(ArrayList<NewDataBean> mData, String category){
             this.mData=mData;
             moreData=true;
+            this.category=category;
         }
 
         public void setKey(String key){
@@ -386,9 +390,14 @@ public class SearchActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         textView2.setTextColor(getResources().getColor(R.color.defaultColor));
                         textView3.setTextColor(getResources().getColor(R.color.defaultColor));
-                        NewsDataBean newData=mData.get(position);
+                        NewDataBean newData=mData.get(position);
                         newData.title=Html.fromHtml(mData.get(position).title).toString();
-                        newData.src="https://wap.gamersky.com/news/Content-"+mData.get(position).id+".html";
+                        if(category.equals("news")) {
+                            newData.src = "https://wap.gamersky.com/news/Content-" + mData.get(position).id + ".html";
+                        }
+                        if(category.equals("handbook")){
+                            newData.src = "https://wap.gamersky.com/gl/Content-" + mData.get(position).id + ".html";
+                        }
                         Intent intent=new Intent(SearchActivity.this,ArticleActivity.class);
                         intent.putExtra("new_data",mData.get(position));
                         startActivity(intent);

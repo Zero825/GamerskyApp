@@ -28,9 +28,11 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
-import com.news.gamersky.databean.NewsDataBean;
+import com.news.gamersky.databean.NewDataBean;
+import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.ReadingProgressUtil;
 import com.news.gamersky.customizeview.ArticleWebView;
 
@@ -57,9 +59,10 @@ public class ArticleFragment extends Fragment {
     private boolean pinye;
     private int page;
     private int maxPage;
-    private List<NewsDataBean> listData;
+    private List<NewDataBean> listData;
     private boolean listShowed;
     private AnimatorSet listAnimator;;
+    private String newTitle;
 
 
     @Nullable
@@ -70,6 +73,7 @@ public class ArticleFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             data_src=args.getString("data_src");
+            Log.i("TAG", "onCreateView: "+data_src);
             init(view);
             startListen();
             loadData(data_src);
@@ -128,8 +132,13 @@ public class ArticleFragment extends Fragment {
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url){
-                //Log.i("TAG", "shouldOverrideUrlLoading: "+url);
-                if(url.contains("http")){
+                Log.i("TAG", "shouldOverrideUrlLoading: "+url);
+                if(url.contains("gamersky.com/news")){
+                    String wapUrl= "https://wap.gamersky.com/news/Content-" + AppUtil.urlToId(url)+ ".html";
+                    Intent intent=new Intent(getContext(), ArticleActivity.class);
+                    intent.putExtra("new_data",new NewDataBean("",wapUrl));
+                    startActivity(intent);
+                }else if(url.contains("http")){
                     Intent intent = new Intent();
                     Uri content_url = Uri.parse(url);
                     intent.setAction(Intent.ACTION_VIEW);
@@ -176,8 +185,13 @@ public class ArticleFragment extends Fragment {
                 Document doc = Jsoup.connect(link).get();
                 final Elements content = doc.getElementsByTag("article");
                 final Elements content1 = doc.getElementsByClass("ymw-contxt-aside");
+
                 Elements content4=doc.getElementsByClass("gsAreaContextArt");
-                String srcUrl=content4.get(0).getElementsByTag("script").html();
+                String srcUrl="";
+                if(content4.size()!=0&&content4.get(0).getElementsByTag("script").size()!=0) {
+                    srcUrl = content4.get(0).getElementsByTag("script").html();
+                }
+
                 String a=content.html();
                 //Log.i("TAG", "run: "+srcUrl);
                 pinye=true;
@@ -220,7 +234,7 @@ public class ArticleFragment extends Fragment {
                 }else {
                     System.out.println("不用跳转");
                 }
-
+                newTitle=content1.get(0).getElementsByTag("h1").text();
                 String h= "<script src=\"file:///android_asset/js/echo.min.js\"></script>\n"+
 //                        "<script src=\"file:///android_asset/js/jquery-3.5.0.min.js\"></script>\n"+
                         "<link rel=\"stylesheet\" type=\"text/css\" href=\"file:///android_asset/css/oldstyle.css\" />"+
@@ -234,7 +248,7 @@ public class ArticleFragment extends Fragment {
 //                        "       $(\"div\").fadeIn(300);\n"+
 //                        "   });\n"+
                         "</script>"+
-                        "<b style=\"font-size:22px;margin:0;\">"+content1.get(0).getElementsByTag("h1").text()+"</b >"+
+                        "<b style=\"font-size:22px;margin:0;\">"+newTitle+"</b >"+
                         "<p class=\"author\" style=\"font-size:13px;margin:0;color:#808080\">"+"&nbsp;"+content1.get(0).getElementsByTag("span").text()+"</p >";
 
                 if(doc.getElementById("ymwTopVideoInfos")!=null){
@@ -262,7 +276,7 @@ public class ArticleFragment extends Fragment {
                         }else {
                             link= data_src.substring(0, data_src.indexOf(".html")) + "_" + (i + 1) + ".html";
                         }
-                        listData.add(new NewsDataBean(title,link));
+                        listData.add(new NewDataBean(title,link));
                     }
 
                     final String title=eSelected.html();
@@ -404,11 +418,13 @@ public class ArticleFragment extends Fragment {
         if(sharedPreferences.getBoolean("swpie_back",true)){
             final float dis=sharedPreferences.getInt("swipe_back_distance",10)*8;
             final float stc=sharedPreferences.getInt("swipe_sides_sensitivity",50)*0.01f;
+
             webView.setOnTouchListener(new View.OnTouchListener() {
                 float x1 = 0;
                 float x2 = 0;
                 float y1 = 0;
                 float y2 = 0;
+                float k = 0;
                 boolean back=true;
 
                 @Override
@@ -425,15 +441,18 @@ public class ArticleFragment extends Fragment {
                         case MotionEvent.ACTION_MOVE:
                             if(x2>event.getX()){
                                 //Log.i("TAG", "onTouch: "+icon_back+"\t"+x2+"\t"+event.getX());
+                                v.getParent().requestDisallowInterceptTouchEvent(false);
                                 back=false;
+                            }else {
+                                v.getParent().requestDisallowInterceptTouchEvent(true);
                             }
                             x2=event.getX();
                             break;
                         case MotionEvent.ACTION_UP:
                             x2=event.getX();
                             y2=event.getY();
-                            float k=(y2-y1)/(x2-x1);
-                            //Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+k+"\t"+back);
+                            k=(y2-y1)/(x2-x1);
+                            Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+dis+"\t"+k+"\t"+stc+"\t"+back);
                             if(x2-x1>dis&&Math.abs(k)<stc&&back){
                                 getActivity().finish();
                             }
@@ -441,6 +460,18 @@ public class ArticleFragment extends Fragment {
                                 showOrHideList();
                             }
                             break;
+//                        case MotionEvent.ACTION_CANCEL:
+//                            x2=event.getX();
+//                            y2=event.getY();
+//                            k = (y2 - y1) / (x2 - x1);
+//                            Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+dis+"\t"+k+"\t"+stc+"\t"+back);
+//                            if(x2-x1>dis&&Math.abs(k)<stc&&back){
+//                                getActivity().finish();
+//                            }
+//                            if(listShowed){
+//                                showOrHideList();
+//                            }
+//                            break;
                     }
                     return false;
                 }
@@ -530,7 +561,6 @@ public class ArticleFragment extends Fragment {
             }
             for (int i=0;i<elements5.size();i++){
                 Element element=elements5.get(i);
-                Log.i("TAG", "getNewContent: "+element.toString());
                 if (element.attr("src").equals("//j.gamersky.com/g/gsVideo.js")){
                     Element v=elements5.get(i+1);
                     String s=v.html();
@@ -570,6 +600,18 @@ public class ArticleFragment extends Fragment {
         webView.scrollTo(0,0);
     }
 
+    public void webViewResume(){
+        if(webView!=null){
+            webView.resumeTimers();
+        }
+    }
+
+    public void webViewPause(){
+        if(webView!=null){
+            webView.pauseTimers();
+        }
+    }
+
     @Override
     public void onDestroy() {
         ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
@@ -577,8 +619,16 @@ public class ArticleFragment extends Fragment {
         super.onDestroy();
     }
 
+    public String getNewTitle() {
+        if(newTitle==null) {
+            return "";
+        }else {
+            return newTitle;
+        }
+    }
+
     public class RecyclerViewAdapter extends RecyclerView.Adapter{
-        private List<NewsDataBean> data;
+        private List<NewDataBean> data;
         private Context context;
         private int currentSelected;
 
@@ -591,7 +641,7 @@ public class ArticleFragment extends Fragment {
             }
         }
 
-        public RecyclerViewAdapter(Context context,List<NewsDataBean> data){
+        public RecyclerViewAdapter(Context context,List<NewDataBean> data){
             this.context=context;
             this.data=data;
             currentSelected=0;

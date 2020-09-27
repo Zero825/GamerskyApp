@@ -1,6 +1,7 @@
 package com.news.gamersky;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,17 +14,19 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
-import com.news.gamersky.databean.NewsDataBean;
+import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
+
 
 public class ArticleActivity extends AppCompatActivity{
 
-    private NewsDataBean new_data;
+    private NewDataBean new_data;
     private ImageView imageView1;
     private ImageView imageView2;
     private ViewPager viewPager;
@@ -37,14 +40,20 @@ public class ArticleActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
         init();
-        setListen();
+        startListen();
     }
 
     public void init(){
 //        getWindow().getDecorView()
 //                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-        Intent intent = getIntent();
-        new_data = (NewsDataBean) intent.getSerializableExtra("new_data");
+        // ATTENTION: This was auto-generated to handle app links.
+        Intent appLinkIntent = getIntent();
+        String appLinkAction = appLinkIntent.getAction();
+        Uri appLinkData = appLinkIntent.getData();
+        new_data = (NewDataBean) appLinkIntent.getSerializableExtra("new_data");
+        if(new_data==null){
+            new_data=new NewDataBean("",appLinkData.toString());
+        }
 
         imageView1=findViewById(R.id.imageView5);
         imageView2=findViewById(R.id.imageView12);
@@ -65,7 +74,7 @@ public class ArticleActivity extends AppCompatActivity{
             fragments.get(i).setArguments(bundle);
         }
 
-        viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(),fragments,tabTitles,0);
+        viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(),fragments,tabTitles,BEHAVIOR_SET_USER_VISIBLE_HINT);
         viewPager.setAdapter(viewPagerFragmentAdapter);
         viewPager.setOffscreenPageLimit(viewPagerFragmentAdapter.getCount());
         tabLayout.setTabIndicatorFullWidth(false);
@@ -75,7 +84,7 @@ public class ArticleActivity extends AppCompatActivity{
 
 
 
-    public void setListen(){
+    public void startListen(){
 
         imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +98,11 @@ public class ArticleActivity extends AppCompatActivity{
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
+                if(new_data.title.equals("")){
+                    FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
+                    Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
+                    new_data.title=((ArticleFragment) fragment).getNewTitle();
+                }
                 shareIntent.putExtra(Intent.EXTRA_TEXT,new_data.title+new_data.src);
                 startActivity(Intent.createChooser(shareIntent, "分享到"));
             }
@@ -111,6 +125,32 @@ public class ArticleActivity extends AppCompatActivity{
             });
         }
 
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
+                Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
+                if(position==0) {
+                    if (fragment != null) {
+                        ((ArticleFragment) fragment).webViewResume();
+                    }
+                }else {
+                    if (fragment != null) {
+                        ((ArticleFragment) fragment).webViewPause();
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 

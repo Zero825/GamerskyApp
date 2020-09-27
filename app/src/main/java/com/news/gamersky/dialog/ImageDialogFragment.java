@@ -1,4 +1,4 @@
-package com.news.gamersky.fragment;
+package com.news.gamersky.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

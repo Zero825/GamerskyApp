@@ -1,12 +1,10 @@
 package com.news.gamersky.adapter;
 
-import android.app.Activity;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +19,14 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.customizeview.RoundImageView;
-import com.news.gamersky.databean.NewsDataBean;
+import com.news.gamersky.databean.NewDataBean;
+import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.ReadingProgressUtil;
 
 import java.util.List;
 
-public class NewsAdapter extends RecyclerView.Adapter {
-    private List<NewsDataBean> mDataset;
+public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
+    private List<NewDataBean> mDataset;
     private Context context;
     private View hasheader;
     private boolean moreData;
@@ -84,6 +83,13 @@ public class NewsAdapter extends RecyclerView.Adapter {
                     context.startActivity(intent);
                 }
             });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AppUtil.rockObjectAnimator(v).start();
+                    return true;
+                }
+            });
         }
     }
 
@@ -119,7 +125,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public NewsAdapter(List<NewsDataBean> dataset,Context context,View hasHeader) {
+    public NewsRecyclerViewAdapter(List<NewDataBean> dataset, Context context, View hasHeader) {
         this.mDataset = dataset;
         this.context = context;
         this.hasheader=hasHeader;

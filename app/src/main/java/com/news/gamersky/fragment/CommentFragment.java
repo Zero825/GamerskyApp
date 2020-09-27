@@ -1030,7 +1030,6 @@ public class CommentFragment extends Fragment {
                             recyclerView.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    System.out.println("加载评论成功");
                                     commentAdapter.notifyItemRangeInserted(commentAdapter.getItemCount(),finalLoadCommentNum);
                                     updateSuspensionBar();
                                     String lastCommentFloor2=allCommentData.get(allCommentData.size()-1).floor;

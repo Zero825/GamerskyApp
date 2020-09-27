@@ -32,7 +32,7 @@ import com.github.piasy.biv.loader.ImageLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.github.piasy.biv.view.GlideImageViewFactory;
 import com.google.android.material.snackbar.Snackbar;
-import com.news.gamersky.fragment.ImageDialogFragment;
+import com.news.gamersky.dialog.ImageDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -169,62 +169,62 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
 
 
 
-    public class MyViewpager2Adapter extends RecyclerView.Adapter<MyViewpager2Adapter.MyViewHolder> {
-        private JSONArray jsonArray;
-
-
-        public MyViewpager2Adapter(JSONArray jsonArray){
-            this.jsonArray=jsonArray;
-        }
-
-        public  class MyViewHolder extends RecyclerView.ViewHolder {
-            // each data item is just a string in this case
-
-            public BigImageView imageView;
-            public ProgressBar progressBar;
-            public MyViewHolder(View v) {
-                super(v);
-                imageView=v.findViewById(R.id.imageView8);
-                progressBar=v.findViewById(R.id.progressBar2);
-            }
-        }
-
-
-
-        @NonNull
-        @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.viewpager_image, parent, false);
-            return new MyViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
-            try{
-                JSONObject jsonObject2=jsonArray.getJSONObject(position);
-
-                holder.imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finishAfterTransition();
-                        System.out.println("结束浏览图片");
-                    }
-                });
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return jsonArray.length();
-        }
-    }
+//    public class MyViewpager2Adapter extends RecyclerView.Adapter<MyViewpager2Adapter.MyViewHolder> {
+//        private JSONArray jsonArray;
+//
+//
+//        public MyViewpager2Adapter(JSONArray jsonArray){
+//            this.jsonArray=jsonArray;
+//        }
+//
+//        public  class MyViewHolder extends RecyclerView.ViewHolder {
+//            // each data item is just a string in this case
+//
+//            public BigImageView imageView;
+//            public ProgressBar progressBar;
+//            public MyViewHolder(View v) {
+//                super(v);
+//                imageView=v.findViewById(R.id.imageView8);
+//                progressBar=v.findViewById(R.id.progressBar2);
+//            }
+//        }
+//
+//
+//
+//        @NonNull
+//        @Override
+//        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//            View v = LayoutInflater.from(parent.getContext())
+//                    .inflate(R.layout.viewpager_image, parent, false);
+//            return new MyViewHolder(v);
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
+//            try{
+//                JSONObject jsonObject2=jsonArray.getJSONObject(position);
+//
+//                holder.imageView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        finishAfterTransition();
+//                        System.out.println("结束浏览图片");
+//                    }
+//                });
+//
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//
+//
+//
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return jsonArray.length();
+//        }
+//    }
 
     public class AdapterViewpager extends PagerAdapter {
         private JSONArray jsonArray;
@@ -250,7 +250,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
             final BigImageView imageView=v.findViewById(R.id.imageView8);
             final ProgressBar progressBar=v.findViewById(R.id.progressBar2);
             final TextView textView=v.findViewById(R.id.textView24);
-            v.setOnClickListener(new View.OnClickListener() {
+            progressBar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     finish();
@@ -301,7 +301,6 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
                     public void onSuccess(File image) {
                         progressBar.setVisibility(View.GONE);
                         textView.setVisibility(View.GONE);
-                        v.setOnClickListener(null);
                        if(imageView.getSSIV()!=null) {
                            System.out.println(imageView.getSSIV());
                            imageView.getSSIV().setMaxScale(5.0f);

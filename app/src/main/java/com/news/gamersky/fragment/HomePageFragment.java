@@ -2,7 +2,6 @@ package com.news.gamersky.fragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -33,12 +32,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
-import com.news.gamersky.adapter.NewsAdapter;
+import com.news.gamersky.adapter.NewsRecyclerViewAdapter;
 import com.news.gamersky.customizeview.BannerViewPager;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.customizeview.ZoomOutPageTransformer;
-import com.news.gamersky.databean.NewsDataBean;
+import com.news.gamersky.databean.NewDataBean;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -70,13 +69,13 @@ public class HomePageFragment extends Fragment {
     private ProgressBar progressBar;
     private ConstraintLayout constraintLayout;
     private LinearLayoutManager layoutManager;
-    private ArrayList<NewsDataBean> bannerData;
-    private ArrayList<NewsDataBean> topData ;
-    private ArrayList<NewsDataBean> newsList ;
-    private ArrayList<NewsDataBean> tempBannerData;
-    private ArrayList<NewsDataBean> tempTopData;
-    private ArrayList<NewsDataBean> tempNewsList;
-    private NewsAdapter myAdapter;
+    private ArrayList<NewDataBean> bannerData;
+    private ArrayList<NewDataBean> topData ;
+    private ArrayList<NewDataBean> newsList ;
+    private ArrayList<NewDataBean> tempBannerData;
+    private ArrayList<NewDataBean> tempTopData;
+    private ArrayList<NewDataBean> tempNewsList;
+    private NewsRecyclerViewAdapter myAdapter;
     private MyViewpagerAdapter myViewpagerAdapter;
     private String nodeId;
     private RefreshHandler refreshHandler;
@@ -131,7 +130,7 @@ public class HomePageFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        myAdapter= new NewsAdapter(newsList, getActivity(),headerView);
+        myAdapter= new NewsRecyclerViewAdapter(newsList, getActivity(),headerView);
         recyclerView.setAdapter(myAdapter);
 
 
@@ -252,7 +251,7 @@ public class HomePageFragment extends Fragment {
                         String imageUrl=e1.attr("src");
                         String title=e2.text();
                         String src=content.get(i).attr("href");
-                        tempBannerData.add(new NewsDataBean(imageUrl,title,src));
+                        tempBannerData.add(new NewDataBean(imageUrl,title,src));
                     }
 
                     Elements content1 = doc.getElementsByAttributeValue("class","ymw-todaytop");
@@ -261,7 +260,7 @@ public class HomePageFragment extends Fragment {
                     for (Element link : links) {
                         String linkHref = link.attr("href");
                         String linkTitle=link.text();
-                        tempTopData.add(new NewsDataBean(linkTitle,linkHref));
+                        tempTopData.add(new NewDataBean(linkTitle,linkHref));
                     }
                     //System.out.println(content1.toString());
 
@@ -282,7 +281,7 @@ public class HomePageFragment extends Fragment {
                         String s3=content2.get(i).getElementsByTag("a").attr("href");
                         String s4=e1.get(0).getElementsByTag("time").text();
                         String s5=e2.get(0).getElementsByTag("strong").text();
-                        tempNewsList.add(new NewsDataBean(s0,s1,s2,s3,s4,s5,""));
+                        tempNewsList.add(new NewDataBean(s0,s1,s2,s3,s4,s5,""));
                     }
 
                     if(sharedPreferences.getBoolean("load_comments_count",false)) {
@@ -360,7 +359,7 @@ public class HomePageFragment extends Fragment {
                     connection.connect();
                     //得到响应码
                     int responseCode = connection.getResponseCode();
-                    final ArrayList<NewsDataBean> tempData=new ArrayList<>();
+                    final ArrayList<NewDataBean> tempData=new ArrayList<>();
                     if (responseCode == HttpURLConnection.HTTP_OK) {
                         //得到响应流
                         InputStream inputStream = connection.getInputStream();
@@ -383,7 +382,7 @@ public class HomePageFragment extends Fragment {
                             String s3=content2.get(i).getElementsByTag("a").attr("href");
                             String s4=e1.get(0).getElementsByTag("time").text();
                             String s5=e2.get(0).getElementsByTag("strong").text();
-                            tempData.add(new NewsDataBean(s0,s1,s2,s3,s4,s5,""));
+                            tempData.add(new NewDataBean(s0,s1,s2,s3,s4,s5,""));
 
                         }
 
@@ -435,15 +434,15 @@ public class HomePageFragment extends Fragment {
     }
 
     public void upTop(){
-        recyclerView.scrollToPosition(0);
+        recyclerView.smoothScrollToPosition(0);
     }
 
 
     public class  MyViewpagerAdapter extends PagerAdapter{
-        private ArrayList<NewsDataBean> myData;
+        private ArrayList<NewDataBean> myData;
 
 
-        public MyViewpagerAdapter(ArrayList<NewsDataBean> myData){
+        public MyViewpagerAdapter(ArrayList<NewDataBean> myData){
             this.myData=myData;
         }
         @Override
@@ -546,14 +545,14 @@ public class HomePageFragment extends Fragment {
                 System.out.println("更新ui完毕");
                 myAdapter.notifyDataSetChanged();
                 if(!firstRun){
-                    AppUtil.getSnackbar(getContext(),recyclerView,"首页刷新成功",true,true).show();
+                    AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_successed),true,true).show();
                 }
                 firstRun=false;
                 topiv.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
             if (msg.what==0){
-                AppUtil.getSnackbar(getContext(),recyclerView,"首页加载失败",true,true).show();
+                AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_failed),true,true).show();
                 progressBar.setVisibility(View.GONE);
                 refreshLayout.setRefreshing(false);
             }

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">游民星空</string>
     <string name="title_activity_settings">设置</string>
+    <string name="ok">确认</string>
+    <string name="cancel">取消</string>
     <string name="title_home">资讯</string>
     <string name="title_game_guide">攻略</string>
     <string name="title_game_reviews">评测</string>
@@ -17,15 +19,38 @@
     <string name="no_more">没有了，没有奇迹了</string>
     <string name="handbook_search">游戏攻略查询</string>
     <string name="handbook_search_hint">输入游戏名或攻略标题</string>
+    <string name="reviews_search_hint">输入游戏名</string>
+    <string name="sort_type">排序方式</string>
     <string name="sort_hot_asc">按热度升序</string>
     <string name="sort_time_asc">按时间升序</string>
+    <string name="sort_evaluation_asc">按评价升序</string>
     <string name="sort_hot_des">按热度降序</string>
     <string name="sort_time_des">按时间降序</string>
+    <string name="sort_evaluation_des">按评价降序</string>
+    <string name="listed">已上市</string>
+    <string name="unlisted">未上市</string>
     <string name="end">-END-</string>
+    <string name="article_nav">文章导航</string>
+    <string name="updata_successed">更新成功</string>
+    <string name="updata_failed">更新失败</string>
+
+    <string name="all">全部</string>
+    <string name="game_genres">游戏类型</string>
+    <string name="game_platform">游戏平台</string>
+    <string name="sale_date">发售时间</string>
+    <string name="game_company">游戏厂商</string>
+    <string name="official_chinese">官方中文</string>
+    <string name="game_tag">游戏标签</string>
+
+    <string name="title">游戏名</string>
+    <string name="en_title">英文名</string>
+    <string name="game_make">制作</string>
+    <string name="chinese">中文</string>
+    <string name="listed_time">发行时间</string>
 
     <string name="night_mode">深色模式</string>
     <string name="night_mode_light">浅色</string>
     <string name="night_mode_night">深色</string>
     <string name="night_mode_default">系统默认(跟随系统)</string>
-    <string name="article_nav">文章导航</string>
+
 </resources>

@@ -85,7 +85,7 @@
             android:key="swipe_sides_sensitivity"
             android:max="100"
             app:iconSpaceReserved="false"
-            app:min="0"
+            app:min="10"
             app:showSeekBarValue="true"
             app:summary="默认值：50"
             app:title="滑动返回触发高度" />

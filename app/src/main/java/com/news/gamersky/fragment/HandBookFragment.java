@@ -1,13 +1,11 @@
 package com.news.gamersky.fragment;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +22,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -31,7 +30,8 @@ import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.SearchActivity;
 import com.news.gamersky.customizeview.RoundImageView;
-import com.news.gamersky.databean.NewsDataBean;
+import com.news.gamersky.databean.NewDataBean;
+import com.news.gamersky.util.AppUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -43,12 +43,14 @@ import java.util.regex.Pattern;
 
 
 public class HandBookFragment extends Fragment {
+    private SwipeRefreshLayout refreshLayout;
     private NestedScrollView nestedScrollView;
     private ProgressBar progressBar;
     private SearchView searchView;
-    private LinearLayout top;
+    private LinearLayout topList;
     private LinearLayout hotList;
     private String  dataSrc;
+    private boolean firstRun;
     private boolean corner;
 
     @Nullable
@@ -63,14 +65,17 @@ public class HandBookFragment extends Fragment {
 
     public void init(View view){
         searchView=view.findViewById(R.id.searchView);
-        top=view.findViewById(R.id.top);
+        topList=view.findViewById(R.id.top);
         hotList=view.findViewById(R.id.hot_list);
         nestedScrollView=view.findViewById(R.id.nestedScrollView);
         progressBar=view.findViewById(R.id.progressBar5);
+        refreshLayout=view.findViewById(R.id.refreshLayout);
 
         nestedScrollView.setVisibility(View.INVISIBLE);
+        refreshLayout.setColorSchemeResources(R.color.colorAccent);
 
         dataSrc="https://www.gamersky.com/handbook/";
+        firstRun=true;
 
         corner =
                 PreferenceManager.getDefaultSharedPreferences(getContext())
@@ -81,12 +86,13 @@ public class HandBookFragment extends Fragment {
         new Thread(){
             @Override
             public void run() {
-                super.run();
                 try {
                     Document doc = Jsoup.connect(dataSrc).get();
-                    Elements dataLi0=doc.getElementsByClass("Mid3img").get(0).getElementsByTag("li");
-                    Elements dataLi1=doc.getElementsByClass("LLBlist").get(0).getElementsByTag("li");
+                    final Elements dataLi0=doc.getElementsByClass("Mid3img").get(0).getElementsByTag("li");
+                    final Elements dataLi1=doc.getElementsByClass("LLBlist").get(0).getElementsByTag("li");
                     String pattern="/[0-9]*\\.";
+
+                    final View[] topListViews=new View[dataLi0.size()];
                     for(int i=0;i<dataLi0.size();i=i+2){
                         Element element0=dataLi0.get(i);
                         Element element1=dataLi0.get(i+1);
@@ -127,7 +133,7 @@ public class HandBookFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Intent intent=new Intent(getContext(), ArticleActivity.class);
-                                intent.putExtra("new_data",new NewsDataBean(title0, finalLink0));
+                                intent.putExtra("new_data",new NewDataBean(title0, finalLink0));
                                 getContext().startActivity(intent);
                             }
                         });
@@ -135,11 +141,11 @@ public class HandBookFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Intent intent=new Intent(getContext(), ArticleActivity.class);
-                                intent.putExtra("new_data",new NewsDataBean(title1, finalLink1));
+                                intent.putExtra("new_data",new NewDataBean(title1, finalLink1));
                                 getContext().startActivity(intent);
                             }
                         });
-                        top.post(new Runnable() {
+                        topList.post(new Runnable() {
                             @Override
                             public void run() {
                                 textView0.setText(title0);
@@ -154,18 +160,19 @@ public class HandBookFragment extends Fragment {
                                         .transition(DrawableTransitionOptions.withCrossFade())
                                         .centerCrop()
                                         .into(roundImageView1);
-                                top.addView(vc);
                             }
                         });
+                        topListViews[i]=vc;
                     }
 
+                    final View[] hotListViews=new View[dataLi1.size()];
                     for(int i=0;i<dataLi1.size();i++){
                         Element element=dataLi1.get(i);
                         final String title=element.getElementsByClass("tit").get(0)
                                 .getElementsByTag("a").html();
                         String link=element.getElementsByClass("tit").get(0)
                                 .getElementsByTag("a").attr("href");
-                        final SpannableString ss=new SpannableString("• "+(i+1)+"\t"+ Html.fromHtml(title));
+                        final SpannableString ss=new SpannableString("• "+(i+1)+"\t\t\t"+ Html.fromHtml(title));
                         ForegroundColorSpan foregroundColorSpan=new ForegroundColorSpan(getResources().getColor(R.color.colorAccent));
                         ss.setSpan(foregroundColorSpan,0,1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         Pattern r = Pattern.compile(pattern);
@@ -181,7 +188,7 @@ public class HandBookFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Intent intent=new Intent(getContext(), ArticleActivity.class);
-                                intent.putExtra("new_data",new NewsDataBean(title, finalLink));
+                                intent.putExtra("new_data",new NewDataBean(title, finalLink));
                                 getContext().startActivity(intent);
                             }
                         });
@@ -189,20 +196,42 @@ public class HandBookFragment extends Fragment {
                             @Override
                             public void run() {
                                 textView.setText(ss);
-                                hotList.addView(vc);
                             }
                         });
+                        hotListViews[i]=vc;
                     }
 
                     nestedScrollView.post(new Runnable() {
                         @Override
                         public void run() {
+                            topList.removeAllViews();
+                            hotList.removeAllViews();
+                            for(int i=0;i<dataLi0.size();i++){
+                                if(topListViews[i]!=null)
+                                topList.addView(topListViews[i]);
+                            }
+                            for(int i=0;i<dataLi1.size();i++){
+                                if(hotListViews[i]!=null)
+                                hotList.addView(hotListViews[i]);
+                            }
                             progressBar.setVisibility(View.GONE);
                             nestedScrollView.setVisibility(View.VISIBLE);
+                            refreshLayout.setRefreshing(false);
+                            if(!firstRun){
+                                AppUtil.getSnackbar(getContext(),nestedScrollView,getString(R.string.updata_successed),true,true).show();
+                            }
+                            firstRun=false;
                         }
                     });
                 }catch (Exception e){
                     e.printStackTrace();
+                    nestedScrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.setRefreshing(false);
+                            AppUtil.getSnackbar(getContext(),nestedScrollView,getString(R.string.updata_failed),true,true).show();
+                        }
+                    });
                 }
             }
         }.start();
@@ -226,6 +255,12 @@ public class HandBookFragment extends Fragment {
             }
         });
 
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
     }
 
     public void upTop(){

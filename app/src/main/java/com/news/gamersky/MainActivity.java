@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.news.gamersky.fragment.HandBookFragment;
 import com.news.gamersky.fragment.NewsFragment;
+import com.news.gamersky.fragment.ReviewsFragment;
 import com.news.gamersky.util.AppUtil;
 
 import androidx.annotation.NonNull;
@@ -45,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         hostContainer=findViewById(R.id.nav_host_container);
 
         fragmentManager=getSupportFragmentManager();
-        if(fragmentManager.findFragmentByTag("newsFragment")==null) {
+        if(fragmentManager.findFragmentByTag("NewsFragment")==null) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.nav_host_container, new NewsFragment(), "newsFragment");
+            fragmentTransaction.add(R.id.nav_host_container, new NewsFragment(), "NewsFragment");
             fragmentTransaction.commit();
         }
 
@@ -67,10 +68,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("TAG", "onNavigationItemSelected: show"+item.getItemId());
                 switch (item.getItemId()){
                     case R.id.navigation_home:
-                        if(fragmentManager.findFragmentByTag("newsFragment")!=null){
-                            fragmentTransaction.show(fragmentManager.findFragmentByTag("newsFragment"));
+                        if(fragmentManager.findFragmentByTag("NewsFragment")!=null){
+                            fragmentTransaction.show(fragmentManager.findFragmentByTag("NewsFragment"));
                         }else {
-                            fragmentTransaction.add(R.id.nav_host_container, new NewsFragment(), "newsFragment");
+                            fragmentTransaction.add(R.id.nav_host_container, new NewsFragment(), "NewsFragment");
                         }
                         break;
                     case R.id.navigation_game_guide:
@@ -79,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
                         }else {
                             fragmentTransaction.add(R.id.nav_host_container, new HandBookFragment(), "HandBookFragment");
                         }
+                        break;
+                    case R.id.navigation_game_reviews:
+                        if(fragmentManager.findFragmentByTag("ReviewsFragment")!=null){
+                            fragmentTransaction.show(fragmentManager.findFragmentByTag("ReviewsFragment"));
+                        }else {
+                            fragmentTransaction.add(R.id.nav_host_container, new ReviewsFragment(), "ReviewsFragment");
+                        }
+                        break;
                 }
                 Log.i("TAG", "onNavigationItemSelected: "+item+item.getItemId());
                 fragmentTransaction.commit();
@@ -93,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
             public void onNavigationItemReselected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.navigation_home:
-                        if(fragmentManager.findFragmentByTag("newsFragment")!=null){
-                            Fragment fragment=fragmentManager.findFragmentByTag("newsFragment");
+                        if(fragmentManager.findFragmentByTag("NewsFragment")!=null){
+                            Fragment fragment=fragmentManager.findFragmentByTag("NewsFragment");
                             ((NewsFragment) fragment).upTop();
                         }
                         break;
@@ -104,6 +113,12 @@ public class MainActivity extends AppCompatActivity {
                             ((HandBookFragment) fragment).upTop();
                         }
                         break;
+                    case R.id.navigation_game_reviews:
+                        if(fragmentManager.findFragmentByTag("ReviewsFragment")!=null){
+                            Fragment fragment=fragmentManager.findFragmentByTag("ReviewsFragment");
+                            ((ReviewsFragment) fragment).upTop();
+                        }
+                        break;
                 }
             }
         });
@@ -111,11 +126,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void hideAllFragment(FragmentTransaction fragmentTransaction){
-        if(fragmentManager.findFragmentByTag("newsFragment")!=null){
-            fragmentTransaction.hide(fragmentManager.findFragmentByTag("newsFragment"));
+        if(fragmentManager.findFragmentByTag("NewsFragment")!=null){
+            fragmentTransaction.hide(fragmentManager.findFragmentByTag("NewsFragment"));
         }
         if(fragmentManager.findFragmentByTag("HandBookFragment")!=null){
             fragmentTransaction.hide(fragmentManager.findFragmentByTag("HandBookFragment"));
+        }
+        if(fragmentManager.findFragmentByTag("ReviewsFragment")!=null){
+            fragmentTransaction.hide(fragmentManager.findFragmentByTag("ReviewsFragment"));
+
         }
     }
 
