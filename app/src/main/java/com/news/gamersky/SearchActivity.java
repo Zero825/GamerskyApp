@@ -3,6 +3,7 @@ package com.news.gamersky;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,9 +15,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
+import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.databean.NewDataBean;
 
@@ -35,6 +42,7 @@ public class SearchActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private LinearLayoutManager linearLayoutManager;
+    private GridLayoutManager gridLayoutManager;
     private SearchAdapter searchAdapter;
     private ArrayList<NewDataBean> newsData;
     private ExecutorService executor;
@@ -85,7 +93,13 @@ public class SearchActivity extends AppCompatActivity {
         searchView.requestFocus();
         recyclerView=findViewById(R.id.list_search);
         linearLayoutManager=new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        gridLayoutManager=new GridLayoutManager(this,3);
+        if(category.equals("ku")){
+            recyclerView.setLayoutManager(gridLayoutManager);
+        }else {
+            recyclerView.setLayoutManager(linearLayoutManager);
+        }
+
         newsData=new ArrayList<>();
         searchAdapter=new SearchAdapter(newsData,category);
         recyclerView.setAdapter(searchAdapter);
@@ -121,7 +135,12 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int lastItem=linearLayoutManager.findLastVisibleItemPosition();
+                int lastItem;
+                if(category.equals("ku")){
+                    lastItem = gridLayoutManager.findLastVisibleItemPosition();
+                }else {
+                    lastItem = linearLayoutManager.findLastVisibleItemPosition();
+                }
                 int dataNum=newsData.size();
                 int line=dataNum-10;
 
@@ -196,6 +215,9 @@ public class SearchActivity extends AppCompatActivity {
         if(category.equals("news")){
             findViewById(R.id.type_sort).setVisibility(View.GONE);
         }
+        if(category.equals("ku")){
+            findViewById(R.id.type_sort).setVisibility(View.GONE);
+        }
     }
 
     private void search(final String query){
@@ -208,28 +230,45 @@ public class SearchActivity extends AppCompatActivity {
                     doc= Jsoup.connect("http://so.gamersky.com/all/"
                             +category+"?s="+query
                             +"&type="+type+"&sort="+sort+"&p="+page).get();
-                    final Elements es1=doc.getElementsByClass("txtlist contentpaging")
-                            .get(0).getElementsByTag("li");
-                    for(int i=0;i<es1.size();i++){
-                        Element e1=es1.get(i);
-                        String id=e1.getElementsByTag("a").get(0).attr("href");
-                        id=new StringBuffer(id).reverse().toString();
-                        id=id.substring(id.indexOf(".")+1,id.indexOf("/"));
-                        id=new StringBuffer(id).reverse().toString();
-                        String title=e1.getElementsByTag("a").get(0).html();
-                        String src="";
-                        String date=e1.getElementsByClass("time").get(0).html();
-                        String sort=e1.getElementsByTag("span").get(0).html();
-                        String content=e1.getElementsByClass("con").get(0).html();
-                        tempData.add(new NewDataBean(
-                                id,
-                                title,
-                                src,
-                                date,
-                                sort,
-                                content
-                        ));
+                    if(category.equals("ku")){
+                        final Elements es1=doc.getElementsByClass("ImgY contentpaging")
+                                .get(0).getElementsByTag("li");
+                        for(int i=0;i<es1.size();i++){
+                            Element e1=es1.get(i);
+                            String title=e1.getElementsByTag("img").get(0).attr("title");
+                            String src=e1.getElementsByTag("a").get(0).attr("href");
+                            String imageUrl=e1.getElementsByTag("img").get(0).attr("src");
+                            tempData.add(new NewDataBean(
+                                    imageUrl,
+                                    title,
+                                    src
+                            ));
+                        }
+                    }else {
+                        final Elements es1=doc.getElementsByClass("txtlist contentpaging")
+                                .get(0).getElementsByTag("li");
+                        for(int i=0;i<es1.size();i++){
+                            Element e1=es1.get(i);
+                            String id=e1.getElementsByTag("a").get(0).attr("href");
+                            id=new StringBuffer(id).reverse().toString();
+                            id=id.substring(id.indexOf(".")+1,id.indexOf("/"));
+                            id=new StringBuffer(id).reverse().toString();
+                            String title=e1.getElementsByTag("a").get(0).html();
+                            String src="";
+                            String date=e1.getElementsByClass("time").get(0).html();
+                            String sort=e1.getElementsByTag("span").get(0).html();
+                            String content=e1.getElementsByClass("con").get(0).html();
+                            tempData.add(new NewDataBean(
+                                    id,
+                                    title,
+                                    src,
+                                    date,
+                                    sort,
+                                    content
+                            ));
+                        }
                     }
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -240,7 +279,7 @@ public class SearchActivity extends AppCompatActivity {
                             }
                             progressBar.setVisibility(View.INVISIBLE);
                             searchAdapter.notifyDataSetChanged();
-                            if(es1.size()==0){
+                            if(tempData.size()==0){
                                 AppUtil.getSnackbar(SearchActivity.this,recyclerView,getResources().getString(R.string.no_search_result),true,false).show();
                             }
                         }
@@ -248,6 +287,8 @@ public class SearchActivity extends AppCompatActivity {
 
                 }catch (Exception e){
                     e.printStackTrace();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    AppUtil.getSnackbar(SearchActivity.this,recyclerView,getResources().getString(R.string.search_faild),true,false).show();
                 }
             }
         }).start();
@@ -263,24 +304,40 @@ public class SearchActivity extends AppCompatActivity {
                     final ArrayList<NewDataBean> tempData=new ArrayList<>();
                     doc= Jsoup.connect("http://so.gamersky.com/all/"
                             +category+"?s="+key+"&type="+type+"&sort="+sort+"&p="+page).get();
-                    final Elements es1=doc.getElementsByClass("txtlist contentpaging")
-                            .get(0).getElementsByTag("li");
-                    for(int i=0;i<es1.size();i++){
-                        Element e1=es1.get(i);
-                        String id=AppUtil.urlToId(e1.getElementsByTag("a").get(0).attr("href"));
-                        String title=e1.getElementsByTag("a").get(0).html();
-                        String src="";
-                        String date=e1.getElementsByClass("time").get(0).html();
-                        String sort=e1.getElementsByTag("span").get(0).html();
-                        String content=e1.getElementsByClass("con").get(0).html();
-                        tempData.add(new NewDataBean(
-                                id,
-                                title,
-                                src,
-                                date,
-                                sort,
-                                content
-                        ));
+                    if(category.equals("ku")){
+                        final Elements es1=doc.getElementsByClass("ImgY contentpaging")
+                                .get(0).getElementsByTag("li");
+                        for(int i=0;i<es1.size();i++){
+                            Element e1=es1.get(i);
+                            String title=e1.getElementsByTag("img").get(0).attr("title");
+                            String src=e1.getElementsByTag("a").get(0).attr("href");
+                            String imageUrl=e1.getElementsByTag("img").get(0).attr("src");
+                            tempData.add(new NewDataBean(
+                                    imageUrl,
+                                    title,
+                                    src
+                            ));
+                        }
+                    }else {
+                        final Elements es1=doc.getElementsByClass("txtlist contentpaging")
+                                .get(0).getElementsByTag("li");
+                        for(int i=0;i<es1.size();i++){
+                            Element e1=es1.get(i);
+                            String id=AppUtil.urlToId(e1.getElementsByTag("a").get(0).attr("href"));
+                            String title=e1.getElementsByTag("a").get(0).html();
+                            String src="";
+                            String date=e1.getElementsByClass("time").get(0).html();
+                            String sort=e1.getElementsByTag("span").get(0).html();
+                            String content=e1.getElementsByClass("con").get(0).html();
+                            tempData.add(new NewDataBean(
+                                    id,
+                                    title,
+                                    src,
+                                    date,
+                                    sort,
+                                    content
+                            ));
+                        }
                     }
                     runOnUiThread(new Runnable() {
                         @Override
@@ -325,8 +382,11 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position){
+
             if(position==mData.size()){
                 return 0;
+            }else if(category.equals("ku")){
+                return 2;
             }else {
                 return 1;
             }
@@ -337,14 +397,24 @@ public class SearchActivity extends AppCompatActivity {
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v=null;
             if(viewType==0){
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_footer, parent, false);
+                if(category.equals("ku")){
+                    v = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.recyclerview_search_ku_footer, parent, false);
+                }else {
+                    v = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.recyclerview_footer, parent, false);
+                }
                 return new FooterViewHolder(v);
             }
             if(viewType==1){
                 v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.recyclerview_search, parent, false);
                 return new SearchViewHolder(v);
+            }
+            if(viewType==2){
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recyclerview_search_ku, parent, false);
+                return new KuSearchViewHolder(v);
             }
             return new SearchViewHolder(v);
         }
@@ -357,6 +427,9 @@ public class SearchActivity extends AppCompatActivity {
             }
             if(vt==1){
                 ((SearchViewHolder)holder).bindView(position);
+            }
+            if(vt==2){
+                ((KuSearchViewHolder)holder).bindView(position);
             }
         }
 
@@ -403,6 +476,27 @@ public class SearchActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+            }
+        }
+
+        public class KuSearchViewHolder extends RecyclerView.ViewHolder {
+
+            public ImageView imageView;
+            public TextView textView;
+
+            public KuSearchViewHolder(View v) {
+                super(v);
+                textView=v.findViewById(R.id.textView29);
+                imageView=v.findViewById(R.id.imageView19);
+            }
+
+            public void bindView(final int position){
+                textView.setText(mData.get(position).title);
+                Glide.with(imageView)
+                        .load(mData.get(position).imageUrl)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.smallRoundCorner)))
+                        .into(imageView);
             }
         }
 

@@ -14,6 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
+import com.news.gamersky.customizeview.FixViewPager;
 import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
@@ -29,7 +30,7 @@ public class ArticleActivity extends AppCompatActivity{
     private NewDataBean new_data;
     private ImageView imageView1;
     private ImageView imageView2;
-    private ViewPager viewPager;
+    private FixViewPager viewPager;
     private ViewPagerFragmentAdapter viewPagerFragmentAdapter;
     private List<Fragment> fragments;
     private List<String> tabTitles;

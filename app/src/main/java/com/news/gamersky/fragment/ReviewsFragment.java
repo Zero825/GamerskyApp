@@ -1,6 +1,7 @@
 package com.news.gamersky.fragment;
 
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.news.gamersky.R;
+import com.news.gamersky.SearchActivity;
 import com.news.gamersky.adapter.GameRecyclerViewAdapter;
 import com.news.gamersky.customizeview.LineFeedRadioGroup;
 import com.news.gamersky.databean.GameDataBean;
@@ -50,7 +53,9 @@ public class ReviewsFragment extends Fragment {
 
     private ObjectAnimator arrowAnimator;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private SearchView searchView;
     private ProgressBar progressBar;
+    private ProgressBar smallProgressBar;
     private ImageView btnLogo;
 
     private RecyclerView recyclerView;
@@ -118,7 +123,9 @@ public class ReviewsFragment extends Fragment {
         swipeRefreshLayout=view.findViewById(R.id.swipeRefreshLayout);
         progressBar=view.findViewById(R.id.progressBar6);
         btnLogo=view.findViewById(R.id.imageView18);
+        searchView=view.findViewById(R.id.searchView);
 
+        smallProgressBar=headerView.findViewById(R.id.progressBar7);
         gameGenresSelectTip=headerView.findViewById(R.id.gameGenresSelectTip);
         gameGenresSelect=headerView.findViewById(R.id.radioGroup1);
 
@@ -545,6 +552,22 @@ public class ReviewsFragment extends Fragment {
             }
         });
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
+                Intent intent=new Intent(getContext(), SearchActivity.class);
+                intent.putExtra("key",query);
+                intent.putExtra("category","ku");
+                startActivity(intent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     public void hideAll(){
@@ -563,6 +586,7 @@ public class ReviewsFragment extends Fragment {
         gameRecyclerViewAdapter.setNoMore(false);
         flag=0;
         lastFlag=0;
+        smallProgressBar.setVisibility(View.VISIBLE);
         Log.i(TAG, "loadData: "+referer+"\t"+sort);
         new Thread(new Runnable() {
             @Override
@@ -623,6 +647,7 @@ public class ReviewsFragment extends Fragment {
                                 if(gameDataList.size()<pageSize){
                                     gameRecyclerViewAdapter.setNoMore(true);
                                 }
+                                smallProgressBar.setVisibility(View.GONE);
                             }
                         });
 
@@ -635,7 +660,7 @@ public class ReviewsFragment extends Fragment {
                         public void run() {
                             swipeRefreshLayout.setRefreshing(false);
                             AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_failed),true,true).show();
-
+                            smallProgressBar.setVisibility(View.GONE);
                         }
                     });
                 }

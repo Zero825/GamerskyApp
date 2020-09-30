@@ -25,12 +25,15 @@ import androidx.preference.PreferenceManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.SearchActivity;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.databean.NewDataBean;
+import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 
 import org.jsoup.Jsoup;
@@ -51,7 +54,6 @@ public class HandBookFragment extends Fragment {
     private LinearLayout hotList;
     private String  dataSrc;
     private boolean firstRun;
-    private boolean corner;
 
     @Nullable
     @Override
@@ -77,9 +79,6 @@ public class HandBookFragment extends Fragment {
         dataSrc="https://www.gamersky.com/handbook/";
         firstRun=true;
 
-        corner =
-                PreferenceManager.getDefaultSharedPreferences(getContext())
-                        .getBoolean("corner",false);
     }
 
     public void loadData(){
@@ -118,12 +117,10 @@ public class HandBookFragment extends Fragment {
                         final TextView textView0=vc.findViewById(R.id.textView0);
                         final RoundImageView roundImageView1=vc.findViewById(R.id.roundImageView1);
                         final TextView textView1=vc.findViewById(R.id.textView1);
-                        if(!corner){
-                            roundImageView0.setRound(0);
-                            roundImageView1.setRound(1);
+                        if(!AppSetting.isRoundCorner){
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                roundImageView0.setForeground(getResources().getDrawable(R.drawable.pressed_image));
-                                roundImageView1.setForeground(getResources().getDrawable(R.drawable.pressed_image));
+                                roundImageView0.setForeground(getResources().getDrawable(R.drawable.pressed_image,null));
+                                roundImageView1.setForeground(getResources().getDrawable(R.drawable.pressed_image,null));
                             }
                         }
 
@@ -149,16 +146,16 @@ public class HandBookFragment extends Fragment {
                             @Override
                             public void run() {
                                 textView0.setText(title0);
+                                textView1.setText(title1);
                                 Glide.with(roundImageView0)
                                         .load(imageUrl0)
                                         .transition(DrawableTransitionOptions.withCrossFade())
-                                        .centerCrop()
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.bigRoundCorner)))
                                         .into(roundImageView0);
-                                textView1.setText(title1);
                                 Glide.with(roundImageView1)
                                         .load(imageUrl1)
                                         .transition(DrawableTransitionOptions.withCrossFade())
-                                        .centerCrop()
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.bigRoundCorner)))
                                         .into(roundImageView1);
                             }
                         });

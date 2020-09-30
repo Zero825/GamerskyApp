@@ -65,7 +65,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <com.news.gamersky.customizeview.FixViewPager
         android:id="@+id/pager2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

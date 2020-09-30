@@ -8,12 +8,12 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-    <androidx.viewpager.widget.ViewPager
+    <com.news.gamersky.customizeview.FixViewPager
         android:id="@+id/images_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/darkBackground">
 
-    </androidx.viewpager.widget.ViewPager>
+    </com.news.gamersky.customizeview.FixViewPager>
 
 </LinearLayout>

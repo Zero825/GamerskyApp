@@ -102,12 +102,12 @@ public class ArticleFragment extends Fragment {
         recyclerView.setAdapter(new RecyclerViewAdapter(getContext(),listData));
 
         webView.setBackgroundColor(0);
-        //webView.setInitialScale(320);
+        webView.setInitialScale(320);
         webView.setHorizontalScrollBarEnabled(false);//水平不显示
         webView.setVerticalScrollBarEnabled(true); //垂直不显示
         //webView.getSettings().setLoadsImagesAutomatically(false);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setTextZoom(110);
+        //webView.getSettings().setTextZoom(110);
         webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         //java回调js代码，不要忘了@JavascriptInterface这个注解，不然点击事件不起作用
         webView.addJavascriptInterface(new JsCallJavaObj() {
@@ -207,14 +207,14 @@ public class ArticleFragment extends Fragment {
                         Elements elements2=elements1.get(0).getElementsByTag("img");
                         Elements elements3=doc1.getElementsByClass("video-img");
                         if(elements3.attr("data-sitename").equals("bilibili")){
-                            elements3.html(elements3.html()
+                            elements3.html("<p></p>"+elements3.html()
                                     + "<a class=\"\" target=\"_blank\" href=\""+"https://www.bilibili.com/video/"
                                     +elements3.attr("data-vid")
                                     +"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>");
                             elements3.attr("style","text-align:center;");
                         }
                         if(elements3.attr("data-sitename").equals("youku")){
-                            elements3.html(elements3.html()
+                            elements3.html("<p></p>"+elements3.html()
                                     + "<a class=\"\" target=\"_blank\" href=\""+"https://v.youku.com/v_show/id_"
                                     +elements3.attr("data-vid")
                                     +"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>");
@@ -452,7 +452,7 @@ public class ArticleFragment extends Fragment {
                             x2=event.getX();
                             y2=event.getY();
                             k=(y2-y1)/(x2-x1);
-                            Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+dis+"\t"+k+"\t"+stc+"\t"+back);
+                            //Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+dis+"\t"+k+"\t"+stc+"\t"+back);
                             if(x2-x1>dis&&Math.abs(k)<stc&&back){
                                 getActivity().finish();
                             }
@@ -460,18 +460,6 @@ public class ArticleFragment extends Fragment {
                                 showOrHideList();
                             }
                             break;
-//                        case MotionEvent.ACTION_CANCEL:
-//                            x2=event.getX();
-//                            y2=event.getY();
-//                            k = (y2 - y1) / (x2 - x1);
-//                            Log.i("TAG", "onTouch: "+x2+"\t"+x1+"\t"+dis+"\t"+k+"\t"+stc+"\t"+back);
-//                            if(x2-x1>dis&&Math.abs(k)<stc&&back){
-//                                getActivity().finish();
-//                            }
-//                            if(listShowed){
-//                                showOrHideList();
-//                            }
-//                            break;
                     }
                     return false;
                 }
@@ -509,9 +497,9 @@ public class ArticleFragment extends Fragment {
             String textColor="#"+Integer.toHexString(getResources().getColor(R.color.textColorPrimary)).substring(2);
             Elements elements2=doc.getElementsByTag("body");
             if(pinye) {
-                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px \">" + doc.body().children() + "</div>");
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px;\">" + doc.body().children() + "</div>");
             }else {
-                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px 50px\">" + doc.body().children() + "</div>");
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px 50px;\">" + doc.body().children() + "</div>");
             }
             Elements elements = doc.getElementsByTag("a");
             Elements elements1=doc.getElementsByTag("img");
@@ -524,9 +512,9 @@ public class ArticleFragment extends Fragment {
             elements2.attr("href","");
             for (int i=0;i<elements1.size();i++) {
                 Element element=elements1.get(i);
-                element.attr("style", "border-radius: 2px")
-                        .attr("width", "100%")
-                        .attr("height", "auto")
+                element.attr("style", "border-radius: 2px;max-width:100%;")
+                        //.attr("width", "100%")
+                        //.attr("height", "auto")
                         .attr("data-echo",element.attr("src"))
                         .attr("_cke_saved_src","")
                         .attr("src","data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg");
@@ -551,12 +539,10 @@ public class ArticleFragment extends Fragment {
             }
             for (Element element:elements4){
                 if (!element.attr("class").equals("author")){
-                    element.attr("style","line-height:28px;");
+                    element.attr("style","line-height:28px");
                 }
                 if(!element.getElementsByTag("img").toString().equals("")){
-
                     element.getElementsByTag("a").attr("href","javascript:void(0);");
-
                 }
             }
             for (int i=0;i<elements5.size();i++){

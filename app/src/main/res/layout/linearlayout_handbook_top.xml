@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toStartOf="@id/roundImageView1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:round="8dp" />
+        app:round="0dp" />
 
     <TextView
         android:id="@+id/textView0"
@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/roundImageView0"
         app:layout_constraintTop_toTopOf="parent"
-        app:round="8dp" />
+        app:round="0dp" />
 
     <TextView
         android:id="@+id/textView1"

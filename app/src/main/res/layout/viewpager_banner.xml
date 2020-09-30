@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:foreground="@drawable/pressed_roundimage"
         android:scaleType="fitXY"
-        app:round="8dp" />
+        app:round="0dp" />
 
     <TextView
         android:id="@+id/textView"

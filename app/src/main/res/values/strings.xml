@@ -15,6 +15,7 @@
     <string name="succeed_comment_load">评论加载成功</string>
     <string name="error_comment_load">评论加载失败</string>
     <string name="no_search_result">搜索结果为空</string>
+    <string name="search_faild">搜索失败</string>
     <string name="wait">请稍等…</string>
     <string name="no_more">没有了，没有奇迹了</string>
     <string name="handbook_search">游戏攻略查询</string>

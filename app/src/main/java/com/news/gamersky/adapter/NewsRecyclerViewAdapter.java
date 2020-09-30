@@ -15,11 +15,14 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.databean.NewDataBean;
+import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.ReadingProgressUtil;
 
@@ -30,7 +33,6 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
     private Context context;
     private View hasheader;
     private boolean moreData;
-    private boolean corner;
     private boolean imageSide;
 
     public  class NewsListViewHolder extends RecyclerView.ViewHolder {
@@ -64,12 +66,10 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
             }else {
                 textView4.setText("");
             }
-            if(!corner){
-                imageView.setRound(0);
-            }
             Glide.with(imageView)
                     .load(mDataset.get(position).imageUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.smallRoundCorner)))
                     .into(imageView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -132,9 +132,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
         this.moreData=true;
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
-        corner=sharedPreferences.getBoolean("corner",false);
         imageSide=sharedPreferences.getBoolean("new_image_side",false);
-        //Log.i("TAG", "NewsAdapter: "+corner+"\t"+imageSide);
     }
 
     @Override

@@ -12,7 +12,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.news.gamersky.fragment.HandBookFragment;
 import com.news.gamersky.fragment.NewsFragment;
 import com.news.gamersky.fragment.ReviewsFragment;
+import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
+import com.news.gamersky.util.NightModeUtil;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AppSetting.init(this);
         init();
         startListen();
     }
@@ -40,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
     public void init(){
         exitTime=0;
 
-//        getWindow().getDecorView()
-//                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         navView = findViewById(R.id.nav_view);
         hostContainer=findViewById(R.id.nav_host_container);
 
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(sharedPreferences.getBoolean("no_bottombar",true)){
+        if(sharedPreferences.getBoolean("no_bottombar",false)){
             navView.setVisibility(View.GONE);
         }
     }
@@ -159,5 +160,6 @@ public class MainActivity extends AppCompatActivity {
             showAnimator.start();
         }
     }
+
 
 }

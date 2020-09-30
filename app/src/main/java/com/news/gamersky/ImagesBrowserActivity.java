@@ -32,6 +32,7 @@ import com.github.piasy.biv.loader.ImageLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.github.piasy.biv.view.GlideImageViewFactory;
 import com.google.android.material.snackbar.Snackbar;
+import com.news.gamersky.customizeview.FixViewPager;
 import com.news.gamersky.dialog.ImageDialogFragment;
 
 import org.json.JSONArray;
@@ -44,7 +45,7 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
 public class ImagesBrowserActivity extends AppCompatActivity implements ImageDialogFragment.ImageDialogListener {
-    private ViewPager viewPager;
+    private FixViewPager viewPager;
     private String imagesSrc;
     private int imagePosition;
     private  BigImageView bigImageViewTemp;

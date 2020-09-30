@@ -29,12 +29,15 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.adapter.NewsRecyclerViewAdapter;
 import com.news.gamersky.customizeview.BannerViewPager;
 import com.news.gamersky.customizeview.RoundImageView;
+import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.customizeview.ZoomOutPageTransformer;
 import com.news.gamersky.databean.NewDataBean;
@@ -461,37 +464,17 @@ public class HomePageFragment extends Fragment {
                     .inflate(R.layout.viewpager_banner, container, false);
             TextView textView=v.findViewById(R.id.textView);
             final RoundImageView imageView=v.findViewById(R.id.imageView);
-            if(!sharedPreferences.getBoolean("corner",false)){
-                imageView.setRound(0);
+            textView.setText(myData.get(position).title);
+            if(!AppSetting.isRoundCorner){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    imageView.setForeground(getResources().getDrawable(R.drawable.pressed_image));
+                    imageView.setForeground(getResources().getDrawable(R.drawable.pressed_image,null));
                 }
             }
-            textView.setText(myData.get(position).title);
-            if(firstRun&&position==0){
-                Timer timer=new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        imageView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Glide.with(imageView)
-                                        .load(myData.get(position).imageUrl)
-                                        .transition(DrawableTransitionOptions.withCrossFade())
-                                        .centerCrop()
-                                        .into(imageView);
-                            }
-                        });
-                    }
-                },200);
-            }else {
-                Glide.with(imageView)
-                        .load(myData.get(position).imageUrl)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .centerCrop()
-                        .into(imageView);
-            }
+            Glide.with(imageView)
+                    .load(myData.get(position).imageUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.bigRoundCorner)))
+                    .into(imageView);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

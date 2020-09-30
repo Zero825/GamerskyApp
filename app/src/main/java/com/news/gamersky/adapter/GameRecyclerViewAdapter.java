@@ -13,10 +13,13 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.news.gamersky.R;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.databean.GameDataBean;
+import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 
 import java.util.ArrayList;
@@ -26,7 +29,6 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter {
     private ArrayList<GameDataBean> dataList;
     private View headerView;
     private Context context;
-    private boolean corner;
     private boolean moreData;
 
     public class GameViewHolder extends RecyclerView.ViewHolder {
@@ -51,12 +53,10 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter {
         }
 
         public void bindView(int position){
-            if(!corner){
-                roundImageView.setRound(0);
-            }
             Glide.with(roundImageView)
                     .load(dataList.get(position).picUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.smallRoundCorner)))
                     .into(roundImageView);
             ratingAverage.setText(dataList.get(position).ratingAverage);
             //Log.i(TAG, "bindView: "+dataList.get(position).title+dataList.get(position).ratingAverage);
@@ -133,9 +133,6 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter {
         this.headerView=headerView;
         this.context=context;
         this.moreData=true;
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-        corner=sharedPreferences.getBoolean("corner",false);
     }
 
     @Override
