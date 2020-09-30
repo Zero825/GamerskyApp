@@ -26,5 +26,5 @@
 查看大图引用[BigImageViewer](https://github.com/Piasy/BigImageViewer)<br>
 下拉刷新引用[SmartRefreshLayout](https://github.com/scwang90/SmartRefreshLayout)(v1.0.3起不再引用)<br>
 图片懒加载引用[echo](https://github.com/toddmotto/echo)<br>
-圆形ImageView引用[CircleImageView](https://github.com/hdodenhof/CircleImageView)<br>
-圆角ImageView引用[RoundedImageView](https://github.com/vinc3m1/RoundedImageView)
+圆形ImageView引用[CircleImageView](https://github.com/hdodenhof/CircleImageView)(v1.0.6起不再引用)<br>
+圆角ImageView引用[RoundedImageView](https://github.com/vinc3m1/RoundedImageView)(v1.0.6起不再引用)
