@@ -102,12 +102,12 @@ public class ArticleFragment extends Fragment {
         recyclerView.setAdapter(new RecyclerViewAdapter(getContext(),listData));
 
         webView.setBackgroundColor(0);
-        webView.setInitialScale(320);
+        //webView.setInitialScale(320);
         webView.setHorizontalScrollBarEnabled(false);//水平不显示
         webView.setVerticalScrollBarEnabled(true); //垂直不显示
         //webView.getSettings().setLoadsImagesAutomatically(false);
         webView.getSettings().setJavaScriptEnabled(true);
-        //webView.getSettings().setTextZoom(110);
+        webView.getSettings().setTextZoom(110);
         webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         //java回调js代码，不要忘了@JavascriptInterface这个注解，不然点击事件不起作用
         webView.addJavascriptInterface(new JsCallJavaObj() {
@@ -347,7 +347,7 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void run() {
                         System.out.println("正文载入");
-                        //Log.i("TAG", "run: "+getNewContent(finalS));
+                        Log.i("TAG", "run: "+getNewContent(finalS));
                         webView.loadDataWithBaseURL("file:///android_asset", getNewContent(finalS), "text/html", "utf-8", null);
                         progressBar.setVisibility(View.GONE);
 
@@ -497,7 +497,7 @@ public class ArticleFragment extends Fragment {
             String textColor="#"+Integer.toHexString(getResources().getColor(R.color.textColorPrimary)).substring(2);
             Elements elements2=doc.getElementsByTag("body");
             if(pinye) {
-                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px;\">" + doc.body().children() + "</div>");
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px;word-wrap:break-word;\">" + doc.body().children() + "</div>");
             }else {
                 elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px 50px;\">" + doc.body().children() + "</div>");
             }
@@ -539,7 +539,7 @@ public class ArticleFragment extends Fragment {
             }
             for (Element element:elements4){
                 if (!element.attr("class").equals("author")){
-                    element.attr("style","line-height:28px");
+                    element.attr("style","line-height:28px;word-wrap:break-word;");
                 }
                 if(!element.getElementsByTag("img").toString().equals("")){
                     element.getElementsByTag("a").attr("href","javascript:void(0);");

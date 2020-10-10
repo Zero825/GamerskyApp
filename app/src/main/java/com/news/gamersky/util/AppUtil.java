@@ -70,7 +70,7 @@ public class AppUtil {
             snackbar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
             snackbar.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
         }
-        snackbar.getView().setElevation(0f);
+        //snackbar.getView().setElevation(0f);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         if(!sharedPreferences.getBoolean("no_bottombar",true)&&setAnchorView){
             snackbar.setAnchorView(R.id.nav_view);

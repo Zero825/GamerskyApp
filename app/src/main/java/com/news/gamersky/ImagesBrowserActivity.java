@@ -251,7 +251,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
             final BigImageView imageView=v.findViewById(R.id.imageView8);
             final ProgressBar progressBar=v.findViewById(R.id.progressBar2);
             final TextView textView=v.findViewById(R.id.textView24);
-            progressBar.setOnClickListener(new View.OnClickListener() {
+            v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     finish();
@@ -302,6 +302,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
                     public void onSuccess(File image) {
                         progressBar.setVisibility(View.GONE);
                         textView.setVisibility(View.GONE);
+                        v.setOnClickListener(null);
                        if(imageView.getSSIV()!=null) {
                            System.out.println(imageView.getSSIV());
                            imageView.getSSIV().setMaxScale(5.0f);

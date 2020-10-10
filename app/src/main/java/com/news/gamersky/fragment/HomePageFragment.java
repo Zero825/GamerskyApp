@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,8 @@ import static com.news.gamersky.util.AppUtil.is2s;
 
 
 public class HomePageFragment extends Fragment {
+    private static final String TAG="HomePageFragment";
+
     private SwipeRefreshLayout refreshLayout;
     private Timer timer;
     private int bannerNum;
@@ -218,9 +221,10 @@ public class HomePageFragment extends Fragment {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 int lastItem=layoutManager.findLastVisibleItemPosition();
-                int dataNum=newsList.size();
+                int dataNum=myAdapter.getItemCount();
                 int line=dataNum-5;
-                
+
+                Log.i(TAG, "onScrolled: "+lastItem+"\t"+dataNum+"\t"+line+"\t"+flag+"\t"+lastFlag);
                 if(lastItem>100&&lastItem!=flag&&lastItem==line){
                     lastFlag=flag;
                     flag=lastItem;
@@ -338,6 +342,7 @@ public class HomePageFragment extends Fragment {
 
     //这个请求有点慢
     public Thread loadMoreNews(){
+        Log.i(TAG, "loadMoreNews: ");
         return new Thread(new Runnable() {
             @Override
             public void run() {
@@ -417,6 +422,8 @@ public class HomePageFragment extends Fragment {
                                     tempData.get(i).setCommentCount(s1);
                                 }
                                 connection.disconnect();
+                            }else {
+                                flag=lastFlag;
                             }
                         }
                     }
