@@ -1,4 +1,4 @@
-package com.news.gamersky.customizeview;
+package com.news.gamersky.util;
 
 import android.view.View;
 

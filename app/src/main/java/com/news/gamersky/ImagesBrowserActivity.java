@@ -15,15 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -46,6 +45,8 @@ import java.nio.channels.FileChannel;
 
 public class ImagesBrowserActivity extends AppCompatActivity implements ImageDialogFragment.ImageDialogListener {
     private FixViewPager viewPager;
+    private ImageView back;
+    private TextView page;
     private String imagesSrc;
     private int imagePosition;
     private  BigImageView bigImageViewTemp;
@@ -56,6 +57,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
         setContentView(R.layout.activity_images_browser);
         init();
         loadData();
+        startListen();
     }
     public void  init(){
         Window window = getWindow();
@@ -71,6 +73,8 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         viewPager=findViewById(R.id.images_viewpager);
+        back=findViewById(R.id.back);
+        page=findViewById(R.id.page);
 
         Intent intent = getIntent();
         imagesSrc = intent.getStringExtra("imagesSrc");
@@ -87,6 +91,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
 
             viewPager.setAdapter(new AdapterViewpager(jsonArray));
             viewPager.setCurrentItem(imagePosition,false);
+            page.setText(imagePosition+1+"/"+viewPager.getAdapter().getCount());
             //viewPager.setOffscreenPageLimit(2);
 
 
@@ -95,6 +100,30 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
         }
     }
 
+    public void startListen(){
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                page.setText(position+1+"/"+viewPager.getAdapter().getCount());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
 
     @Override
     public void onDownloadClick(DialogFragment dialogFragment) {
@@ -196,7 +225,7 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
 //        @Override
 //        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 //            View v = LayoutInflater.from(parent.getContext())
-//                    .inflate(R.layout.viewpager_image, parent, false);
+//                    .inflate(R.layout.viewpager_images_browser, parent, false);
 //            return new MyViewHolder(v);
 //        }
 //
@@ -246,17 +275,14 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+
+
             final View v = LayoutInflater.from(container.getContext())
-                    .inflate(R.layout.viewpager_image, container, false);
+                    .inflate(R.layout.viewpager_images_browser, container, false);
             final BigImageView imageView=v.findViewById(R.id.imageView8);
             final ProgressBar progressBar=v.findViewById(R.id.progressBar2);
             final TextView textView=v.findViewById(R.id.textView24);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
+
             imageView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -302,7 +328,6 @@ public class ImagesBrowserActivity extends AppCompatActivity implements ImageDia
                     public void onSuccess(File image) {
                         progressBar.setVisibility(View.GONE);
                         textView.setVisibility(View.GONE);
-                        v.setOnClickListener(null);
                        if(imageView.getSSIV()!=null) {
                            System.out.println(imageView.getSSIV());
                            imageView.getSSIV().setMaxScale(5.0f);

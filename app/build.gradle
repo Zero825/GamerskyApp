@@ -7,8 +7,8 @@ android {
         applicationId "com.news.gamersky"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.0.6"
+        versionCode 7
+        versionName "1.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -45,5 +45,4 @@ dependencies {
     implementation 'com.github.piasy:BigImageViewer:1.6.5'
     implementation 'com.github.piasy:GlideImageLoader:1.6.5'
     implementation 'com.github.piasy:GlideImageViewFactory:1.6.5'
-
 }

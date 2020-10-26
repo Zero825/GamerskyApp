@@ -9,7 +9,9 @@ public class ReadingProgressUtil {
     private static SharedPreferences sharedPreferences;
     private static String name="readingProgress";
     private static SharedPreferences sharedPreferences1;
-    private static String name1="clickList";
+    private static String name1="clickNewsList";
+    private static SharedPreferences sharedPreferences2;
+    private static String name2="clickSearchList";
 
     public static void putProgress(Context context,String key,int value){
         if(sharedPreferences==null){
@@ -33,25 +35,47 @@ public class ReadingProgressUtil {
 
     }
 
-    public static void putClick(Context context,String key,Boolean value){
+    public static void putNewsClick(Context context,String key,Boolean value){
         if(sharedPreferences1==null){
             sharedPreferences1=context.getSharedPreferences(name1,MODE_PRIVATE);
         }
         sharedPreferences1.edit().putBoolean(key,value).apply();
     }
 
-    public static boolean getClick(Context context, String key){
+    public static boolean getNewsClick(Context context, String key){
         if(sharedPreferences1==null){
             sharedPreferences1=context.getSharedPreferences(name1,MODE_PRIVATE);
         }
         return sharedPreferences1.getBoolean(key,false);
     }
 
-    public static void clearClickList(Context context) {
+    public static void clearNewsClickList(Context context) {
         if(sharedPreferences1==null){
             sharedPreferences1=context.getSharedPreferences(name1,MODE_PRIVATE);
         }
         sharedPreferences1.edit().clear();
+
+    }
+
+    public static void putSearchClick(Context context,String key,Boolean value){
+        if(sharedPreferences2==null){
+            sharedPreferences1=context.getSharedPreferences(name2,MODE_PRIVATE);
+        }
+        sharedPreferences2.edit().putBoolean(key,value).apply();
+    }
+
+    public static boolean getSearchClick(Context context, String key){
+        if(sharedPreferences2==null){
+            sharedPreferences2=context.getSharedPreferences(name2,MODE_PRIVATE);
+        }
+        return sharedPreferences2.getBoolean(key,false);
+    }
+
+    public static void clearSearchClickList(Context context) {
+        if(sharedPreferences2==null){
+            sharedPreferences2=context.getSharedPreferences(name2,MODE_PRIVATE);
+        }
+        sharedPreferences2.edit().clear();
 
     }
 

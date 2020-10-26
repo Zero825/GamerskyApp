@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -137,11 +138,27 @@ public class AppUtil {
         return (int) (pxValue / scale + 0.5f);
     }
 
+    public static int px2sp(Context context, float pxValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
+
+    public static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+
     public static ObjectAnimator rockObjectAnimator(View view){
         float f1=0,f2=10,f3=-10,f4=10,f5=0;
         ObjectAnimator objectAnimator=ObjectAnimator.ofFloat(view,"translationX",f1,f2,f3,f4,f5);
         objectAnimator.setDuration(100);
         return objectAnimator;
+    }
+
+    //判断图片亮色还是暗色
+    public static boolean isDark(int color) {
+        return ColorUtils.calculateLuminance(color) < 0.5;
     }
 
 }

@@ -22,6 +22,9 @@
     <string name="handbook_search_hint">输入游戏名或攻略标题</string>
     <string name="reviews_search_hint">输入游戏名</string>
     <string name="sort_type">排序方式</string>
+    <string name="newest">最新</string>
+    <string name="hotest">最热</string>
+    <string name="earliest">最早</string>
     <string name="sort_hot_asc">按热度升序</string>
     <string name="sort_time_asc">按时间升序</string>
     <string name="sort_evaluation_asc">按评价升序</string>
@@ -34,6 +37,7 @@
     <string name="article_nav">文章导航</string>
     <string name="updata_successed">更新成功</string>
     <string name="updata_failed">更新失败</string>
+    <string name="player_comment">玩家评论</string>
 
     <string name="all">全部</string>
     <string name="game_genres">游戏类型</string>
@@ -42,16 +46,26 @@
     <string name="game_company">游戏厂商</string>
     <string name="official_chinese">官方中文</string>
     <string name="game_tag">游戏标签</string>
+    <string name="detail_review">评测详情</string>
 
     <string name="title">游戏名</string>
     <string name="en_title">英文名</string>
     <string name="game_make">制作</string>
     <string name="chinese">中文</string>
     <string name="listed_time">发行时间</string>
+    <string name="game_score">游戏评分</string>
 
     <string name="night_mode">深色模式</string>
     <string name="night_mode_light">浅色</string>
     <string name="night_mode_night">深色</string>
     <string name="night_mode_default">系统默认(跟随系统)</string>
+
+    <string name="man">人</string>
+    <string name="played">玩过</string>
+    <string name="want_play">想玩</string>
+    <string name="star">星</string>
+    <string name="upvote">顶</string>
+    <string name="downvote">踩</string>
+    <string name="not_enough_man_reviews">评价人数不足</string>
 
 </resources>

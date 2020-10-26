@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -28,11 +31,16 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.FutureTarget;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.databean.NewDataBean;
+import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
+import com.news.gamersky.util.NightModeUtil;
 import com.news.gamersky.util.ReadingProgressUtil;
 import com.news.gamersky.customizeview.ArticleWebView;
 
@@ -43,12 +51,22 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import okhttp3.Request;
 
 
 public class ArticleFragment extends Fragment {
+    private final static String TAG="ArticleFragment";
+
     private String  data_src;
     private ArticleWebView webView;
     private ConstraintLayout navListView;
@@ -128,7 +146,7 @@ public class ArticleFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 setWebImageClick(view);
-                webView.scrollTo(0,ReadingProgressUtil.getProgress(getContext(),data_src));
+                //webView.scrollTo(0,ReadingProgressUtil.getProgress(getContext(),data_src));
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url){
@@ -140,21 +158,88 @@ public class ArticleFragment extends Fragment {
                     startActivity(intent);
                 }else if(url.contains("http")){
                     Intent intent = new Intent();
-                    Uri content_url = Uri.parse(url);
+                    Uri contentUrl = Uri.parse(url);
                     intent.setAction(Intent.ACTION_VIEW);
-                    intent.setData(content_url);
+                    intent.setData(contentUrl);
                     startActivity(intent);
                 }
                 return true;
             }
+
+            @Nullable
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                //Log.i(TAG, "shouldInterceptRequest: " + request.getUrl());
+                HttpURLConnection connection = null;
+                String url=request.getUrl().toString();
+                if(!url.contains("http")){
+                    return super.shouldInterceptRequest(view, request);
+                }
+                try {
+                    connection= (HttpURLConnection) new URL(url).openConnection();
+                    connection.setConnectTimeout(60000);
+                    connection.setReadTimeout(60000);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(connection!=null){
+                    List<String> contentTypeList=connection.getHeaderFields().get("Content-Type");
+                    if(contentTypeList!=null&&contentTypeList.get(0).startsWith("image")){
+                        String contentType=contentTypeList.get(0);
+                        //Log.i(TAG, "shouldInterceptRequest: "+contentType);
+                        byte[] bytes=null;
+                        if(contentType.contains("gif")){
+                            try {
+                                FutureTarget<byte[]> target = Glide.with(getContext())
+                                        .as(byte[].class)
+                                        .timeout(60000)
+                                        .load(url)
+                                        .decode(GifDrawable.class)
+                                        .submit();
+                                bytes=target.get();
+                            } catch (ExecutionException|InterruptedException|NullPointerException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            try {
+                                FutureTarget<Bitmap> target = Glide.with(getContext())
+                                        .asBitmap()
+                                        .timeout(60000)
+                                        .load(url)
+                                        .submit();
+                                Bitmap bitmap = target.get();
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                                bytes=baos.toByteArray();
+                            } catch (ExecutionException|InterruptedException|NullPointerException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if(bytes!=null) {
+                            connection.disconnect();
+                            return new WebResourceResponse(contentType, "utf-8", new ByteArrayInputStream(bytes));
+                        }
+                    }
+
+                }
+                return super.shouldInterceptRequest(view, request);
+            }
         });
         webView.loadDataWithBaseURL("file:///android_asset", "<div></div>", "text/html", "utf-8", null);
 
-
-
-
-
     }
+
+    public String getContentType(String url){
+
+        try {
+            HttpURLConnection connection= (HttpURLConnection) new URL(url).openConnection();
+            return connection.getHeaderFields().get("Content-Type").get(0);
+        } catch (IOException|NullPointerException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     /**
      * 設置網頁中圖片的點擊事件
      * @param view
@@ -235,12 +320,14 @@ public class ArticleFragment extends Fragment {
                     System.out.println("不用跳转");
                 }
                 newTitle=content1.get(0).getElementsByTag("h1").text();
+
+
                 String h= "<script src=\"file:///android_asset/js/echo.min.js\"></script>\n"+
 //                        "<script src=\"file:///android_asset/js/jquery-3.5.0.min.js\"></script>\n"+
                         "<link rel=\"stylesheet\" type=\"text/css\" href=\"file:///android_asset/css/oldstyle.css\" />"+
                         "<script>\n" +
                         "  echo.init({\n" +
-                        "    offset: 2000,\n" +
+                        "    offset: 1000,\n" +
                         "    throttle: 250,\n" +
                         "    unload: false,\n" +
                         "  });\n" +
@@ -254,6 +341,8 @@ public class ArticleFragment extends Fragment {
                 if(doc.getElementById("ymwTopVideoInfos")!=null){
                     h=h+doc.getElementById("ymwTopVideoInfos").toString();
                 }
+
+
                 String s=h+a;
 
                 Elements elements1 = doc.getElementsByClass("yu-btnwrap");
@@ -313,7 +402,8 @@ public class ArticleFragment extends Fragment {
                         Elements elements4 = content.get(0).getElementsByClass("gs_bot_author");
                         elements4.html("");
 
-                        s = h + content.html();
+                        //s=h+scriptClear(content.html());
+                        s=h+content.html();
 
                         int n = Integer.parseInt(elements2.text().substring(2));
                         String s1 = elements3.get(1).attr("href");
@@ -347,7 +437,7 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void run() {
                         System.out.println("正文载入");
-                        Log.i("TAG", "run: "+getNewContent(finalS));
+                        //Log.i("TAG", "run: "+getNewContent(finalS));
                         webView.loadDataWithBaseURL("file:///android_asset", getNewContent(finalS), "text/html", "utf-8", null);
                         progressBar.setVisibility(View.GONE);
 
@@ -367,6 +457,7 @@ public class ArticleFragment extends Fragment {
         }.start();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void startListen(){
         navView.findViewById(R.id.imageView14).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -497,9 +588,9 @@ public class ArticleFragment extends Fragment {
             String textColor="#"+Integer.toHexString(getResources().getColor(R.color.textColorPrimary)).substring(2);
             Elements elements2=doc.getElementsByTag("body");
             if(pinye) {
-                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px;word-wrap:break-word;\">" + doc.body().children() + "</div>");
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px;word-wrap:break-word;max-width:100%;\">" + doc.body().children() + "</div>");
             }else {
-                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px 50px;\">" + doc.body().children() + "</div>");
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px 50px;word-wrap:break-word;max-width:100%;\">" + doc.body().children() + "</div>");
             }
             Elements elements = doc.getElementsByTag("a");
             Elements elements1=doc.getElementsByTag("img");
@@ -508,16 +599,25 @@ public class ArticleFragment extends Fragment {
             Elements elements5=doc.getElementsByTag("script");
             Elements elements6 = doc.getElementsByClass("gs_bot_author");
             Elements elements7 = doc.getElementsByTag("iframe");
-            Elements elements8= doc.getElementsByClass("recommend-app-btn-wrap");
+            Elements elements8 = doc.getElementsByClass("recommend-app-btn-wrap");
+
             elements2.attr("href","");
             for (int i=0;i<elements1.size();i++) {
                 Element element=elements1.get(i);
+//                if(element.attr("src").contains("gif")){
+//                    element.attr("width", "100%");
+//                }
                 element.attr("style", "border-radius: 2px;max-width:100%;")
                         //.attr("width", "100%")
-                        //.attr("height", "auto")
+                        .attr("height", "auto")
                         .attr("data-echo",element.attr("src"))
-                        .attr("_cke_saved_src","")
-                        .attr("src","data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg");
+                        .attr("_cke_saved_src","");
+                if(NightModeUtil.isNightMode(getContext())){
+                    element.attr("src","file:///android_asset/pic/placeholders_pic_dark.png");
+                }else {
+                    element.attr("src","file:///android_asset/pic/placeholders_pic_light.png");
+                }
+
                 String s=element.parent().getElementsByTag("a").attr("href");
                 if(s.equals("")){
                     jsonArray.put(i,new JSONObject().put("origin",element.attr("data-echo")));
@@ -547,7 +647,7 @@ public class ArticleFragment extends Fragment {
             }
             for (int i=0;i<elements5.size();i++){
                 Element element=elements5.get(i);
-                if (element.attr("src").equals("//j.gamersky.com/g/gsVideo.js")){
+                if (element.attr("src").contains("//j.gamersky.com/g/gsVideo.js")){
                     Element v=elements5.get(i+1);
                     String s=v.html();
                     int i1=s.indexOf("http");
@@ -586,21 +686,10 @@ public class ArticleFragment extends Fragment {
         webView.scrollTo(0,0);
     }
 
-    public void webViewResume(){
-        if(webView!=null){
-            webView.resumeTimers();
-        }
-    }
-
-    public void webViewPause(){
-        if(webView!=null){
-            webView.pauseTimers();
-        }
-    }
 
     @Override
     public void onDestroy() {
-        ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
+        //ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
         webView.destroy();
         super.onDestroy();
     }

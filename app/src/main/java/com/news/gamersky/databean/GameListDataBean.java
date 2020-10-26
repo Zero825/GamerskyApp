@@ -1,8 +1,11 @@
 package com.news.gamersky.databean;
 
 
+import android.graphics.drawable.Drawable;
 
-public class GameDataBean {
+import java.io.Serializable;
+
+public class GameListDataBean implements Serializable {
     public String id;
     public String title;
     public String enTitle;
@@ -13,9 +16,9 @@ public class GameDataBean {
     public String itemUrl;
     public String ratingAverage;
 
-    public GameDataBean() {}
+    public GameListDataBean() {}
 
-    public GameDataBean(String id, String title, String enTitle, String picUrl, String listedTime, String gameMake, String officialChinese,String itemUrl,String ratingAverage) {
+    public GameListDataBean(String id, String title, String enTitle, String picUrl, String listedTime, String gameMake, String officialChinese, String itemUrl, String ratingAverage) {
         this.id = id;
         this.title = title;
         this.enTitle = enTitle;
@@ -26,4 +29,6 @@ public class GameDataBean {
         this.itemUrl=itemUrl;
         this.ratingAverage=ratingAverage;
     }
+
+
 }

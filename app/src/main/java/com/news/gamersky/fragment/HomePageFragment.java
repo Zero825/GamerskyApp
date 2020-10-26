@@ -40,7 +40,7 @@ import com.news.gamersky.customizeview.BannerViewPager;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
-import com.news.gamersky.customizeview.ZoomOutPageTransformer;
+import com.news.gamersky.util.ZoomOutPageTransformer;
 import com.news.gamersky.databean.NewDataBean;
 
 import org.json.JSONObject;
@@ -143,8 +143,11 @@ public class HomePageFragment extends Fragment {
         refreshLayout= view.findViewById(R.id.refreshLayout1);
         refreshLayout.setColorSchemeResources(R.color.colorAccent);
 
+
         refreshHandler=new RefreshHandler();
+
         executor= Executors.newSingleThreadExecutor();
+
         sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
         if(sharedPreferences.getBoolean("page_both_sides",true)){
@@ -152,6 +155,8 @@ public class HomePageFragment extends Fragment {
         }else {
             constraintLayout.setClipChildren(true);
         }
+
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -224,7 +229,7 @@ public class HomePageFragment extends Fragment {
                 int dataNum=myAdapter.getItemCount();
                 int line=dataNum-5;
 
-                Log.i(TAG, "onScrolled: "+lastItem+"\t"+dataNum+"\t"+line+"\t"+flag+"\t"+lastFlag);
+                //Log.i(TAG, "onScrolled: "+lastItem+"\t"+dataNum+"\t"+line+"\t"+flag+"\t"+lastFlag);
                 if(lastItem>100&&lastItem!=flag&&lastItem==line){
                     lastFlag=flag;
                     flag=lastItem;

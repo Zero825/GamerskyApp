@@ -1,4 +1,4 @@
-package com.news.gamersky.customizeview;
+package com.news.gamersky.behavior;
 
 //https://www.jianshu.com/p/7d4e0a5b86c2
 

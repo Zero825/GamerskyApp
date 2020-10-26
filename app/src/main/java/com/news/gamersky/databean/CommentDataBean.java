@@ -12,8 +12,11 @@ public class CommentDataBean implements Serializable {
     public String objectUserName;
     public String time;
     public String likeNum;
+    public String disLikeNum;
     public String content;
     public String floor;
+    public String gamePlatform;
+    public String scoreStar;
     public String imagesJson;
     public ArrayList<String> images;
     public ArrayList<CommentDataBean> replies;

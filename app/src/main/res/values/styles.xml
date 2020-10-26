@@ -47,10 +47,21 @@
         <!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
     </style>
 
+    <style name="GameDetailTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+    </style>
 
     <style name="tabStyle">
         <item name="android:textSize">15sp</item>
     </style>
+
 
 
 </resources>

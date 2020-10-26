@@ -35,95 +35,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
     private boolean moreData;
     private boolean imageSide;
 
-    public  class NewsListViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public TextView textView2;
-        public TextView textView3;
-        public TextView textView4;
-        public RoundImageView imageView;
 
-        public NewsListViewHolder(View v) {
-            super(v);
-            textView = v.findViewById(R.id.textView4);
-            textView2 = v.findViewById(R.id.textView5);
-            textView3 = v.findViewById(R.id.textView10);
-            textView4=v.findViewById(R.id.textView17);
-            imageView=v.findViewById(R.id.imageView3);
-        }
-
-        public void bindView(final int position){
-
-            textView2.setText(mDataset.get(position).date);
-            textView.setText(Html.fromHtml(mDataset.get(position).title));
-            if(ReadingProgressUtil.getClick(context,mDataset.get(position).id)){
-                textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
-            }else {
-                textView.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
-            }
-            textView3.setText(mDataset.get(position).sort);
-            if (!mDataset.get(position).commentCount.equals("")) {
-                textView4.setText(mDataset.get(position).commentCount + "评论");
-            }else {
-                textView4.setText("");
-            }
-            Glide.with(imageView)
-                    .load(mDataset.get(position).imageUrl)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.smallRoundCorner)))
-                    .into(imageView);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
-                    System.out.println("我是第"+position);
-                    ReadingProgressUtil.putClick(context,mDataset.get(position).id,true);
-                    Intent intent=new Intent(context, ArticleActivity.class);
-                    intent.putExtra("new_data",mDataset.get(position));
-                    context.startActivity(intent);
-                }
-            });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    AppUtil.rockObjectAnimator(v).start();
-                    return true;
-                }
-            });
-        }
-    }
-
-    public  class FooterViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView textView;
-
-        public FooterViewHolder(View v) {
-            super(v);
-            textView=v.findViewById(R.id.textView8);
-        }
-
-        public void bindView(int position){
-
-            if(mDataset.size()==0){
-                textView.setVisibility(View.GONE);
-            }
-            else {
-                textView.setVisibility(View.VISIBLE);
-                if(moreData) {
-                    textView.setText(context.getResources().getString(R.string.wait));
-                }else {
-                    textView.setText(context.getResources().getString(R.string.no_more));
-                }
-            }
-        }
-    }
-
-    public class HeaderViewHolder extends RecyclerView.ViewHolder{
-
-        public HeaderViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-    }
 
     public NewsRecyclerViewAdapter(List<NewDataBean> dataset, Context context, View hasHeader) {
         this.mDataset = dataset;
@@ -199,6 +111,96 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public void setNoMore(boolean b){
         moreData=!b;
+    }
+
+    public  class NewsListViewHolder extends RecyclerView.ViewHolder {
+        public TextView textView;
+        public TextView textView2;
+        public TextView textView3;
+        public TextView textView4;
+        public RoundImageView imageView;
+
+        public NewsListViewHolder(View v) {
+            super(v);
+            textView = v.findViewById(R.id.textView4);
+            textView2 = v.findViewById(R.id.textView5);
+            textView3 = v.findViewById(R.id.textView10);
+            textView4=v.findViewById(R.id.textView17);
+            imageView=v.findViewById(R.id.imageView3);
+        }
+
+        public void bindView(final int position){
+
+            textView2.setText(mDataset.get(position).date);
+            textView.setText(Html.fromHtml(mDataset.get(position).title));
+            if(ReadingProgressUtil.getNewsClick(context,mDataset.get(position).id)){
+                textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
+            }else {
+                textView.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+            }
+            textView3.setText(mDataset.get(position).sort);
+            if (!mDataset.get(position).commentCount.equals("")) {
+                textView4.setText(mDataset.get(position).commentCount + "评论");
+            }else {
+                textView4.setText("");
+            }
+            Glide.with(imageView)
+                    .load(mDataset.get(position).imageUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.smallRoundCorner)))
+                    .into(imageView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
+                    System.out.println("我是第"+position);
+                    ReadingProgressUtil.putNewsClick(context,mDataset.get(position).id,true);
+                    Intent intent=new Intent(context, ArticleActivity.class);
+                    intent.putExtra("new_data",mDataset.get(position));
+                    context.startActivity(intent);
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //AppUtil.rockObjectAnimator(v).start();
+                    return true;
+                }
+            });
+        }
+    }
+
+    public  class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView textView;
+
+        public FooterViewHolder(View v) {
+            super(v);
+            textView=v.findViewById(R.id.textView8);
+        }
+
+        public void bindView(int position){
+
+            if(mDataset.size()==0){
+                textView.setVisibility(View.GONE);
+            }
+            else {
+                textView.setVisibility(View.VISIBLE);
+                if(moreData) {
+                    textView.setText(context.getResources().getString(R.string.wait));
+                }else {
+                    textView.setText(context.getResources().getString(R.string.no_more));
+                }
+            }
+        }
+    }
+
+    public class HeaderViewHolder extends RecyclerView.ViewHolder{
+
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
     }
 
 }

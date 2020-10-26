@@ -1,32 +1,31 @@
 package com.news.gamersky.adapter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.news.gamersky.GameDetailActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.customizeview.RoundImageView;
-import com.news.gamersky.databean.GameDataBean;
+import com.news.gamersky.databean.GameListDataBean;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 
 import java.util.ArrayList;
 
-public class GameRecyclerViewAdapter extends RecyclerView.Adapter {
+public class GameListRecyclerViewAdapter extends RecyclerView.Adapter {
     private static final String TAG="GameRecyclerViewAdapter";
-    private ArrayList<GameDataBean> dataList;
+    private ArrayList<GameListDataBean> dataList;
     private View headerView;
     private Context context;
     private boolean moreData;
@@ -45,14 +44,14 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter {
             roundImageView=itemView.findViewById(R.id.roundImageView);
             ratingAverage=itemView.findViewById(R.id.ratingAverage);
             title=itemView.findViewById(R.id.title);
-//            enTitle=itemView.findViewById(R.id.enTitle);
+            enTitle=itemView.findViewById(R.id.enTitle);
             gameMake=itemView.findViewById(R.id.gameMake);
             officialChinese=itemView.findViewById(R.id.officialChinese);
             listedTime=itemView.findViewById(R.id.listedTime);
 
         }
 
-        public void bindView(int position){
+        public void bindView(final int position){
             Glide.with(roundImageView)
                     .load(dataList.get(position).picUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
@@ -70,8 +69,8 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter {
             }else {
                 ratingAverage.setBackgroundColor(context.getResources().getColor(R.color.ratingAverageBad));
             }
-            title.setText(context.getString(R.string.title)+":\t\t"+dataList.get(position).title);
-//            enTitle.setText(context.getString(R.string.en_title)+":\t\t"+dataList.get(position).enTitle);
+            title.setText(dataList.get(position).title);
+            enTitle.setText(dataList.get(position).enTitle);
             gameMake.setText(context.getString(R.string.game_make)+":\t\t"+dataList.get(position).gameMake);
             if(!dataList.get(position).officialChinese.equals("")){
                 officialChinese.setText(context.getString(R.string.chinese)+":\t\t"+dataList.get(position).officialChinese);
@@ -83,13 +82,16 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent = new Intent(context, GameDetailActivity.class);
+                    intent.putExtra("gameData", dataList.get(position));
+                    //context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, roundImageView, "gameCover").toBundle());
+                    context.startActivity(intent);
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    AppUtil.rockObjectAnimator(v).start();
+                    //AppUtil.rockObjectAnimator(v).start();
                     return true;
                 }
             });
@@ -128,7 +130,7 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public GameRecyclerViewAdapter(ArrayList<GameDataBean> dataList, View headerView, Context context){
+    public GameListRecyclerViewAdapter(ArrayList<GameListDataBean> dataList, View headerView, Context context){
         this.dataList = dataList;
         this.headerView=headerView;
         this.context=context;

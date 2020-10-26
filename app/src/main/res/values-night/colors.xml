@@ -19,6 +19,6 @@
 
     <color name="selectedColor">#2aae68</color>
     <color name="ratingAverageGood">#2aae68</color>
-    <color name="ratingAverageMid">#FDD835</color>
-    <color name="ratingAverageBad">#F4511E</color>
+    <color name="ratingAverageMid">#FBC02D</color>
+    <color name="ratingAverageBad">#C62828</color>
 </resources>

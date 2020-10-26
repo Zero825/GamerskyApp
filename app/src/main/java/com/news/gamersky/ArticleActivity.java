@@ -53,7 +53,11 @@ public class ArticleActivity extends AppCompatActivity{
         Uri appLinkData = appLinkIntent.getData();
         new_data = (NewDataBean) appLinkIntent.getSerializableExtra("new_data");
         if(new_data==null){
-            new_data=new NewDataBean("",appLinkData.toString());
+            String url=appLinkData.toString();
+            new_data=new NewDataBean("",url);
+        }
+        if(new_data.src.contains("_")){
+            new_data.src=new_data.src.substring(0,new_data.src.indexOf("_"))+".html";
         }
 
         imageView1=findViewById(R.id.imageView5);
@@ -134,17 +138,17 @@ public class ArticleActivity extends AppCompatActivity{
 
             @Override
             public void onPageSelected(int position) {
-                FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
-                Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
-                if(position==0) {
-                    if (fragment != null) {
-                        ((ArticleFragment) fragment).webViewResume();
-                    }
-                }else {
-                    if (fragment != null) {
-                        ((ArticleFragment) fragment).webViewPause();
-                    }
-                }
+//                FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
+//                Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
+//                if(position==0) {
+//                    if (fragment != null) {
+//                        ((ArticleFragment) fragment).webViewResume();
+//                    }
+//                }else {
+//                    if (fragment != null) {
+//                        ((ArticleFragment) fragment).webViewPause();
+//                    }
+//                }
             }
 
             @Override

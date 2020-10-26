@@ -23,9 +23,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.news.gamersky.databean.GameListDataBean;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.databean.NewDataBean;
+import com.news.gamersky.util.ReadingProgressUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,6 +39,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SearchActivity extends AppCompatActivity {
+    private final static String TAG="SearchActivity";
 
     private SearchView searchView;
     private RecyclerView recyclerView;
@@ -458,11 +461,19 @@ public class SearchActivity extends AppCompatActivity {
                 textView2.setText(AppUtil.keyTextColor(Html.fromHtml(mData.get(position).title).toString(),key, Color.parseColor("#F01A21")));
                 textView3.setText(Html.fromHtml(mData.get(position).content));
                 textView4.setText(mData.get(position).date);
+                if(ReadingProgressUtil.getSearchClick(SearchActivity.this,mData.get(position).id)){
+                    textView2.setTextColor(getResources().getColor(R.color.defaultColor));
+                    textView3.setTextColor(getResources().getColor(R.color.defaultColor));
+                }else {
+                    textView2.setTextColor(getResources().getColor(R.color.textColorPrimary));
+                    textView3.setTextColor(getResources().getColor(R.color.textColorPrimary));
+                }
                 this.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         textView2.setTextColor(getResources().getColor(R.color.defaultColor));
                         textView3.setTextColor(getResources().getColor(R.color.defaultColor));
+                        ReadingProgressUtil.putSearchClick(SearchActivity.this,mData.get(position).id,true);
                         NewDataBean newData=mData.get(position);
                         newData.title=Html.fromHtml(mData.get(position).title).toString();
                         if(category.equals("news")) {
@@ -497,6 +508,19 @@ public class SearchActivity extends AppCompatActivity {
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.smallRoundCorner)))
                         .into(imageView);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(SearchActivity.this, GameDetailActivity.class);
+                        GameListDataBean gameData=new GameListDataBean();
+                        gameData.title=mData.get(position).title;
+                        gameData.picUrl=mData.get(position).imageUrl;
+                        gameData.itemUrl=mData.get(position).src;
+                        intent.putExtra("gameData", gameData);
+                        //startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(SearchActivity.this, imageView, "gameCover").toBundle());
+                        startActivity(intent);
+                    }
+                });
             }
         }
 

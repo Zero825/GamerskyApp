@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -63,15 +64,16 @@ public class CommentFragment extends Fragment {
     private ArrayList<CommentDataBean> hotCommentData;
     private ArrayList<CommentDataBean> allCommentData;
     private CommentAdapter commentAdapter;
-    private LinearLayout commentHeader;
+    private ConstraintLayout commentHeader;
     private int mSuspensionHeight;
     private int mCurrentPosition;
     private SwipeRefreshLayout refreshLayout;
-    private  Document doc;
-    private  String srcUrl;
-    private  int page;
-    private  String sid;
-    private  int flag;
+    private Document doc;
+    private String srcUrl;
+    private String order;
+    private int page;
+    private String sid;
+    private int flag;
     private int lastFlag;
     private boolean isFirst;
     private ExecutorService executor;
@@ -107,6 +109,8 @@ public class CommentFragment extends Fragment {
         commentAdapter=new CommentAdapter(hotCommentData,allCommentData);
         recyclerView.setAdapter(commentAdapter);
 
+        //createTimeDESC or createTimeASC
+        order="createTimeDESC";
         mCurrentPosition = 0;
         page=1;
         flag=0;
@@ -185,24 +189,43 @@ public class CommentFragment extends Fragment {
             }
         });
 
-
+        commentHeader.findViewById(R.id.order).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(order.equals("createTimeDESC")){
+                    order="createTimeASC";
+                }else {
+                    order="createTimeDESC";
+                }
+                refreshLayout.setRefreshing(true);
+                loadComment();
+            }
+        });
 
     }
 
     public void updateSuspensionBar(){
-        TextView textView=commentHeader.findViewById(R.id.textView16);
+        TextView title=commentHeader.findViewById(R.id.textView16);
+        TextView orderTitle=commentHeader.findViewById(R.id.order);
         if(allCommentData.size()==0){
-            textView.setText("暂时还没有评论");
+            title.setText("暂时还没有评论");
+            orderTitle.setVisibility(View.INVISIBLE);
         }
         else {
             if (mCurrentPosition <= hotCommentData.size()) {
-                textView.setText("热门评论");
+                title.setText("热门评论");
+                orderTitle.setVisibility(View.INVISIBLE);
             } else {
-                textView.setText("全部评论");
+                title.setText("全部评论");
+                if(order.equals("createTimeDESC")){
+                    orderTitle.setText(getString(R.string.newest));
+                }else {
+                    orderTitle.setText(getString(R.string.earliest));
+                }
+                orderTitle.setVisibility(View.VISIBLE);
             }
         }
     }
-
 
     public  void loadComment(){
         ((AnimationDrawable) loadimageView.getDrawable()).start();
@@ -244,6 +267,9 @@ public class CommentFragment extends Fragment {
                         String pageIndex = "1";
                         String pageSize = "10"; //最多条数
                         String sorts = "0"; //排序
+                        if(order.equals("createTimeASC")) {
+                            sorts = "1";
+                        }
                         String isShowHot = "true"; //显示热门
                         String src = "https://club.gamersky.com/club/api/getclubactivity?" +
                                 "jsondata=" +
@@ -648,7 +674,7 @@ public class CommentFragment extends Fragment {
                                 "\"repliesMaxCount\":" + maxCount + "," +
                                 "\"pageIndex\":" + pageIndex + "," +
                                 "\"pageSize\":" + pageSize + "," +
-                                "\"order\":\"createTimeDESC\"}";
+                                "\"order\":"+"\""+order+"\""+"}";
                         URL url1 = new URL(src1);
                         //得到connection对象。
                         HttpURLConnection connection1 = (HttpURLConnection) url1.openConnection();
@@ -780,6 +806,9 @@ public class CommentFragment extends Fragment {
                             System.out.println("特殊处理sid" + sid);
                             String pageSize = "10"; //最多条数
                             String sorts = "0"; //排序
+                            if(order.equals("createTimeASC")) {
+                                sorts = "1";
+                            }
                             String isShowHot = "true"; //显示热门
                             String src = "https://club.gamersky.com/club/api/getclubactivity?" +
                                     "jsondata=" +
@@ -964,7 +993,7 @@ public class CommentFragment extends Fragment {
                                     "\"repliesMaxCount\":" + maxCount + "," +
                                     "\"pageIndex\":" + page + "," +
                                     "\"pageSize\":" + pageSize + "," +
-                                    "\"order\":\"createTimeDESC\"}";
+                                    "\"order\":"+"\""+order+"\""+"}";
                             URL url1 = new URL(src1);
                             //得到connection对象。
                             HttpURLConnection connection1 = (HttpURLConnection) url1.openConnection();
@@ -1247,6 +1276,7 @@ public class CommentFragment extends Fragment {
                     if(!commentDataBean.userImage.equals("")) {
                         Glide.with(imageView)
                                 .load(commentDataBean.userImage)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .centerCrop()
                                 .into(imageView);
                     }

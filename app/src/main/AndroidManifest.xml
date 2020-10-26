@@ -45,6 +45,9 @@
                     android:host="wap.gamersky.com" />
             </intent-filter>
         </activity>
+        <activity android:name=".GameDetailActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/GameDetailTheme"></activity>
         <activity
             android:name=".ImagesBrowserActivity"
             android:launchMode="singleTop" />

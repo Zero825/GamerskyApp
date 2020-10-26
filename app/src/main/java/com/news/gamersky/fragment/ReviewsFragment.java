@@ -25,9 +25,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.news.gamersky.R;
 import com.news.gamersky.SearchActivity;
-import com.news.gamersky.adapter.GameRecyclerViewAdapter;
+import com.news.gamersky.adapter.GameListRecyclerViewAdapter;
 import com.news.gamersky.customizeview.LineFeedRadioGroup;
-import com.news.gamersky.databean.GameDataBean;
+import com.news.gamersky.databean.GameListDataBean;
 import com.news.gamersky.util.AppUtil;
 
 import org.json.JSONArray;
@@ -60,7 +60,7 @@ public class ReviewsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private GameRecyclerViewAdapter gameRecyclerViewAdapter;
+    private GameListRecyclerViewAdapter gameListRecyclerViewAdapter;
 
     private ConstraintLayout gameGenresSelectTip;
     private LineFeedRadioGroup gameGenresSelect;
@@ -80,7 +80,7 @@ public class ReviewsFragment extends Fragment {
     private ConstraintLayout gameTagSelectTip;
     private LineFeedRadioGroup gameTagSelect;
 
-    private ArrayList<GameDataBean> gameDataList;
+    private ArrayList<GameListDataBean> gameDataList;
     private HashMap<RadioButton,String> tagUrlHashMap;
     private String tagSrc;
     private String rootNodeId;
@@ -174,8 +174,8 @@ public class ReviewsFragment extends Fragment {
         swipeRefreshLayout.setVisibility(View.INVISIBLE);
         linearLayoutManager=new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        gameRecyclerViewAdapter=new GameRecyclerViewAdapter(gameDataList,headerView,getContext());
-        recyclerView.setAdapter(gameRecyclerViewAdapter);
+        gameListRecyclerViewAdapter =new GameListRecyclerViewAdapter(gameDataList,headerView,getContext());
+        recyclerView.setAdapter(gameListRecyclerViewAdapter);
         recyclerView.hasFixedSize();
 
 
@@ -583,7 +583,7 @@ public class ReviewsFragment extends Fragment {
 
     public void loadData(final String referer, final boolean showTip){
         pageIndex=1;
-        gameRecyclerViewAdapter.setNoMore(false);
+        gameListRecyclerViewAdapter.setNoMore(false);
         flag=0;
         lastFlag=0;
         smallProgressBar.setVisibility(View.VISIBLE);
@@ -616,12 +616,12 @@ public class ReviewsFragment extends Fragment {
                         String result = is2s(inputStream);//将流转换为字符串。
                         result = result.substring(1, result.length() - 2);
                         //Log.i(TAG, "run: "+result);
-                        final ArrayList<GameDataBean> tempGameDataList=new ArrayList<>();
+                        final ArrayList<GameListDataBean> tempGameDataList=new ArrayList<>();
                         JSONObject resultJsonObject=new JSONObject(result);
                         JSONArray resultJsonArray=resultJsonObject.getJSONArray("result");
                         for(int i=0;i<resultJsonArray.length();i++){
                             JSONObject tempJsonObject=(JSONObject)resultJsonArray.get(i);
-                            tempGameDataList.add(new GameDataBean(
+                            tempGameDataList.add(new GameListDataBean(
                                     tempJsonObject.getString("id"),
                                     tempJsonObject.getString("title"),
                                     tempJsonObject.getString("enTitle"),
@@ -645,7 +645,7 @@ public class ReviewsFragment extends Fragment {
                                     AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_successed),true,true).show();
                                 }
                                 if(gameDataList.size()<pageSize){
-                                    gameRecyclerViewAdapter.setNoMore(true);
+                                    gameListRecyclerViewAdapter.setNoMore(true);
                                 }
                                 smallProgressBar.setVisibility(View.GONE);
                             }
@@ -700,12 +700,12 @@ public class ReviewsFragment extends Fragment {
                         String result = is2s(inputStream);//将流转换为字符串。
                         result = result.substring(1, result.length() - 2);
                         //Log.i(TAG, "run: "+result);
-                        final ArrayList<GameDataBean> tempGameDataList=new ArrayList<>();
+                        final ArrayList<GameListDataBean> tempGameDataList=new ArrayList<>();
                         JSONObject resultJsonObject=new JSONObject(result);
                         JSONArray resultJsonArray=resultJsonObject.getJSONArray("result");
                         for(int i=0;i<resultJsonArray.length();i++){
                             JSONObject tempJsonObject=(JSONObject)resultJsonArray.get(i);
-                            tempGameDataList.add(new GameDataBean(
+                            tempGameDataList.add(new GameListDataBean(
                                     tempJsonObject.getString("id"),
                                     tempJsonObject.getString("title"),
                                     tempJsonObject.getString("enTitle"),
@@ -723,10 +723,10 @@ public class ReviewsFragment extends Fragment {
                             public void run() {
 
                                 gameDataList.addAll(tempGameDataList);
-                                gameRecyclerViewAdapter.notifyItemRangeInserted(gameDataList.size() - tempGameDataList.size(),
+                                gameListRecyclerViewAdapter.notifyItemRangeInserted(gameDataList.size() - tempGameDataList.size(),
                                         tempGameDataList.size());
                                 if(tempGameDataList.size()<pageSize){
-                                    gameRecyclerViewAdapter.setNoMore(true);
+                                    gameListRecyclerViewAdapter.setNoMore(true);
                                 }
                             }
                         });
