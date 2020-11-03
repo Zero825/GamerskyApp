@@ -48,16 +48,24 @@
             app:isPreferenceVisible="false"/>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="资讯相关"
+        android:title="加载相关"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:iconSpaceReserved="false">
 
         <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:key="load_comments_count"
+            android:key="switch_preference_1"
             android:summary="关闭以提高加载速度"
             android:title="加载资讯评论数量"
+            app:iconSpaceReserved="false" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="load_pic_auto"
+            android:summary="快速切换到评论时不加载正文图片"
+            android:title="自动暂停正文图片加载"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -69,17 +77,16 @@
             android:defaultValue="true"
             android:key="swpie_back"
             android:title="文章滑动返回"
-            app:iconSpaceReserved="false"/>
+            app:iconSpaceReserved="false" />
         <SeekBarPreference
-            android:key="swipe_back_distance"
             android:defaultValue="10"
+            android:key="swipe_back_distance"
             android:max="100"
             app:iconSpaceReserved="false"
             app:min="10"
             app:showSeekBarValue="true"
-            app:title="滑动返回触发距离"
-            app:summary="默认值：10">
-        </SeekBarPreference>
+            app:summary="默认值：10"
+            app:title="滑动返回触发距离"></SeekBarPreference>
         <SeekBarPreference
             android:defaultValue="50"
             android:key="swipe_sides_sensitivity"

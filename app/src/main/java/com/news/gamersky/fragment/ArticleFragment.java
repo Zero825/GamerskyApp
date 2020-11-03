@@ -217,6 +217,7 @@ public class ArticleFragment extends Fragment {
                         }
                         if(bytes!=null) {
                             connection.disconnect();
+                            Log.i(TAG, "shouldInterceptRequest: "+"return image");
                             return new WebResourceResponse(contentType, "utf-8", new ByteArrayInputStream(bytes));
                         }
                     }
@@ -224,6 +225,8 @@ public class ArticleFragment extends Fragment {
                 }
                 return super.shouldInterceptRequest(view, request);
             }
+
+
         });
         webView.loadDataWithBaseURL("file:///android_asset", "<div></div>", "text/html", "utf-8", null);
 
@@ -245,13 +248,18 @@ public class ArticleFragment extends Fragment {
      * @param view
      */
     private  void setWebImageClick(WebView view) {
-        String jsCode="javascript:(function(){" +
-                "var imgs=document.getElementsByTagName(\"img\");" +
-                "for(var i=0;i<imgs.length;i++){" +
-                "imgs[i].pos = i;"+
-                "imgs[i].onclick=function(){" +
-                "window.jsCallJavaObj.showBigImg(this.pos);" +
-                "}}})()";
+        String jsCode= "javascript:(function(){" +
+                    "var imgs=document.getElementsByTagName(\"img\");" +
+                    "for(var i=0;i<imgs.length;i++){" +
+                        "imgs[i].pos = i;"+
+                        "imgs[i].onclick=function(){" +
+                            "window.jsCallJavaObj.showBigImg(this.pos);" +
+                        "};" +
+                        "imgs[i].onerror=function(){"+
+                            "this.src=\"file:///android_asset/pic/placeholders_pic_null.png\";"+
+                        "};"+
+                    "}" +
+                "})()";
         view.loadUrl(jsCode);
     }
     /**
@@ -331,9 +339,6 @@ public class ArticleFragment extends Fragment {
                         "    throttle: 250,\n" +
                         "    unload: false,\n" +
                         "  });\n" +
-//                        "   $(function() {\n" +
-//                        "       $(\"div\").fadeIn(300);\n"+
-//                        "   });\n"+
                         "</script>"+
                         "<b style=\"font-size:22px;margin:0;\">"+newTitle+"</b >"+
                         "<p class=\"author\" style=\"font-size:13px;margin:0;color:#808080\">"+"&nbsp;"+content1.get(0).getElementsByTag("span").text()+"</p >";
@@ -604,9 +609,6 @@ public class ArticleFragment extends Fragment {
             elements2.attr("href","");
             for (int i=0;i<elements1.size();i++) {
                 Element element=elements1.get(i);
-//                if(element.attr("src").contains("gif")){
-//                    element.attr("width", "100%");
-//                }
                 element.attr("style", "border-radius: 2px;max-width:100%;")
                         //.attr("width", "100%")
                         .attr("height", "auto")
@@ -639,7 +641,8 @@ public class ArticleFragment extends Fragment {
             }
             for (Element element:elements4){
                 if (!element.attr("class").equals("author")){
-                    element.attr("style","line-height:28px;word-wrap:break-word;");
+                    element.attr("style","line-height:28px;word-wrap:break-word;")
+                            .attr("width", "100%");
                 }
                 if(!element.getElementsByTag("img").toString().equals("")){
                     element.getElementsByTag("a").attr("href","javascript:void(0);");
@@ -686,6 +689,17 @@ public class ArticleFragment extends Fragment {
         webView.scrollTo(0,0);
     }
 
+    public void webViewResume(){
+        if(webView!=null){
+            webView.resumeTimers();
+        }
+    }
+
+    public void webViewPause(){
+        if(webView!=null){
+            webView.pauseTimers();
+        }
+    }
 
     @Override
     public void onDestroy() {

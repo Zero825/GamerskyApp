@@ -14,10 +14,12 @@ public class AppSetting {
     public static int bigRoundCorner;
     public static int nightMode;
 
+
     public static void init(Context context){
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
         isRoundCorner=sharedPreferences.getBoolean("corner",true);
+
         if(isRoundCorner) {
             smallRoundCorner = AppUtil.dip2px(context, 4f);
             bigRoundCorner = AppUtil.dip2px(context, 8f);
@@ -25,6 +27,7 @@ public class AppSetting {
             smallRoundCorner = 1;
             bigRoundCorner = 1;
         }
+
         nightMode=Integer.parseInt(sharedPreferences.getString("night_mode","2"));
         NightModeUtil.changeNightMode(AppSetting.nightMode);
     }

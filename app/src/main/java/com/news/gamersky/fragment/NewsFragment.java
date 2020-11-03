@@ -90,6 +90,7 @@ public class NewsFragment extends Fragment {
         fragmentAdapter= new ViewPagerFragmentAdapter(getChildFragmentManager(),fragments,tabTitles,BEHAVIOR_SET_USER_VISIBLE_HINT);
         viewPager.setAdapter(fragmentAdapter);
         viewPager.setOffscreenPageLimit(fragmentAdapter.getCount());
+        tabLayout.setupWithViewPager(viewPager);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         clearGlideDiskCache(sharedPreferences.getBoolean("auto_clear_cache",true));
@@ -122,7 +123,7 @@ public class NewsFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                tabLayout.selectTab(tabLayout.getTabAt(position));
+                //tabLayout.selectTab(tabLayout.getTabAt(position));
             }
 
             @Override
@@ -135,7 +136,7 @@ public class NewsFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 startAnimator(tab.view);
-                viewPager.setCurrentItem(tab.getPosition(),true);
+                //viewPager.setCurrentItem(tab.getPosition(),true);
             }
 
             @Override

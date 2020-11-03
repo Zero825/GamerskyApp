@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
 
@@ -18,6 +19,7 @@ import com.news.gamersky.customizeview.FixViewPager;
 import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
+import com.news.gamersky.setting.AppSetting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,33 +131,34 @@ public class ArticleActivity extends AppCompatActivity{
                 }
             });
         }
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("load_pic_auto",true)) {
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
 
-            }
+                @Override
+                public void onPageSelected(int position) {
+                    FragmentManager fragmentManager = ArticleActivity.this.getSupportFragmentManager();
+                    Fragment fragment = fragmentManager.findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + 0);
+                    if (position == 0) {
+                        if (fragment != null) {
+                            ((ArticleFragment) fragment).webViewResume();
+                        }
+                    } else {
+                        if (fragment != null) {
+                            ((ArticleFragment) fragment).webViewPause();
+                        }
+                    }
+                }
 
-            @Override
-            public void onPageSelected(int position) {
-//                FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
-//                Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
-//                if(position==0) {
-//                    if (fragment != null) {
-//                        ((ArticleFragment) fragment).webViewResume();
-//                    }
-//                }else {
-//                    if (fragment != null) {
-//                        ((ArticleFragment) fragment).webViewPause();
-//                    }
-//                }
-            }
+                @Override
+                public void onPageScrollStateChanged(int state) {
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+                }
+            });
+        }
 
     }
 
