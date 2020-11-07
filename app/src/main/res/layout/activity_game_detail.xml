@@ -20,7 +20,6 @@
             app:contentScrim="@color/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:scrimAnimationDuration="100"
-            app:scrimVisibleHeightTrigger="80dp"
             app:title="toolBarTitleStyle"
             app:titleEnabled="false">
 

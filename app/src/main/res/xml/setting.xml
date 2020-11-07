@@ -57,10 +57,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:key="switch_preference_1"
+            android:key="load_comments_count"
             android:summary="关闭以提高加载速度"
             android:title="加载资讯评论数量"
             app:iconSpaceReserved="false" />
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="load_pic_auto"
