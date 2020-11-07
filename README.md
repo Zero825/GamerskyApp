@@ -8,6 +8,10 @@
 <td><img src="https://user-images.githubusercontent.com/37415536/84290079-d3228680-ab75-11ea-89a6-1d7db72cff04.png" width="200"></td>
 <td><img src="https://user-images.githubusercontent.com/37415536/89034716-20e48f80-d36c-11ea-8fe9-61fbd8d80526.png" width="200"></td>
 </tr>
+<tr>
+<td><img src="https://user-images.githubusercontent.com/37415536/97137332-893ae580-1790-11eb-809b-8cb27c162e4b.png" width="300"></td>
+<td><img src="https://user-images.githubusercontent.com/37415536/97137357-935ce400-1790-11eb-9fb0-339eb93e3f15.png" width="300"></td>
+</tr>
 </table>
 
 ### 功能特性
@@ -16,6 +20,7 @@
 * 阅读正文
 * 查看评论
 * 搜索文章
+* 查阅攻略和评测
 * 图片懒加载
 * 上拉自动加载
 * 快速返回顶部
