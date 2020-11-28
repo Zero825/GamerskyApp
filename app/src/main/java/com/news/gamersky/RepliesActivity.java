@@ -759,8 +759,6 @@ public class RepliesActivity extends AppCompatActivity {
         }
 
         public  class CommentViewHolder extends RecyclerView.ViewHolder {
-            // each data item is just a string in this case
-
 
             public TextView textView1;
             public TextView textView2;
@@ -938,7 +936,7 @@ public class RepliesActivity extends AppCompatActivity {
             }
             if(viewType==1){
                 v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_reply, parent, false);
+                        .inflate(R.layout.recyclerview_item_reply, parent, false);
                 return new RepliesAdapter.RepliesViewHolder(v);
             }
             if(viewType==2){

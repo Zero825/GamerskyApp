@@ -16,6 +16,11 @@
         android:icon="@drawable/icon_game_reviews"
         android:title="@string/title_game_reviews" />
 
+    <item
+        android:id="@+id/navigation_gallery"
+        android:icon="@drawable/icon_gallery"
+        android:title="@string/title_gallery" />
+
 <!--    <item-->
 <!--        android:id="@+id/navigation_user"-->
 <!--        android:icon="@drawable/icon_user"-->

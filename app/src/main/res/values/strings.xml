@@ -6,6 +6,7 @@
     <string name="title_home">资讯</string>
     <string name="title_game_guide">攻略</string>
     <string name="title_game_reviews">评测</string>
+    <string name="title_gallery">图库</string>
     <string name="title_user">用户</string>
     <string name="title_news_tab1">首页</string>
     <string name="title_news_tab2">娱乐</string>
@@ -28,9 +29,9 @@
     <string name="sort_hot_asc">按热度升序</string>
     <string name="sort_time_asc">按时间升序</string>
     <string name="sort_evaluation_asc">按评价升序</string>
-    <string name="sort_hot_des">按热度降序</string>
-    <string name="sort_time_des">按时间降序</string>
-    <string name="sort_evaluation_des">按评价降序</string>
+    <string name="sort_hot_desc">按热度降序</string>
+    <string name="sort_time_desc">按时间降序</string>
+    <string name="sort_evaluation_desc">按评价降序</string>
     <string name="listed">已上市</string>
     <string name="unlisted">未上市</string>
     <string name="end">-END-</string>
@@ -54,6 +55,7 @@
     <string name="chinese">中文</string>
     <string name="listed_time">发行时间</string>
     <string name="game_score">游戏评分</string>
+    <string name="more_images">更多图片</string>
 
     <string name="night_mode">深色模式</string>
     <string name="night_mode_light">浅色</string>

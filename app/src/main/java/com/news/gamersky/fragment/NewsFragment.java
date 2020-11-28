@@ -31,6 +31,7 @@ import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
 
 public class NewsFragment extends Fragment {
@@ -87,7 +88,7 @@ public class NewsFragment extends Fragment {
             fragments.get(i).setArguments(bundle);
         }
 
-        fragmentAdapter= new ViewPagerFragmentAdapter(getChildFragmentManager(),fragments,tabTitles,BEHAVIOR_SET_USER_VISIBLE_HINT);
+        fragmentAdapter= new ViewPagerFragmentAdapter(getChildFragmentManager(),fragments,tabTitles,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager.setAdapter(fragmentAdapter);
         viewPager.setOffscreenPageLimit(fragmentAdapter.getCount());
         tabLayout.setupWithViewPager(viewPager);
@@ -116,39 +117,6 @@ public class NewsFragment extends Fragment {
             }
         });
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                //tabLayout.selectTab(tabLayout.getTabAt(position));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                startAnimator(tab.view);
-                //viewPager.setCurrentItem(tab.getPosition(),true);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                endAnimator(tab.view);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
     }
 
     public void upTop(){

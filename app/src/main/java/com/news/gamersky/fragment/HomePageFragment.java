@@ -34,6 +34,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.news.gamersky.ArticleActivity;
+import com.news.gamersky.MainActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.adapter.NewsRecyclerViewAdapter;
 import com.news.gamersky.customizeview.BannerViewPager;
@@ -43,6 +44,7 @@ import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.ZoomOutPageTransformer;
 import com.news.gamersky.databean.NewDataBean;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -104,7 +106,7 @@ public class HomePageFragment extends Fragment {
     }
 
 
-    public void init(View view,View headerView){
+    public void init(@NotNull View view, @NotNull View headerView){
 
         bannerNum=5;
         flag=0;
@@ -538,6 +540,9 @@ public class HomePageFragment extends Fragment {
 //                }
 
                 System.out.println("更新ui完毕");
+                if(getActivity()!=null) {
+                    ((MainActivity) getActivity()).showOrHideSplash(false);
+                }
                 myAdapter.notifyDataSetChanged();
                 if(!firstRun){
                     AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_successed),true,true).show();
@@ -547,6 +552,9 @@ public class HomePageFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
             }
             if (msg.what==0){
+                if(getActivity()!=null) {
+                    ((MainActivity) getActivity()).showOrHideSplash(false);
+                }
                 AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_failed),true,true).show();
                 progressBar.setVisibility(View.GONE);
                 refreshLayout.setRefreshing(false);

@@ -16,14 +16,17 @@
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true">
         <activity android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/MainTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity" />
+        <activity android:name=".SearchActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".GameGalleryActivity"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".RepliesActivity"
             android:launchMode="singleTop"
@@ -33,7 +36,8 @@
             android:label="@string/title_activity_settings"
             android:launchMode="singleTop"
             android:theme="@style/SettingsTheme" />
-        <activity android:name=".ArticleActivity">
+        <activity android:name=".ArticleActivity"
+            android:launchMode="singleTop">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -47,7 +51,7 @@
         </activity>
         <activity android:name=".GameDetailActivity"
             android:launchMode="singleTop"
-            android:theme="@style/GameDetailTheme"></activity>
+            android:theme="@style/GameDetailTheme"/>
         <activity
             android:name=".ImagesBrowserActivity"
             android:launchMode="singleTop" />

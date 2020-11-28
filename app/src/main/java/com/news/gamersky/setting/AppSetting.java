@@ -19,7 +19,6 @@ public class AppSetting {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
         isRoundCorner=sharedPreferences.getBoolean("corner",true);
-
         if(isRoundCorner) {
             smallRoundCorner = AppUtil.dip2px(context, 4f);
             bigRoundCorner = AppUtil.dip2px(context, 8f);

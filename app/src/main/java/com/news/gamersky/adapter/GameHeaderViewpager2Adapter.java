@@ -14,9 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.setting.AppSetting;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,13 +28,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class CommonViewpager2Adapter extends RecyclerView.Adapter {
-    private final static String TAG="CommonViewpager2Adapter";
+public class GameHeaderViewpager2Adapter extends RecyclerView.Adapter {
+    private final static String TAG="GHViewpager2Adapter";
 
     public ArrayList<String> dataList;
     public int size;
 
-    public CommonViewpager2Adapter(ArrayList<String> dataList) {
+    public GameHeaderViewpager2Adapter(ArrayList<String> dataList) {
         this.dataList = dataList;
         this.size=8;
     }

@@ -68,6 +68,13 @@
             android:summary="快速切换到评论时不加载正文图片"
             android:title="自动暂停正文图片加载"
             app:iconSpaceReserved="false" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="unfold_replies"
+            android:summary="关闭以提高流畅度"
+            android:title="回复预览"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="滑动相关"

@@ -35,6 +35,7 @@
             android:layout_height="40dp"
             android:layout_marginStart="6dp"
             android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
             android:background="@drawable/pressed_circle"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"

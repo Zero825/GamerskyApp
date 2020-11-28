@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.news.gamersky.MainActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.SearchActivity;
 import com.news.gamersky.adapter.GameListRecyclerViewAdapter;
@@ -196,7 +197,7 @@ public class ReviewsFragment extends Fragment {
                             radioButton.setText(aTagList.get(j).html());
                             radioButton.setButtonDrawable(null);
                             radioButton.setBackgroundResource(R.drawable.bg_selected);
-                            radioButton.setTextColor(getResources().getColorStateList(R.color.text_color_selector));
+                            radioButton.setTextColor(getResources().getColorStateList(R.color.radio_button_text_color_selector));
                             radioButton.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
                             radioButton.setPaddingRelative(AppUtil.dip2px(getContext(),6f),AppUtil.dip2px(getContext(),0f),
                                     AppUtil.dip2px(getContext(),6f),AppUtil.dip2px(getContext(),0f));
@@ -481,10 +482,10 @@ public class ReviewsFragment extends Fragment {
                     btnSortHot.setText(getString(R.string.sort_hot_asc));
                 }else if(sort.equals("01")){
                     sort="00";
-                    btnSortHot.setText(getString(R.string.sort_hot_des));
+                    btnSortHot.setText(getString(R.string.sort_hot_desc));
                 }else {
                     sort="00";
-                    btnSortHot.setText(getString(R.string.sort_hot_des));
+                    btnSortHot.setText(getString(R.string.sort_hot_desc));
                 }
                 loadData(getReferer(),false);
             }
@@ -500,10 +501,10 @@ public class ReviewsFragment extends Fragment {
                     btnSortTime.setText(getString(R.string.sort_time_asc));
                 }else if(sort.equals("11")){
                     sort="10";
-                    btnSortTime.setText(getString(R.string.sort_time_des));
+                    btnSortTime.setText(getString(R.string.sort_time_desc));
                 }else {
                     sort="10";
-                    btnSortTime.setText(getString(R.string.sort_time_des));
+                    btnSortTime.setText(getString(R.string.sort_time_desc));
                 }
                 loadData(getReferer(),false);
             }
@@ -519,10 +520,10 @@ public class ReviewsFragment extends Fragment {
                     btnSortEvaluation.setText(getString(R.string.sort_evaluation_asc));
                 }else if(sort.equals("21")){
                     sort="20";
-                    btnSortEvaluation.setText(getString(R.string.sort_evaluation_des));
+                    btnSortEvaluation.setText(getString(R.string.sort_evaluation_desc));
                 }else {
                     sort="20";
-                    btnSortEvaluation.setText(getString(R.string.sort_evaluation_des));
+                    btnSortEvaluation.setText(getString(R.string.sort_evaluation_desc));
                 }
                 loadData(getReferer(),false);
             }
@@ -791,6 +792,9 @@ public class ReviewsFragment extends Fragment {
 
     public void upTop(){
         recyclerView.smoothScrollToPosition(0);
+        if(getActivity()!=null){
+            ((MainActivity)getActivity()).showNav();
+        }
     }
 
 }

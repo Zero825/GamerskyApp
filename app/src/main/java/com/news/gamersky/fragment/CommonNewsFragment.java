@@ -68,15 +68,15 @@ public class CommonNewsFragment extends Fragment {
         return view;
     }
 
-
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(firstVisible&&isVisibleToUser){
+    public void onResume() {
+        super.onResume();
+        if(firstVisible){
             firstVisible=false;
             loadNews();
         }
     }
+
 
     public void init(View view){
         newsData=new ArrayList<>();
@@ -87,7 +87,6 @@ public class CommonNewsFragment extends Fragment {
         recyclerView.setAdapter(newsAdapter);
         midSwipeRefreshLayout=view.findViewById(R.id.refreshLayout);
         midSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-        midSwipeRefreshLayout.setRefreshing(true);
 
         firstRun=true;
         firstVisible=true;
@@ -103,6 +102,7 @@ public class CommonNewsFragment extends Fragment {
         page=1;
         flag=0;
         lastFlag=0;
+        midSwipeRefreshLayout.setRefreshing(true);
         newsAdapter.setNoMore(false);
         new Thread(new Runnable() {
             @Override

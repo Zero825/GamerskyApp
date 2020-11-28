@@ -4,10 +4,18 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,19 +34,8 @@ import java.util.Date;
 
 public class AppUtil {
 
-    public static Toast toast;
+    private final static String TAG="AppUtil";
 
-    public static Toast getToast(Activity activity, String message){
-        toast = new Toast(activity);
-        View toastview = activity.getLayoutInflater().inflate(R.layout.toast, null);
-        toast.setView(toastview);
-        TextView tv = toastview.findViewById(R.id.textView15);
-        tv.setText(message);
-        return toast;
-    }
-    public static void stopToast(){
-        if (toast!=null) toast.cancel();
-    }
 
     public static SpannableString keyTextColor(String text,String key,int color){
         SpannableString spannableString = new SpannableString(text);
@@ -52,10 +49,11 @@ public class AppUtil {
         return spannableString;
     }
 
+    //游民星空链接获取id
     public static String urlToId(String url){
-        String s=url;
+        String s=null;
         try {
-            String id=new StringBuffer(s).reverse().toString();
+            String id=new StringBuffer(url).reverse().toString();
             id=id.substring(id.indexOf(".")+1,id.indexOf("/"));
             id=new StringBuffer(id).reverse().toString();
             s=id;
@@ -73,7 +71,7 @@ public class AppUtil {
         }
         //snackbar.getView().setElevation(0f);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if(!sharedPreferences.getBoolean("no_bottombar",true)&&setAnchorView){
+        if(!sharedPreferences.getBoolean("no_bottombar",false)&&setAnchorView){
             snackbar.setAnchorView(R.id.nav_view);
         }
         return snackbar;
@@ -159,6 +157,57 @@ public class AppUtil {
     //判断图片亮色还是暗色
     public static boolean isDark(int color) {
         return ColorUtils.calculateLuminance(color) < 0.5;
+    }
+
+    /**
+     * 获取状态栏高度
+     * @param context
+     * @return
+     */
+    public static int getStatusBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        int height = resources.getDimensionPixelSize(resourceId);
+        return height;
+    }
+
+    //高斯模糊
+    public static Bitmap rsBlur(Context context, Bitmap source, int radius){
+
+        Bitmap inputBmp = source;
+        //(1)
+        RenderScript renderScript =  RenderScript.create(context);
+
+        Log.i(TAG,"scale size:"+inputBmp.getWidth()+"*"+inputBmp.getHeight());
+
+        // Allocate memory for Renderscript to work with
+        //(2)
+        final Allocation input = Allocation.createFromBitmap(renderScript,inputBmp);
+        final Allocation output = Allocation.createTyped(renderScript,input.getType());
+        //(3)
+        // Load up an instance of the specific script that we want to use.
+        ScriptIntrinsicBlur scriptIntrinsicBlur = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript));
+        //(4)
+        scriptIntrinsicBlur.setInput(input);
+        //(5)
+        // Set the blur radius
+        scriptIntrinsicBlur.setRadius(radius);
+        //(6)
+        // Start the ScriptIntrinisicBlur
+        scriptIntrinsicBlur.forEach(output);
+        //(7)
+        // Copy the output to the blurred bitmap
+        output.copyTo(inputBmp);
+        //(8)
+        renderScript.destroy();
+
+        return inputBmp;
+    }
+
+    public static int getDisplayWidth(Context context){
+        Point point=new Point();
+        ((Activity)context).getWindowManager().getDefaultDisplay().getSize(point);
+        return point.x;
     }
 
 }

@@ -12,64 +12,73 @@
         app:elevation="0dp"
         app:layout_behavior="com.news.gamersky.behavior.FixFlingBehavior">
 
-
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:contentScrim="@color/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:scrimAnimationDuration="100"
-            app:title="toolBarTitleStyle"
-            app:titleEnabled="false">
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager2"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </androidx.viewpager2.widget.ViewPager2>
+
+            <com.news.gamersky.customizeview.ArcView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/viewPager2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.news.gamersky.customizeview.IndicatorView
+                android:id="@+id/indicatorView"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintBottom_toTopOf="@+id/game_header"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout2"
+                android:id="@+id/game_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="150dp"
                 android:animateLayoutChanges="true"
-                app:layout_collapseMode="none"
-                app:layout_collapseParallaxMultiplier="0.25">
-
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewPager2"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                </androidx.viewpager2.widget.ViewPager2>
-
-                <com.news.gamersky.customizeview.IndicatorView
-                    android:id="@+id/indicatorView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/viewPager2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                android:minHeight="100dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/viewPager2"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/viewPager2">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="16dp">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/gameCard"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
@@ -181,13 +190,24 @@
                             android:layout_marginStart="12dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="16dp"
-                            android:layout_marginBottom="16dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/gameCard">
 
                         </com.news.gamersky.customizeview.LineFeedRadioGroup>
+
+                        <TextView
+                            android:id="@+id/more_images"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
+                            android:text="@string/more_images"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/lineFeedRadioGroup" />
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
@@ -301,24 +321,24 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="30dp"
-                app:layout_collapseMode="pin" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/back_bar"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="30dp"
-                app:layout_collapseMode="pin">
+                android:layout_height="wrap_content"
+                android:elevation="3dp"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="pin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/back"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
                     android:background="@drawable/pressed_circle"
                     android:scaleType="centerInside"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -330,7 +350,8 @@
                     android:id="@+id/title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="46dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="54dp"
                     android:ellipsize="end"
                     android:gravity="center"
                     android:singleLine="true"
@@ -340,11 +361,13 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/back"
                     app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/comment_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -400,14 +423,28 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/load_pic"
+            android:layout_width="100dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/load_animation" />
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -24,6 +24,7 @@ import com.news.gamersky.setting.AppSetting;
 import java.util.ArrayList;
 import java.util.List;
 
+import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
 
 
@@ -81,7 +82,7 @@ public class ArticleActivity extends AppCompatActivity{
             fragments.get(i).setArguments(bundle);
         }
 
-        viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(),fragments,tabTitles,BEHAVIOR_SET_USER_VISIBLE_HINT);
+        viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(),fragments,tabTitles,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager.setAdapter(viewPagerFragmentAdapter);
         viewPager.setOffscreenPageLimit(viewPagerFragmentAdapter.getCount());
         tabLayout.setTabIndicatorFullWidth(false);

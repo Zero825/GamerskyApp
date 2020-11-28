@@ -20,12 +20,12 @@ public class CommentDataBean implements Serializable {
     public String imagesJson;
     public ArrayList<String> images;
     public ArrayList<CommentDataBean> replies;
-    public String repliesCount;
+    public int repliesCount;
 
 
     public CommentDataBean(){}
 
-    public CommentDataBean(String commentId,String userImage, String userName, String time, String likeNum, String content, String floor, ArrayList<String> images,String imagesJson,ArrayList<CommentDataBean> replies,String repliesCount) {
+    public CommentDataBean(String commentId,String userImage, String userName, String time, String likeNum, String content, String floor, ArrayList<String> images,String imagesJson,ArrayList<CommentDataBean> replies,int repliesCount) {
         this.commentId=commentId;
         this.userImage = userImage;
         this.userName = userName;
@@ -50,7 +50,7 @@ public class CommentDataBean implements Serializable {
     }
 
 
-    public CommentDataBean(String commentId, String clubContentId, String userImage, String userName, String time, String likeNum, String content, String floor, ArrayList<String> images, String imagesJson, ArrayList<CommentDataBean> replies, String repliesCount) {
+    public CommentDataBean(String commentId, String clubContentId, String userImage, String userName, String time, String likeNum, String content, String floor, ArrayList<String> images, String imagesJson, ArrayList<CommentDataBean> replies, int repliesCount) {
         this.commentId=commentId;
         this.clubContentId=clubContentId;
         this.userImage = userImage;

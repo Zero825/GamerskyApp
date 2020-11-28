@@ -330,10 +330,10 @@ public class ArticleFragment extends Fragment {
                 newTitle=content1.get(0).getElementsByTag("h1").text();
 
 
-                String h= "<script src=\"file:///android_asset/js/echo.min.js\"></script>\n"+
+                String h= "<script clear=\"false\" src=\"file:///android_asset/js/echo.min.js\"></script>\n"+
 //                        "<script src=\"file:///android_asset/js/jquery-3.5.0.min.js\"></script>\n"+
                         "<link rel=\"stylesheet\" type=\"text/css\" href=\"file:///android_asset/css/oldstyle.css\" />"+
-                        "<script>\n" +
+                        "<script clear=\"false\">\n" +
                         "  echo.init({\n" +
                         "    offset: 1000,\n" +
                         "    throttle: 250,\n" +
@@ -650,6 +650,7 @@ public class ArticleFragment extends Fragment {
             }
             for (int i=0;i<elements5.size();i++){
                 Element element=elements5.get(i);
+                Log.i(TAG, "getNewContent: "+element.toString());
                 if (element.attr("src").contains("//j.gamersky.com/g/gsVideo.js")){
                     Element v=elements5.get(i+1);
                     String s=v.html();
@@ -670,6 +671,8 @@ public class ArticleFragment extends Fragment {
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+                }else if(!element.attr("clear").equals("false")){
+                    element.empty();
                 }
             }
             elements6.attr("style","color:#999;text-align:right;font-size:14px");

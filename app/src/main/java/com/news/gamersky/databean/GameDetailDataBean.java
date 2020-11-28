@@ -16,6 +16,7 @@ public class GameDetailDataBean {
     public String issue;
     public String shortIntroduction;
     public String introduction;
+    public String imagesUrl;
 
     public GameDetailDataBean() {
     }

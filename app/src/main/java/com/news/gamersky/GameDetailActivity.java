@@ -3,8 +3,10 @@ package com.news.gamersky;
 import android.app.WallpaperColors;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 
@@ -28,6 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -35,15 +37,14 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
-import com.news.gamersky.adapter.CommonViewpager2Adapter;
+import com.news.gamersky.adapter.GameHeaderViewpager2Adapter;
 import com.news.gamersky.adapter.GameCommentRecyclerViewAdapter;
 import com.news.gamersky.customizeview.IndicatorView;
 import com.news.gamersky.customizeview.LineFeedRadioGroup;
@@ -69,9 +70,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -143,7 +141,7 @@ public class GameDetailActivity extends AppCompatActivity {
         gameCommentRecyclerViewAdapter=new GameCommentRecyclerViewAdapter(this,commentDataArrayList);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(gameCommentRecyclerViewAdapter);
-        viewPager2.setAdapter(new CommonViewpager2Adapter(gamePicList));
+        viewPager2.setAdapter(new GameHeaderViewpager2Adapter(gamePicList));
         viewPager2.setOffscreenPageLimit(2);
 
         title.setText(gameData.title);
@@ -153,23 +151,25 @@ public class GameDetailActivity extends AppCompatActivity {
         //placeholdersPic="https://fakeimg.pl/440x230/282828/eae0d0/?retina=1&text=nopic?";
         placeholdersPic="file:///android_asset/pic/placeholders_pic_null.png";
 
+        findViewById(R.id.header).setMinimumHeight(AppUtil.getStatusBarHeight(this)+AppUtil.dip2px(this,46f));
         ((CardView)findViewById(R.id.cardView)).setRadius(AppSetting.bigRoundCorner);
         ((CardView)findViewById(R.id.cardView1)).setRadius(AppSetting.bigRoundCorner);
         ((CardView)findViewById(R.id.cardView1)).setVisibility(View.GONE);
         Glide.with(roundImageView)
+                .asBitmap()
                 .load(gameData.picUrl)
-                .transition(DrawableTransitionOptions.withCrossFade())
+                .transition(BitmapTransitionOptions.withCrossFade())
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.smallRoundCorner)))
-                .addListener(new RequestListener<Drawable>() {
+                .addListener(new RequestListener<Bitmap>() {
                     @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
                         return false;
                     }
 
                     @RequiresApi(api = Build.VERSION_CODES.O_MR1)
                     @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        int primaryColor=WallpaperColors.fromDrawable(resource).getPrimaryColor().toArgb();
+                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        int primaryColor=WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
                         ((CardView)findViewById(R.id.cardView)).setCardBackgroundColor(primaryColor);
                         cardIsDark=AppUtil.isDark(primaryColor);
                         int color;
@@ -185,6 +185,7 @@ public class GameDetailActivity extends AppCompatActivity {
                         ((TextView)findViewById(R.id.chinese)).setTextColor(color);
                         ((TextView)findViewById(R.id.issue)).setTextColor(color);
                         ((TextView)findViewById(R.id.time)).setTextColor(color);
+                        ((TextView)findViewById(R.id.more_images)).setTextColor(color);
                         LineFeedRadioGroup lineFeedRadioGroup=((LineFeedRadioGroup)findViewById(R.id.lineFeedRadioGroup));
                         for(int i=0;i<lineFeedRadioGroup.getChildCount();i++){
                             RadioButton radioButton= (RadioButton) lineFeedRadioGroup.getChildAt(i);
@@ -229,6 +230,7 @@ public class GameDetailActivity extends AppCompatActivity {
                     String supportChinese=" - ";
                     String issue="";
                     String introduction="";
+                    String imagesUrl="";
 
                     if(doc.getElementsByClass("tit_CH").size()!=0){
                         id=doc.getElementsByClass("tit_CH").get(0).attr("gameid");
@@ -284,6 +286,10 @@ public class GameDetailActivity extends AppCompatActivity {
                     if(doc.getElementsByClass("con-hide").size()!=0){
                         introduction=doc.getElementsByClass("con-hide").get(0).html();
                     }
+                    if(doc.getElementsByClass("more").size()!=0){
+                        imagesUrl=doc.getElementsByClass("more").get(0).attr("href");
+                    }
+
                     gameDetailData.id=id;
                     gameDetailData.title=title;
                     gameDetailData.enTitle=enTitle;
@@ -294,6 +300,7 @@ public class GameDetailActivity extends AppCompatActivity {
                     gameDetailData.supportChinese=supportChinese;
                     gameDetailData.issue=issue;
                     gameDetailData.introduction=introduction;
+                    gameDetailData.imagesUrl=imagesUrl;
 
                     //加载评分表
                     loadStatistics(gameDetailData.id);
@@ -362,7 +369,7 @@ public class GameDetailActivity extends AppCompatActivity {
                                 if(cardIsDark){
                                     radioButton.setTextColor(Color.WHITE);
                                 }else {
-                                    radioButton.setTextColor(getResources().getColorStateList(R.color.text_color_selector));
+                                    radioButton.setTextColor(getResources().getColorStateList(R.color.radio_button_text_color_selector));
                                 }
                                 radioButton.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
                                 Context context=lineFeedRadioGroup.getContext();
@@ -453,6 +460,18 @@ public class GameDetailActivity extends AppCompatActivity {
                                 }
                             });
 
+                            if(!gameDetailData.imagesUrl.equals("")){
+                                findViewById(R.id.more_images).setVisibility(View.VISIBLE);
+                                findViewById(R.id.more_images).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent=new Intent(GameDetailActivity.this, GameGalleryActivity.class);
+                                        intent.putExtra("src",gameDetailData.imagesUrl);
+                                        intent.putExtra("title",gameDetailData.title);
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
 
                         }
                     });
@@ -580,6 +599,8 @@ public class GameDetailActivity extends AppCompatActivity {
                 try{
                     page=1;
                     gameCommentRecyclerViewAdapter.setMoreData(true);
+                    ImageView loadPic=findViewById(R.id.load_pic);
+                    ((AnimationDrawable)loadPic.getDrawable()).start();
                     String pageIndex="1";
                     String pageSize="10";
                     String foorPageSize="5";
@@ -688,6 +709,9 @@ public class GameDetailActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                ImageView loadPic=findViewById(R.id.load_pic);
+                                loadPic.setVisibility(View.GONE);
+                                ((AnimationDrawable)loadPic.getDrawable()).stop();
                                 commentDataArrayList.clear();
                                 commentDataArrayList.addAll(tempData);
                                 if(tempData.size()<10){
@@ -838,12 +862,29 @@ public class GameDetailActivity extends AppCompatActivity {
 
     public void startListen(){
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            ConstraintLayout bar=findViewById(R.id.back_bar);
+            ConstraintLayout gameHeader=findViewById(R.id.game_header);
+            ColorDrawable colorDrawable=new ColorDrawable(getColor(R.color.colorPrimary));
+
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 //Log.i(TAG, "onOffsetChanged: "+verticalOffset+"\t"+appBarLayout.getTotalScrollRange());
+                int offset=100;
+                int alpha=255-(int) ((appBarLayout.getTotalScrollRange()+verticalOffset)/(float)(bar.getMeasuredHeight())*255)+offset;
+                //Log.i(TAG, "onOffsetChanged: "+alpha);
+                bar.setTranslationY(-verticalOffset);
+                if(alpha<=255&&alpha>=0) {
+                    colorDrawable.setAlpha(alpha);
+                }else if(alpha<=255+offset&&alpha>=0){
+                    colorDrawable.setAlpha(255);
+                }else {
+                    colorDrawable.setAlpha(0);
+                }
                 if(Math.abs(verticalOffset)==appBarLayout.getTotalScrollRange()){
                     title.setVisibility(View.VISIBLE);
                     backBtn.setImageDrawable(getDrawable(R.drawable.icon_back));
+                    gameHeader.setForeground(null);
+                    bar.setBackgroundResource(R.color.colorPrimary);
                     getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
                     if(NightModeUtil.isNightMode(GameDetailActivity.this)){
                         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -851,6 +892,8 @@ public class GameDetailActivity extends AppCompatActivity {
                 }else {
                     title.setVisibility(View.INVISIBLE);
                     backBtn.setImageDrawable(getDrawable(R.drawable.icon_back_white));
+                    bar.setBackground(null);
+                    gameHeader.setForeground(colorDrawable);
                     if((getWindow().getDecorView().getSystemUiVisibility())!=(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)) {
                         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
                     }

@@ -28,6 +28,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.RepliesActivity;
+import com.news.gamersky.adapter.CommentAdapter;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.CommentEmojiUtil;
@@ -56,6 +57,8 @@ import static com.news.gamersky.util.AppUtil.is2s;
 
 
 public class CommentFragment extends Fragment {
+    private static final String TAG="CommentFragment";
+
     private String  data_src;
     private ImageView loadimageView;
     private TextView loadtextView;
@@ -106,7 +109,7 @@ public class CommentFragment extends Fragment {
         allCommentData=new ArrayList<>();
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        commentAdapter=new CommentAdapter(hotCommentData,allCommentData);
+        commentAdapter=new CommentAdapter(getContext(),hotCommentData,allCommentData);
         recyclerView.setAdapter(commentAdapter);
 
         //createTimeDESC or createTimeASC
@@ -410,7 +413,7 @@ public class CommentFragment extends Fragment {
                                         images,
                                         jsonArray.toString(),
                                         replies,
-                                        jsonObject1.getString("replyCount")
+                                        jsonObject1.getInt("replyCount")
 
                                 ));
                             }
@@ -527,7 +530,7 @@ public class CommentFragment extends Fragment {
                                         images,
                                         jsonArray.toString(),
                                         replies,
-                                        jsonObject1.getString("replyCount")
+                                        jsonObject1.getInt("replyCount")
                                 ));
                             }
                         }
@@ -658,7 +661,7 @@ public class CommentFragment extends Fragment {
                                         images,
                                         jsonArray2.toString(),
                                         replies,
-                                        jsonObject1.getString("repliesCount")
+                                        jsonObject1.getInt("repliesCount")
 
                                 ));
 
@@ -727,7 +730,7 @@ public class CommentFragment extends Fragment {
                                         images,
                                         jsonArray2.toString(),
                                         replies,
-                                        jsonObject1.getString("repliesCount")
+                                        jsonObject1.getInt("repliesCount")
 
                                 ));
 
@@ -798,7 +801,7 @@ public class CommentFragment extends Fragment {
            return new  Thread(new Runnable() {
                 @Override
                 public void run() {
-
+                    Log.i(TAG, "run: "+"加载评论"+page);
                     final String lastCommentFloor1=allCommentData.get(allCommentData.size()-1).floor;
                     page++;
                     if (srcUrl != null && (srcUrl.contains("https://club")||srcUrl.contains("http://club"))) {
@@ -957,7 +960,7 @@ public class CommentFragment extends Fragment {
                                             images,
                                             jsonArray.toString(),
                                             replies,
-                                            jsonObject1.getString("replyCount")
+                                            jsonObject1.getInt("replyCount")
                                     ));
                                 }
                             }
@@ -1048,7 +1051,7 @@ public class CommentFragment extends Fragment {
                                             images,
                                             jsonArray2.toString(),
                                             replies,
-                                            jsonObject1.getString("repliesCount")
+                                            jsonObject1.getInt("repliesCount")
 
                                     ));
 
@@ -1084,251 +1087,6 @@ public class CommentFragment extends Fragment {
     public void upTop(){
         recyclerView.smoothScrollToPosition(0);
     }
-
-    public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHolder> {
-        private ArrayList<CommentDataBean> hotData;
-        private ArrayList<CommentDataBean> allData;
-        private boolean moreData;
-
-
-        public CommentAdapter(ArrayList<CommentDataBean> hotData,ArrayList<CommentDataBean> allData){
-
-            this.hotData=hotData;
-            this.allData=allData;
-            moreData=true;
-        }
-
-        public  class MyViewHolder extends RecyclerView.ViewHolder {
-            // each data item is just a string in this case
-
-
-            public TextView textView;
-            public TextView textView1;
-            public TextView textView2;
-            public TextView textView3;
-            public TextView textView4;
-            public TextView textView5;
-            public TextView textView6;
-            public RoundImageView imageView;
-            public GridLayout gridLayout;
-            public LinearLayout linearLayout;
-
-            public MyViewHolder(View v) {
-                super(v);
-                textView=v.findViewById(R.id.textView8);
-
-                textView1=v.findViewById(R.id.textView9);
-                textView2=v.findViewById(R.id.textView11);
-                textView3=v.findViewById(R.id.textView12);
-                textView4=v.findViewById(R.id.textView13);
-                textView5=v.findViewById(R.id.textView14);
-                imageView=v.findViewById(R.id.imageView6);
-                gridLayout=v.findViewById(R.id.imageContainer);
-                textView6=v.findViewById(R.id.textView18);
-                linearLayout=v.findViewById(R.id.repliesContainer);
-            }
-        }
-
-        @Override
-        public int getItemViewType(int position){
-            int i=2;
-            if(position==0){
-                i=0;
-            }
-            if(position==hotData.size()+1){
-                i=1;
-            }
-            if(position==hotData.size()+allData.size()+2){
-                i=3;
-            }
-            return i;
-        }
-
-
-        @NonNull
-        @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v=null;
-            if(viewType==0){
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_header, parent, false);
-            }
-            if(viewType==1){
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_header, parent, false);
-            }
-            if(viewType==2){
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_comment, parent, false);
-            }
-            if(viewType==3){
-                v = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recyclerview_footer, parent, false);
-            }
-            return new MyViewHolder(v);
-        }
-
-
-        @Override
-        public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
-            int vt=holder.getItemViewType();
-            if(vt==0){
-                if(hotData.size()==0){
-                    holder.textView.setVisibility(View.GONE);
-                }
-                else {
-                    holder.textView.setVisibility(View.VISIBLE);
-                    holder.textView.setText("热门评论");
-                }
-            }
-            if(vt==1){
-                if(allData.size()==0){
-                    holder.textView.setVisibility(View.GONE);
-                }
-                else {
-                    holder.textView.setVisibility(View.VISIBLE);
-                    holder.textView.setText("全部评论");
-                }
-            }
-            if(vt==2){
-                int p;
-                final CommentDataBean tempData;
-                if(position<=hotData.size()){
-                    p=position-1;
-                    tempData=hotData.get(p);
-
-
-                }else {
-                    p=position-2-hotData.size();
-                    tempData=allData.get(p);
-                }
-                holder.textView1.setText(tempData.userName);
-                if(tempData.content.equals("")){
-                    holder.textView2.setVisibility(View.GONE);
-                }else {
-                    holder.textView2.setVisibility(View.VISIBLE);
-                    holder.textView2.setText(CommentEmojiUtil.getEmojiString(tempData.content));
-                }
-                if(Integer.parseInt(tempData.repliesCount)<=5){
-                    holder.textView6.setVisibility(View.GONE);
-                }else {
-                    holder.textView6.setVisibility(View.VISIBLE);
-                    holder.textView6.setText("全部"+tempData.repliesCount+"条回复");
-                    holder.textView6.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent=new Intent(getContext(), RepliesActivity.class);
-                            intent.putExtra("commentId",tempData.commentId);
-                            intent.putExtra("clubContentId",tempData.clubContentId);
-                            intent.putExtra("comment", tempData);
-                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
-                           // startActivity(intent);
-                        }
-                    });
-                }
-                holder.textView3.setText(tempData.time);
-                holder.textView4.setText(tempData.floor);
-                holder.textView5.setText(tempData.likeNum);
-                if(!tempData.userImage.equals("")) {
-                    Glide.with(holder.imageView)
-                            .load(tempData.userImage)
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .centerCrop()
-                            .into(holder.imageView);
-                }
-                holder.gridLayout.removeAllViews();
-                final RoundImageView[] imageViews=new RoundImageView[tempData.images.size()];
-                for (int i=0;i<tempData.images.size();i++){
-                    View ic = LayoutInflater.from(getContext())
-                            .inflate(R.layout.gridlayout_comment_image, null, false);
-                    imageViews[i]=ic.findViewById(R.id.imageView7);
-                    Glide.with(imageViews[i])
-                            .load(tempData.images.get(i))
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .centerCrop()
-                            .into(imageViews[i]);
-                    final int finalI = i;
-                    final CommentDataBean finalTempData;
-                    finalTempData = tempData;
-                    imageViews[i].setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getContext(), ImagesBrowserActivity.class);
-                            intent.putExtra("imagesSrc", finalTempData.imagesJson);
-                            intent.putExtra("imagePosition", finalI);
-                            //startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
-                            startActivity(intent);
-                        }
-                    });
-                    holder.gridLayout.addView(ic);
-                }
-                if(tempData.images.size()==0){
-                    holder.gridLayout.setVisibility(View.GONE);
-                }else {
-                    holder.gridLayout.setVisibility(View.VISIBLE);
-                }
-                holder.linearLayout.removeAllViews();
-                for (int i=0;i<tempData.replies.size();i++){
-                    CommentDataBean commentDataBean=tempData.replies.get(i);
-                    View rc = LayoutInflater.from(getContext())
-                            .inflate(R.layout.item_reply, null, false);
-                    ImageView imageView=rc.findViewById(R.id.imageView6_2);
-                    if(!commentDataBean.userImage.equals("")) {
-                        Glide.with(imageView)
-                                .load(commentDataBean.userImage)
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .centerCrop()
-                                .into(imageView);
-                    }
-                    TextView textView1=rc.findViewById(R.id.textView9_2);
-                    TextView textView2=rc.findViewById(R.id.textView20_2);
-                    TextView textView3=rc.findViewById(R.id.textView11_2);
-                    TextView textView4=rc.findViewById(R.id.textView12_2);
-                    TextView textView5=rc.findViewById(R.id.textView14_2);
-                    TextView textView6=rc.findViewById(R.id.textView19_2);
-                    textView1.setText(commentDataBean.userName);
-                    if(commentDataBean.objectUserName.equals(tempData.userName)){
-                        textView2.setText("");
-                        textView6.setVisibility(View.GONE);
-                        textView1.setMaxEms(14);
-                    }else {
-                        textView2.setText(commentDataBean.objectUserName);
-                        textView6.setVisibility(View.VISIBLE);
-                        textView1.setMaxEms(7);
-                    }
-                    textView3.setText(CommentEmojiUtil.getEmojiString(commentDataBean.content));
-                    textView4.setText(commentDataBean.time);
-                    textView5.setText("赞:"+commentDataBean.likeNum);
-                    holder.linearLayout.addView(rc);
-                }
-
-            }
-            if(vt==3){
-                if(allData.size()==0){
-                    holder.textView.setVisibility(View.GONE);
-                }
-                else {
-                    holder.textView.setVisibility(View.VISIBLE);
-                    if(moreData) {
-                        holder.textView.setText("请稍等");
-                    }else {
-                        holder.textView.setText("没有了，没有奇迹了");
-                    }
-                }
-            }
-
-        }
-
-        @Override
-        public int getItemCount() {
-                return hotData.size()+allData.size()+3;
-
-        }
-        public void setNoMore(boolean b){
-            moreData=!b;
-        }
-    }
-
 
 
 }
