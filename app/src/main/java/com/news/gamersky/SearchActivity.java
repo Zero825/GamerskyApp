@@ -15,8 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -43,6 +45,7 @@ public class SearchActivity extends AppCompatActivity {
     private final static String TAG="SearchActivity";
 
     private SearchView searchView;
+    private Spinner spinner;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private LinearLayoutManager linearLayoutManager;
@@ -76,7 +79,7 @@ public class SearchActivity extends AppCompatActivity {
 //                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 
 
-        category="news";
+
         key="";
         page=1;
         flag=0;
@@ -85,12 +88,14 @@ public class SearchActivity extends AppCompatActivity {
         sort="des";
         hotSort="des";
         timeSort="des";
+        category="news";
         if(getIntent().getStringExtra("category")!=null) {
             category = getIntent().getStringExtra("category");
         }
 
         progressBar=findViewById(R.id.progressBar4);
         searchView=findViewById(R.id.view_search);
+        spinner=findViewById(R.id.category);
 
         searchView.setIconifiedByDefault(false);
         searchView.findViewById(R.id.search_plate).setBackgroundResource(R.color.tc);
@@ -108,7 +113,15 @@ public class SearchActivity extends AppCompatActivity {
         searchAdapter=new SearchAdapter(this,newsData,category);
         recyclerView.setAdapter(searchAdapter);
         executor= Executors.newSingleThreadExecutor();
-
+        if (category.equals("news")) {
+            spinner.setSelection(0,true);
+        }
+        if (category.equals("handbook")) {
+            spinner.setSelection(1,true);
+        }
+        if (category.equals("ku")) {
+            spinner.setSelection(2,true);
+        }
 
     }
 
@@ -206,7 +219,39 @@ public class SearchActivity extends AppCompatActivity {
                 searchView.setQuery(key,true);
             }
         });
+        ((Spinner)findViewById(R.id.category)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "onItemSelected: "+position);
+                if((category.equals("news") &&position!=0)
+                ||(category.equals("handbook") &&position!=1)
+                ||(category.equals("ku") &&position!=2)) {
+                    if (position == 0) {
+                        category = "news";
+                    } else if (position == 1) {
+                        category = "handbook";
+                    } else if (position == 2) {
+                        category = "ku";
+                    }
+                    if (category.equals("ku")) {
+                        recyclerView.setLayoutManager(gridLayoutManager);
+                    } else {
+                        recyclerView.setLayoutManager(linearLayoutManager);
+                    }
 
+                    newsData = new ArrayList<>();
+                    searchAdapter = new SearchAdapter(SearchActivity.this, newsData, category);
+                    recyclerView.setAdapter(searchAdapter);
+                    searchView.setQuery(searchView.getQuery(), true);
+                    searchView.clearFocus();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     public void autoSearch(){
@@ -215,12 +260,6 @@ public class SearchActivity extends AppCompatActivity {
             key=getIntent().getStringExtra("key");
             searchView.setQuery(key,true);
             searchView.clearFocus();
-        }
-        if(category.equals("news")){
-            findViewById(R.id.type_sort).setVisibility(View.GONE);
-        }
-        if(category.equals("ku")){
-            findViewById(R.id.type_sort).setVisibility(View.GONE);
         }
     }
 

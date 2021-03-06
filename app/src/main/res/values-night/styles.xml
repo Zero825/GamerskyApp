@@ -55,9 +55,9 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <style name="MainTheme" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
-    </style>
+<!--    <style name="MainTheme" parent="AppTheme">-->
+<!--        <item name="android:windowBackground">@drawable/bg_splash</item>-->
+<!--    </style>-->
 
     <style name="tabStyle">
         <item name="android:textSize">15sp</item>

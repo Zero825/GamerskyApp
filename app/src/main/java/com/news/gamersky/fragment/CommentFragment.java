@@ -211,15 +211,15 @@ public class CommentFragment extends Fragment {
         TextView title=commentHeader.findViewById(R.id.textView16);
         TextView orderTitle=commentHeader.findViewById(R.id.order);
         if(allCommentData.size()==0){
-            title.setText("暂时还没有评论");
+            title.setText(getString(R.string.no_comment));
             orderTitle.setVisibility(View.INVISIBLE);
         }
         else {
             if (mCurrentPosition <= hotCommentData.size()) {
-                title.setText("热门评论");
+                title.setText(getString(R.string.hot_comment));
                 orderTitle.setVisibility(View.INVISIBLE);
             } else {
-                title.setText("全部评论");
+                title.setText(getString(R.string.all_comment));
                 if(order.equals("createTimeDESC")){
                     orderTitle.setText(getString(R.string.newest));
                 }else {
@@ -232,7 +232,7 @@ public class CommentFragment extends Fragment {
 
     public  void loadComment(){
         ((AnimationDrawable) loadimageView.getDrawable()).start();
-        loadtextView.setText("正在加载...");
+        loadtextView.setText(getString(R.string.loading));
         commentAdapter.setNoMore(false);
         final ArrayList<CommentDataBean> tempHotCommentData=new ArrayList<>();
         final ArrayList<CommentDataBean> tempAllCommentData=new ArrayList<>();

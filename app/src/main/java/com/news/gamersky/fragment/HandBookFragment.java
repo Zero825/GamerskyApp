@@ -119,6 +119,8 @@ public class HandBookFragment extends Fragment {
                         final TextView textView0=vc.findViewById(R.id.textView0);
                         final RoundImageView roundImageView1=vc.findViewById(R.id.roundImageView1);
                         final TextView textView1=vc.findViewById(R.id.textView1);
+                        roundImageView0.setRound(AppSetting.bigRoundCorner);
+                        roundImageView1.setRound(AppSetting.bigRoundCorner);
                         if(!AppSetting.isRoundCorner){
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 roundImageView0.setForeground(getResources().getDrawable(R.drawable.pressed_image,null));
@@ -152,12 +154,10 @@ public class HandBookFragment extends Fragment {
                                 Glide.with(roundImageView0)
                                         .load(imageUrl0)
                                         .transition(DrawableTransitionOptions.withCrossFade())
-                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.bigRoundCorner)))
                                         .into(roundImageView0);
                                 Glide.with(roundImageView1)
                                         .load(imageUrl1)
                                         .transition(DrawableTransitionOptions.withCrossFade())
-                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.bigRoundCorner)))
                                         .into(roundImageView1);
                             }
                         });

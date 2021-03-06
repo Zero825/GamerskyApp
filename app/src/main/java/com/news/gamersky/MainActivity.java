@@ -17,10 +17,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.news.gamersky.database.AppDatabase;
 import com.news.gamersky.fragment.GalleryFragment;
 import com.news.gamersky.fragment.HandBookFragment;
 import com.news.gamersky.fragment.NewsFragment;
 import com.news.gamersky.fragment.ReviewsFragment;
+import com.news.gamersky.fragment.UserFragment;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.NightModeUtil;
@@ -32,8 +34,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
+import androidx.room.Room;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static android.view.Gravity.CENTER;
+import static com.news.gamersky.util.AppUtil.is2s;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -72,9 +83,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         if(sharedPreferences.getBoolean("no_bottombar",false)){
             navView.setVisibility(View.GONE);
+        }else {
+            navView.setLabelVisibilityMode(Integer.parseInt(sharedPreferences.getString("bottom_mode","1")));
         }
+
+        AppDatabase db = Room.databaseBuilder(ThisApp.getContext(),
+                AppDatabase.class, "app_database").build();
     }
 
     public void startListen(){
@@ -114,6 +131,13 @@ public class MainActivity extends AppCompatActivity {
                             fragmentTransaction.add(R.id.nav_host_container, new GalleryFragment(), "GalleryFragment");
                         }
                         break;
+                    case R.id.navigation_user:
+                        if(fragmentManager.findFragmentByTag("UserFragment")!=null){
+                            fragmentTransaction.show(fragmentManager.findFragmentByTag("UserFragment"));
+                        }else {
+                            fragmentTransaction.add(R.id.nav_host_container, new UserFragment(), "UserFragment");
+                        }
+                        break;
                 }
                 Log.i("TAG", "onNavigationItemSelected: "+item+item.getItemId());
                 fragmentTransaction.commit();
@@ -151,6 +175,12 @@ public class MainActivity extends AppCompatActivity {
                             ((GalleryFragment) fragment).upTop();
                         }
                         break;
+                    case R.id.navigation_user:
+                        if(fragmentManager.findFragmentByTag("UserFragment")!=null){
+                            Fragment fragment=fragmentManager.findFragmentByTag("UserFragment");
+                            ((UserFragment) fragment).upTop();
+                        }
+                        break;
                 }
             }
         });
@@ -170,7 +200,11 @@ public class MainActivity extends AppCompatActivity {
         if(fragmentManager.findFragmentByTag("GalleryFragment")!=null){
             fragmentTransaction.hide(fragmentManager.findFragmentByTag("GalleryFragment"));
         }
+        if(fragmentManager.findFragmentByTag("UserFragment")!=null){
+            fragmentTransaction.hide(fragmentManager.findFragmentByTag("UserFragment"));
+        }
     }
+
 
     @Override
     public void onBackPressed() {
@@ -202,44 +236,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showOrHideSplash(boolean show){
-        final View view=findViewById(R.id.splash);
-        final View container=findViewById(R.id.container);
-        if(show){
-        }else {
-            if(container.getVisibility()==View.INVISIBLE){
-                container.setAlpha(0);
-            }
-            container.setVisibility(View.VISIBLE);
-            //Log.i(TAG, "showOrHideSplash: "+"隐藏动画"+container.getAlpha());
-            Drawable[] layers=new Drawable[2];
-            layers[0]=getDrawable(R.color.colorBackground);
-            layers[1]=getDrawable(R.drawable.bg_404);
-            final LayerDrawable layerDrawable=new LayerDrawable(layers);
-            layerDrawable.setLayerGravity(1,CENTER);
-            layerDrawable.setLayerWidth(1,AppUtil.dip2px(this,270f));
-            layerDrawable.setLayerHeight(1,AppUtil.dip2px(this,400f));
-            ValueAnimator valueAnimator=ValueAnimator.ofInt(255,0);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    int alpha=(int)animation.getAnimatedValue();
-                    layerDrawable.getDrawable(1).setAlpha(alpha);
-                    getWindow().setBackgroundDrawable(layerDrawable);
-                    container.setAlpha(1 - alpha / 255f);
-                    if(alpha==0){
-                        layerDrawable.getDrawable(1).setAlpha(255);
-                        getWindow().setBackgroundDrawableResource(R.color.colorBackground);
-                        view.setVisibility(View.GONE);
-                    }
-                    view.setAlpha(alpha/255f);
-                }
-            });
-            if(container.getAlpha()!=1.0f) {
-                valueAnimator.setDuration(300).start();
-            }
-
-        }
-    }
+//    public void showOrHideSplash(boolean show){
+//        final View view=findViewById(R.id.splash);
+//        final View container=findViewById(R.id.container);
+//        if(show){
+//        }else {
+//            if(container.getVisibility()==View.INVISIBLE){
+//                container.setAlpha(0);
+//            }
+//            container.setVisibility(View.VISIBLE);
+//            //Log.i(TAG, "showOrHideSplash: "+"隐藏动画"+container.getAlpha());
+//            Drawable[] layers=new Drawable[2];
+//            layers[0]=getDrawable(R.color.colorBackground);
+//            layers[1]=getDrawable(R.drawable.bg_404);
+//            final LayerDrawable layerDrawable=new LayerDrawable(layers);
+//            layerDrawable.setLayerGravity(1,CENTER);
+//            layerDrawable.setLayerWidth(1,AppUtil.dip2px(this,270f));
+//            layerDrawable.setLayerHeight(1,AppUtil.dip2px(this,400f));
+//            layerDrawable.setLayerInsetBottom(1,AppUtil.dip2px(this,50f));
+//            ValueAnimator valueAnimator=ValueAnimator.ofInt(255,0);
+//            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                @Override
+//                public void onAnimationUpdate(ValueAnimator animation) {
+//                    int alpha=(int)animation.getAnimatedValue();
+//                    layerDrawable.getDrawable(1).setAlpha(alpha);
+//                    getWindow().setBackgroundDrawable(layerDrawable);
+//                    container.setAlpha(1 - alpha / 255f);
+//                    if(alpha==0){
+//                        layerDrawable.getDrawable(1).setAlpha(255);
+//                        getWindow().setBackgroundDrawableResource(R.color.colorBackground);
+//                        view.setVisibility(View.GONE);
+//                    }
+//                    view.setAlpha(alpha/255f);
+//                }
+//            });
+//            if(container.getAlpha()!=1.0f) {
+//                valueAnimator.setDuration(300).start();
+//            }
+//
+//        }
+//    }
 
 }

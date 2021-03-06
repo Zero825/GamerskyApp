@@ -29,6 +29,8 @@ import com.news.gamersky.R;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -210,4 +212,37 @@ public class AppUtil {
         return point.x;
     }
 
+    public static boolean compereByteArray(byte[] b1, byte[] b2) {
+        if(b1.length == 0 || b2.length == 0 ){
+            return false;
+        }
+        if (b1.length != b2.length) {
+            return false;
+        }
+        boolean isEqual = true;
+        for (int i = 0; i < b1.length; i++) {
+            if (b1[i] != b2[i]) {
+                isEqual = false;
+                break;
+            }
+        }
+        return isEqual;
+    }
+
+    //sha-256加密
+    public static byte[] getSHA256Bytes(String str,int times){
+        MessageDigest messageDigest;
+        byte[] bytesResult = new byte[256];
+        byte[] strBytes=str.getBytes();
+        try {
+            messageDigest = MessageDigest.getInstance("SHA-256");
+            for(int i=0;i<times;i++) {
+                messageDigest.update(strBytes);
+            }
+            bytesResult = messageDigest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return bytesResult;
+    }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -11,24 +12,22 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:src="@drawable/avatar"
-        app:isCircle="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView9_2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:text="TextView"
         android:textColor="@color/textColorPrimary"
         android:textIsSelectable="true"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/l1_2"
-        app:layout_constraintEnd_toStartOf="@+id/textView19_2"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView6_2"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,79 +35,68 @@
         android:id="@+id/textView19_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
         android:text="回复"
-        app:layout_constraintBottom_toTopOf="@+id/l1_2"
-        app:layout_constraintEnd_toStartOf="@+id/textView20_2"
-        app:layout_constraintStart_toEndOf="@+id/textView9_2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/imageView6_2"
+        app:layout_constraintTop_toBottomOf="@+id/textView9_2" />
 
     <TextView
         android:id="@+id/textView20_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
         android:text="TextView"
         android:textColor="@color/textColorPrimary"
         android:textIsSelectable="true"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/l1_2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView19_2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView9_2" />
 
-    <LinearLayout
-        android:id="@+id/l1_2"
+    <TextView
+        android:id="@+id/textView11_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/textView12_2"
+        android:lineSpacingExtra="4sp"
+        android:text="TextView"
+        android:textColor="@color/textColorPrimary"
+        android:textIsSelectable="true"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView6_2"
-        app:layout_constraintTop_toBottomOf="@id/textView9_2">
-
-        <TextView
-            android:id="@+id/textView11_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:lineSpacingExtra="4sp"
-            android:text="TextView"
-            android:textColor="@color/textColorPrimary"
-            android:textIsSelectable="true"
-            android:textSize="15sp" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/textView20_2" />
 
     <TextView
         android:id="@+id/textView12_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="TextView"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/imageView6_2"
-        app:layout_constraintTop_toBottomOf="@+id/l1_2" />
+        app:layout_constraintTop_toBottomOf="@id/textView11_2" />
 
     <TextView
         android:id="@+id/textView14_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:gravity="right"
         android:text="TextView"
         android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/l1_2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView11_2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

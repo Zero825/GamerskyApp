@@ -13,7 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.news.gamersky.R;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.databean.CommentDataBean;
@@ -104,6 +106,7 @@ public class GameCommentRecyclerViewAdapter extends RecyclerView.Adapter {
             Glide.with(userImage)
                     .load(comment.userImage)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(userImage);
             userName.setText(comment.userName);
             msg.setText(comment.gamePlatform);

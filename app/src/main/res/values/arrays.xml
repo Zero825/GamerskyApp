@@ -10,11 +10,43 @@
         <item>@string/night_mode_night</item>
         <item>@string/night_mode_default</item>
     </string-array>
-
     <string-array name="night_mode_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="bottom_mode">
+        <item>@string/bottom_bar_selected</item>
+        <item>@string/bottom_bar_labeled</item>
+        <item>@string/bottom_bar_unlabeled</item>
+    </string-array>
+    <string-array name="bottom_mode_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="article_text_size">
+        <item>@string/smaller</item>
+        <item>@string/small</item>
+        <item>@string/normal</item>
+        <item>@string/big</item>
+        <item>@string/bigger</item>
+    </string-array>
+    <string-array name="article_text_size_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="search_category">
+        <item>@string/article</item>
+        <item>@string/handbook</item>
+        <item>@string/game</item>
+    </string-array>
+
 
 </resources>

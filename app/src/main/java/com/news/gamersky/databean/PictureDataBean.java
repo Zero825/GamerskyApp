@@ -1,5 +1,8 @@
 package com.news.gamersky.databean;
 
+import android.net.Uri;
+
+import java.net.URI;
 import java.util.ArrayList;
 
 public class PictureDataBean {
@@ -16,6 +19,7 @@ public class PictureDataBean {
     public int originHeight;
     public int originWidth;
     public String imagesJSON;
+    public Uri uri;
 
     public PictureDataBean() {
     }
@@ -29,6 +33,7 @@ public class PictureDataBean {
         this.originHeight = originHeight;
         this.originWidth = originWidth;
     }
+
 
     public static ArrayList<PictureDataBean> getTestData(){
         ArrayList<PictureDataBean> data=new ArrayList<>();

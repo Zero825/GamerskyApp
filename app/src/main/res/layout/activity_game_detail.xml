@@ -29,9 +29,11 @@
 
             </androidx.viewpager2.widget.ViewPager2>
 
-            <com.news.gamersky.customizeview.ArcView
+
+            <View
+                android:id="@+id/gradientView"
                 android:layout_width="0dp"
-                android:layout_height="20dp"
+                android:layout_height="50dp"
                 app:layout_constraintBottom_toBottomOf="@+id/viewPager2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -41,29 +43,27 @@
                 android:layout_width="0dp"
                 android:layout_height="20dp"
                 android:layout_marginBottom="4dp"
-                app:layout_constraintBottom_toTopOf="@+id/game_header"
+                app:layout_constraintBottom_toBottomOf="@+id/viewPager2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/game_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="150dp"
+                android:layout_marginTop="8dp"
                 android:animateLayoutChanges="true"
                 android:minHeight="100dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/viewPager2"
+                app:layout_constraintTop_toBottomOf="@+id/viewPager2"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
+                    app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -212,6 +212,21 @@
 
                 </androidx.cardview.widget.CardView>
 
+                <TextView
+                    android:id="@+id/introduction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toTopOf="@+id/cardView1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cardView" />
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView1"
                     android:layout_width="match_parent"
@@ -219,9 +234,11 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cardView">
+                    app:layout_constraintTop_toBottomOf="@id/introduction">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -304,21 +321,6 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:id="@+id/introduction"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cardView1" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -369,7 +371,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/comment_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="40dp"
+            android:background="@drawable/bg_replies">
 
             <ImageView
                 android:id="@+id/imageView21"
@@ -378,11 +381,11 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
-                android:tint="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/icon_game_reviews" />
+                app:srcCompat="@drawable/icon_game_reviews"
+                app:tint="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/commentPlayer"
@@ -426,6 +429,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorBackground"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.recyclerview.widget.RecyclerView

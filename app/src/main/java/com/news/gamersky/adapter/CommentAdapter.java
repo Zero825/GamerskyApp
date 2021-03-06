@@ -16,7 +16,9 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
@@ -42,7 +44,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
         this.hotData=hotData;
         this.allData=allData;
         moreData=true;
-        unfoldReplies= PreferenceManager.getDefaultSharedPreferences(context).getBoolean("unfold_replies",false);
+        unfoldReplies= PreferenceManager.getDefaultSharedPreferences(context).getBoolean("unfold_replies",true);
     }
 
 
@@ -163,7 +165,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
                 Glide.with(holder.imageView)
                         .load(tempData.userImage)
                         .transition(DrawableTransitionOptions.withCrossFade())
-                        .centerCrop()
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(holder.imageView);
             }
 
@@ -228,15 +230,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
                         Glide.with(replyViewHolder.imageView)
                                 .load(commentDataBean.userImage)
                                 .transition(DrawableTransitionOptions.withCrossFade())
-                                .centerCrop()
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                 .into(replyViewHolder.imageView);
                     }
                     replyViewHolder.textView1.setText(commentDataBean.userName);
                     if (commentDataBean.objectUserName.equals(tempData.userName)) {
-                        replyViewHolder.textView2.setText("");
+                        replyViewHolder.textView2.setVisibility(View.GONE);
                         replyViewHolder.textView6.setVisibility(View.GONE);
                     } else {
                         replyViewHolder.textView2.setText(commentDataBean.objectUserName);
+                        replyViewHolder.textView2.setVisibility(View.VISIBLE);
                         replyViewHolder.textView6.setVisibility(View.VISIBLE);
                     }
                     replyViewHolder.textView3.setText(CommentEmojiUtil.getEmojiString(commentDataBean.content));

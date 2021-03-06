@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -139,9 +140,12 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             this.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    textView2.setTextColor(context.getResources().getColor(R.color.defaultColor));
-                    textView3.setTextColor(context.getResources().getColor(R.color.defaultColor));
-                    ReadingProgressUtil.putSearchClick(context,mData.get(position).id,true);
+                    if(PreferenceManager.getDefaultSharedPreferences(context)
+                            .getBoolean("save_article_click",true)){
+                        textView2.setTextColor(context.getResources().getColor(R.color.defaultColor));
+                        textView3.setTextColor(context.getResources().getColor(R.color.defaultColor));
+                        ReadingProgressUtil.putSearchClick(context,mData.get(position).id,true);
+                    }
                     NewDataBean newData=mData.get(position);
                     newData.title=Html.fromHtml(mData.get(position).title).toString();
                     if(category.equals("news")) {

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -91,6 +92,7 @@ public class GameDetailActivity extends AppCompatActivity {
     private ViewPager2 viewPager2;
     private IndicatorView indicatorView;
     private TabLayout reviewsTab;
+    private int primaryColor;
     private boolean cardIsDark;
     private String placeholdersPic;
     private int dateType;
@@ -145,8 +147,9 @@ public class GameDetailActivity extends AppCompatActivity {
         viewPager2.setOffscreenPageLimit(2);
 
         title.setText(gameData.title);
-        title.setVisibility(View.INVISIBLE);
+        title.setAlpha(0);
 
+        primaryColor=-1;
         cardIsDark=false;
         //placeholdersPic="https://fakeimg.pl/440x230/282828/eae0d0/?retina=1&text=nopic?";
         placeholdersPic="file:///android_asset/pic/placeholders_pic_null.png";
@@ -169,8 +172,13 @@ public class GameDetailActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.O_MR1)
                     @Override
                     public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                        int primaryColor=WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
+                        primaryColor=WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
                         ((CardView)findViewById(R.id.cardView)).setCardBackgroundColor(primaryColor);
+                        findViewById(R.id.appBarLayout).setBackgroundColor(primaryColor);
+                        GradientDrawable gradientDrawable=new GradientDrawable();
+                        gradientDrawable.setColors(new int[]{Color.TRANSPARENT,primaryColor});
+                        gradientDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+                        findViewById(R.id.gradientView).setBackground(gradientDrawable);
                         cardIsDark=AppUtil.isDark(primaryColor);
                         int color;
                         if(cardIsDark){
@@ -178,6 +186,7 @@ public class GameDetailActivity extends AppCompatActivity {
                         }else {
                             color=Color.BLACK;
                         }
+                        title.setTextColor(color);
                         ((TextView)findViewById(R.id.gameTitle)).setTextColor(color);
                         ((TextView)findViewById(R.id.enTitle)).setTextColor(color);
                         ((TextView)findViewById(R.id.gameTime)).setTextColor(color);
@@ -186,6 +195,7 @@ public class GameDetailActivity extends AppCompatActivity {
                         ((TextView)findViewById(R.id.issue)).setTextColor(color);
                         ((TextView)findViewById(R.id.time)).setTextColor(color);
                         ((TextView)findViewById(R.id.more_images)).setTextColor(color);
+                        ((TextView)findViewById(R.id.introduction)).setTextColor(color);
                         LineFeedRadioGroup lineFeedRadioGroup=((LineFeedRadioGroup)findViewById(R.id.lineFeedRadioGroup));
                         for(int i=0;i<lineFeedRadioGroup.getChildCount();i++){
                             RadioButton radioButton= (RadioButton) lineFeedRadioGroup.getChildAt(i);
@@ -864,14 +874,20 @@ public class GameDetailActivity extends AppCompatActivity {
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             ConstraintLayout bar=findViewById(R.id.back_bar);
             ConstraintLayout gameHeader=findViewById(R.id.game_header);
-            ColorDrawable colorDrawable=new ColorDrawable(getColor(R.color.colorPrimary));
+            ColorDrawable colorDrawable;
 
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 //Log.i(TAG, "onOffsetChanged: "+verticalOffset+"\t"+appBarLayout.getTotalScrollRange());
-                int offset=100;
-                int alpha=255-(int) ((appBarLayout.getTotalScrollRange()+verticalOffset)/(float)(bar.getMeasuredHeight())*255)+offset;
-                //Log.i(TAG, "onOffsetChanged: "+alpha);
+                if(colorDrawable==null&&primaryColor!=-1){
+                    colorDrawable=new ColorDrawable(primaryColor);
+                }
+                if(colorDrawable==null){
+                    return;
+                }
+                int offset=2000;
+                int alpha=-verticalOffset-viewPager2.getHeight();
+                Log.i(TAG, "onOffsetChanged: "+alpha);
                 bar.setTranslationY(-verticalOffset);
                 if(alpha<=255&&alpha>=0) {
                     colorDrawable.setAlpha(alpha);
@@ -880,25 +896,8 @@ public class GameDetailActivity extends AppCompatActivity {
                 }else {
                     colorDrawable.setAlpha(0);
                 }
-                if(Math.abs(verticalOffset)==appBarLayout.getTotalScrollRange()){
-                    title.setVisibility(View.VISIBLE);
-                    backBtn.setImageDrawable(getDrawable(R.drawable.icon_back));
-                    gameHeader.setForeground(null);
-                    bar.setBackgroundResource(R.color.colorPrimary);
-                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-                    if(NightModeUtil.isNightMode(GameDetailActivity.this)){
-                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-                    }
-                }else {
-                    title.setVisibility(View.INVISIBLE);
-                    backBtn.setImageDrawable(getDrawable(R.drawable.icon_back_white));
-                    bar.setBackground(null);
-                    gameHeader.setForeground(colorDrawable);
-                    if((getWindow().getDecorView().getSystemUiVisibility())!=(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)) {
-                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-                    }
-
-                }
+                bar.setBackground(colorDrawable);
+                title.setAlpha(alpha/255f);
             }
         });
 

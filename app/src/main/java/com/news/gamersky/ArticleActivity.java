@@ -3,10 +3,13 @@ package com.news.gamersky;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
@@ -103,16 +106,8 @@ public class ArticleActivity extends AppCompatActivity{
         imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                if(new_data.title.equals("")){
-                    FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
-                    Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
-                    new_data.title=((ArticleFragment) fragment).getNewTitle();
-                }
-                shareIntent.putExtra(Intent.EXTRA_TEXT,new_data.title+new_data.src);
-                startActivity(Intent.createChooser(shareIntent, "分享到"));
+                showPopup(v);
+
             }
         });
 
@@ -160,6 +155,42 @@ public class ArticleActivity extends AppCompatActivity{
                 }
             });
         }
+
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id=item.getItemId();
+                if(id==R.id.favorites){
+                    addOrDeleteFavorite();
+                }else if(id==R.id.share){
+                    shareArticle();
+                }
+                return true;
+            }
+        });
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.common_menu, popup.getMenu());
+        popup.show();
+    }
+
+    public void shareArticle(){
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        if(new_data.title.equals("")){
+            FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
+            Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
+            new_data.title=((ArticleFragment) fragment).getNewTitle();
+        }
+        shareIntent.putExtra(Intent.EXTRA_TEXT,new_data.title+new_data.src);
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_to)));
+    }
+
+    public void addOrDeleteFavorite(){
 
     }
 

@@ -79,7 +79,9 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
             return new FooterViewHolder(v);
         }
         if(viewType==2){
-            return new HeaderViewHolder(hasheader);
+            HeaderViewHolder headerViewHolder=new HeaderViewHolder(hasheader);
+            headerViewHolder.setIsRecyclable(false);
+            return headerViewHolder;
         }
         return new NewsListViewHolder(v);
     }
@@ -153,9 +155,11 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
-                    System.out.println("我是第"+position);
-                    ReadingProgressUtil.putNewsClick(context,mDataset.get(position).id,true);
+                    if(PreferenceManager.getDefaultSharedPreferences(context)
+                            .getBoolean("save_article_click",true)){
+                        textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
+                        ReadingProgressUtil.putNewsClick(context,mDataset.get(position).id,true);
+                    }
                     Intent intent=new Intent(context, ArticleActivity.class);
                     intent.putExtra("new_data",mDataset.get(position));
                     context.startActivity(intent);

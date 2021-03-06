@@ -14,7 +14,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:src="@drawable/avatar"
-        app:isCircle="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,48 +34,42 @@
         app:layout_constraintStart_toEndOf="@+id/imageView6"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/l1"
+    <TextView
+        android:id="@+id/textView11"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
+        android:lineSpacingExtra="4sp"
+        android:text="TextView"
+        android:textColor="@color/textColorPrimary"
+        android:textIsSelectable="true"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView6"
-        app:layout_constraintTop_toBottomOf="@id/textView9">
-
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:lineSpacingExtra="4sp"
-            android:text="TextView"
-            android:textColor="@color/textColorPrimary"
-            android:textIsSelectable="true"
-            android:textSize="15sp" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     <GridLayout
         android:id="@+id/imageContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:columnCount="3"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageView6"
-        app:layout_constraintTop_toBottomOf="@id/l1" />
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
     <TextView
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
         android:text="TextView"
         android:textSize="12sp"
         app:layout_constraintLeft_toRightOf="@id/imageView6"
@@ -98,6 +91,7 @@
         android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:gravity="right"
         android:text="TextView"
@@ -109,17 +103,16 @@
         android:id="@+id/repliesContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView6"
         app:layout_constraintTop_toBottomOf="@id/textView12" />
 
     <TextView
         android:id="@+id/textView18"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/pressed_rectangle"
         android:clickable="true"
@@ -130,7 +123,7 @@
         android:text="TextView"
         android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView6"
         app:layout_constraintTop_toBottomOf="@id/repliesContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

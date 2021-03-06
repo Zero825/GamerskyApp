@@ -70,4 +70,54 @@
     <string name="downvote">踩</string>
     <string name="not_enough_man_reviews">评价人数不足</string>
 
+    <string name="user_name">用户名</string>
+    <string name="user_id">用户ID</string>
+    <string name="user_password">用户密码</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="register">注册</string>
+    <string name="login">登录</string>
+    <string name="my_favorites">我的收藏</string>
+    
+    <string name="loading">正在加载…</string>
+    <string name="no_comment">暂时还没有评论</string>
+    <string name="hot_comment">热门评论</string>
+    <string name="all_comment">全部评论</string>
+
+    <string name="bottom_bar_about">底栏相关</string>
+    <string name="bottom_bar_style">底栏样式</string>
+    <string name="bottom_bar_labeled">标题全展开</string>
+    <string name="bottom_bar_unlabeled">标题全收缩</string>
+    <string name="bottom_bar_selected">标题选中展开</string>
+    
+    <string name="read_about">阅读相关</string>
+    <string name="article_text_size">文章字体大小</string>
+    <string name="smaller">特小</string>
+    <string name="small">小</string>
+    <string name="normal">中</string>
+    <string name="big">大</string>
+    <string name="bigger">特大</string>
+    <string name="save_read_progress">阅读进度记录</string>
+    <string name="no_sure">可能不准确</string>
+    <string name="save_article_click">文章点击记录</string>
+    <string name="clear_save">清除记录</string>
+    <string name="click_clear_save">点击清除记录</string>
+
+    <string name="favorites">收藏</string>
+    <string name="share">分享</string>
+    <string name="share_to">分享到</string>
+    
+    <string name="article">文章</string>
+    <string name="handbook">攻略</string>
+    <string name="game">游戏</string>
+    
+    <string name="please_input_user_name">请输入用户名！</string>
+    <string name="please_input_user_password">请输入密码！</string>
+    <string name="please_confirm_user_password">请确认密码！</string>
+    <string name="error_register">注册异常，用户已存在！</string>
+    <string name="success_register">注册成功！</string>
+    <string name="success_login">登录成功！</string>
+    <string name="error_login">密码错误或用户不存在！</string>
+    <string name="error_password">密码错误！</string>
+    <string name="error_password_inconsistent">密码不一致！</string>
+    <string name="error_user_not_exist">该用户不存在！</string>
 </resources>

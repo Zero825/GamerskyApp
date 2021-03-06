@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.FutureTarget;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
@@ -59,6 +61,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import okhttp3.Request;
@@ -71,7 +75,7 @@ public class ArticleFragment extends Fragment {
     private ArticleWebView webView;
     private ConstraintLayout navListView;
     private RecyclerView recyclerView;
-    private ProgressBar progressBar;
+    private CircularProgressIndicator progressBar;
     private ConstraintLayout navView;
     private JSONArray jsonArray;
     private boolean pinye;
@@ -124,9 +128,13 @@ public class ArticleFragment extends Fragment {
         webView.setHorizontalScrollBarEnabled(false);//水平不显示
         webView.setVerticalScrollBarEnabled(true); //垂直不显示
         //webView.getSettings().setLoadsImagesAutomatically(false);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setTextZoom(110);
-        webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        WebSettings webSettings=webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        int textZoomValue= (int) (110+110*0.2*(Integer.parseInt(PreferenceManager
+                        .getDefaultSharedPreferences(getContext())
+                        .getString("article_text_size","2"))-2));
+        webSettings.setTextZoom(textZoomValue);
+        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         //java回调js代码，不要忘了@JavascriptInterface这个注解，不然点击事件不起作用
         webView.addJavascriptInterface(new JsCallJavaObj() {
             @JavascriptInterface
@@ -146,7 +154,10 @@ public class ArticleFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 setWebImageClick(view);
-                //webView.scrollTo(0,ReadingProgressUtil.getProgress(getContext(),data_src));
+                int readProgress=ReadingProgressUtil.getProgress(getContext(),data_src);
+                if(readProgress!=-1) {
+                    webView.scrollTo(0,readProgress);
+                }
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url){
@@ -177,8 +188,6 @@ public class ArticleFragment extends Fragment {
                 }
                 try {
                     connection= (HttpURLConnection) new URL(url).openConnection();
-                    connection.setConnectTimeout(60000);
-                    connection.setReadTimeout(60000);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -192,7 +201,6 @@ public class ArticleFragment extends Fragment {
                             try {
                                 FutureTarget<byte[]> target = Glide.with(getContext())
                                         .as(byte[].class)
-                                        .timeout(60000)
                                         .load(url)
                                         .decode(GifDrawable.class)
                                         .submit();
@@ -204,7 +212,6 @@ public class ArticleFragment extends Fragment {
                             try {
                                 FutureTarget<Bitmap> target = Glide.with(getContext())
                                         .asBitmap()
-                                        .timeout(60000)
                                         .load(url)
                                         .submit();
                                 Bitmap bitmap = target.get();
@@ -407,12 +414,19 @@ public class ArticleFragment extends Fragment {
                         Elements elements4 = content.get(0).getElementsByClass("gs_bot_author");
                         elements4.html("");
 
-                        //s=h+scriptClear(content.html());
                         s=h+content.html();
 
-                        int n = Integer.parseInt(elements2.text().substring(2));
-                        String s1 = elements3.get(1).attr("href");
+                        final int n = Integer.parseInt(elements2.text().substring(2));
+                        final String s1 = elements3.get(1).attr("href");
                         String s2 = s1.substring(0, s1.indexOf("_"));
+
+                        progressBar.setMax(n);
+                        webView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setProgressCompat(1,true);
+                            }
+                        });
 
                         for (int i = 2; i <= n; i++) {
                             String s3 = s2 + "_" + i+".html";
@@ -422,6 +436,7 @@ public class ArticleFragment extends Fragment {
                                 doc1 = Jsoup.connect(s3).get();
                             } catch (IOException e) {
                                 e.printStackTrace();
+                                continue;
                             }
                             Elements content2 = doc1.getElementsByTag("article");
                             if (i != n) {
@@ -431,6 +446,13 @@ public class ArticleFragment extends Fragment {
                                 }
                             }
                             s = s + content2.html();
+                            final int finalI = i;
+                            webView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressBar.setProgressCompat(finalI,true);
+                                }
+                            });
                         }
                     }
                 }
@@ -442,9 +464,9 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void run() {
                         System.out.println("正文载入");
-                        //Log.i("TAG", "run: "+getNewContent(finalS));
+                        //Log.i("TAG", "run: "+finalS);
                         webView.loadDataWithBaseURL("file:///android_asset", getNewContent(finalS), "text/html", "utf-8", null);
-                        progressBar.setVisibility(View.GONE);
+                        progressBar.hide();
 
 
                     }
@@ -456,6 +478,13 @@ public class ArticleFragment extends Fragment {
 
                 }catch (Exception e){
                     System.out.println("载入失败");
+                    webView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            webView.loadUrl(data_src);
+                            progressBar.hide();
+                        }
+                    });
                     e.printStackTrace();
                 }
             }
@@ -590,12 +619,12 @@ public class ArticleFragment extends Fragment {
         try {
 
             Document doc = Jsoup.parse(htmltext);
-            String textColor="#"+Integer.toHexString(getResources().getColor(R.color.textColorPrimary)).substring(2);
+            String textColor="#"+Integer.toHexString(getResources().getColor(R.color.textColorPrimary,null)).substring(2);
             Elements elements2=doc.getElementsByTag("body");
             if(pinye) {
-                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px;word-wrap:break-word;max-width:100%;\">" + doc.body().children() + "</div>");
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px;word-wrap:break-word;max-width:100%;\">" + elements2.html() + "</div>");
             }else {
-                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px 50px;word-wrap:break-word;max-width:100%;\">" + doc.body().children() + "</div>");
+                elements2.html("<div style=\"color:" + textColor + ";margin:0px 10px 50px;word-wrap:break-word;max-width:100%;\">" + elements2.html() + "</div>");
             }
             Elements elements = doc.getElementsByTag("a");
             Elements elements1=doc.getElementsByTag("img");
@@ -650,27 +679,34 @@ public class ArticleFragment extends Fragment {
             }
             for (int i=0;i<elements5.size();i++){
                 Element element=elements5.get(i);
-                Log.i(TAG, "getNewContent: "+element.toString());
-                if (element.attr("src").contains("//j.gamersky.com/g/gsVideo.js")){
-                    Element v=elements5.get(i+1);
+                //Log.i(TAG, "getNewContent: "+element.toString());
+                if (element.html().contains("gsVideo")){
+                    Element v=element;
                     String s=v.html();
-                    int i1=s.indexOf("http");
-                    int i2=0;
-                    if(s.indexOf("\"",i1)==-1){
-                        i2=s.indexOf("'",i1);
-                    }
-                    if(s.indexOf("'",i1)==-1){
-                        i2=s.indexOf("\"",i1);
-                    }
-                    if(s.indexOf("'",i1)!=-1&&s.indexOf("'",i1)!=-1) {
-                        i2 = (s.indexOf("\"", i1) < s.indexOf("'", i1)) ? s.indexOf("\"", i1) : s.indexOf("'", i1);
-                    }
                     try{
-                        s=s.substring(i1,i2);
-                        v.parent().html("<p style=\"text-align: center;\">"+"<a class=\"\" target=\"_blank\" href=\""+s+"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>"+"</p>");
+                        int i1=s.indexOf("http");
+                        int i2=0;
+                        if(s.indexOf("\"",i1)==-1){
+                            i2=s.indexOf("'",i1);
+                        }
+                        if(s.indexOf("'",i1)==-1){
+                            i2=s.indexOf("\"",i1);
+                        }
+                        if(s.indexOf("'",i1)!=-1&&s.indexOf("'",i1)!=-1) {
+                            i2 = (s.indexOf("\"", i1) < s.indexOf("'", i1)) ? s.indexOf("\"", i1) : s.indexOf("'", i1);
+                        }
+                        String videoSrc=s.substring(i1,i2);
+                        v.parent().html("<p style=\"text-align: center;\">"+"<a class=\"\" target=\"_blank\" href=\""+videoSrc+"\" style=\"color:#D81B60;text-decoration:none;\">视频链接</a>"+"</p>");
+                        if(videoSrc.contains("v.youku.com")){
+                            videoSrc="http://player.youku.com/embed/"+videoSrc.substring(videoSrc.indexOf("id_")+3,videoSrc.indexOf("="))+"==";
+                        }else if(videoSrc.contains("www.bilibili.com")){
+                            videoSrc="https://player.bilibili.com/player.html?bvid="+videoSrc.substring(videoSrc.indexOf("BV"));
+                        }
+                        v.parent().prepend("<iframe width='100%' height='200' src='"+videoSrc+"' frameborder=0></iframe>");
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+
                 }else if(!element.attr("clear").equals("false")){
                     element.empty();
                 }
@@ -706,7 +742,7 @@ public class ArticleFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        //ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
+        ReadingProgressUtil.putProgress(getContext(),data_src,webView.getScrollY());
         webView.destroy();
         super.onDestroy();
     }
@@ -751,9 +787,9 @@ public class ArticleFragment extends Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
             ((VH)holder).textView.setText(data.get(position).title);
             if(position==currentSelected){
-                ((VH)holder).textView.setTextColor(getResources().getColor(R.color.colorAccent));
+                ((VH)holder).textView.setTextColor(getResources().getColor(R.color.colorAccent,null));
             }else {
-                ((VH)holder).textView.setTextColor(getResources().getColor(R.color.textColorPrimary));
+                ((VH)holder).textView.setTextColor(getResources().getColor(R.color.textColorPrimary,null));
             }
             ((VH)holder).textView.setOnClickListener(new View.OnClickListener() {
                 @Override

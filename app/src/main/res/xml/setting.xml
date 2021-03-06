@@ -23,16 +23,25 @@
             android:title="资讯图片圆角"
             app:iconSpaceReserved="false" />
         <SwitchPreference
-            android:defaultValue="true"
-            android:key="page_both_sides"
-            android:summary="重启应用生效"
-            android:title="显示两侧预览"
-            app:iconSpaceReserved="false" />
-        <SwitchPreference
             android:defaultValue="false"
             android:key="new_image_side"
             android:summary="重启应用生效"
             android:title="左侧资讯图片"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/bottom_bar_about"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/bottom_mode"
+            android:entryValues="@array/bottom_mode_values"
+            android:key="bottom_mode"
+            android:title="@string/bottom_bar_style"
             app:iconSpaceReserved="false" />
         <SwitchPreference
             android:defaultValue="false"
@@ -47,6 +56,40 @@
             app:iconSpaceReserved="false"
             app:isPreferenceVisible="false"/>
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/read_about"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            android:defaultValue="2"
+            android:entries="@array/article_text_size"
+            android:entryValues="@array/article_text_size_values"
+            android:key="article_text_size"
+           android:title="@string/article_text_size"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="save_read_progress"
+            android:summary="@string/no_sure"
+            android:title="@string/save_read_progress"
+            app:iconSpaceReserved="false"/>
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="save_article_click"
+            android:summary="@string/no_sure"
+            android:title="@string/save_article_click"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            android:key="manual_clear_save"
+            android:summary="@string/click_clear_save"
+            android:title="@string/clear_save"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:title="加载相关"
         app:allowDividerAbove="false"
@@ -70,7 +113,7 @@
             app:iconSpaceReserved="false" />
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="unfold_replies"
             android:summary="关闭以提高流畅度"
             android:title="回复预览"

@@ -18,6 +18,7 @@
     <color name="LogoColorPrimary">#f01a21</color>
 
     <color name="selectedColor">#2aae68</color>
+    <color name="selectedColorDark">#2D9E62</color>
     <color name="ratingAverageGood">#2aae68</color>
     <color name="ratingAverageMid">#FBC02D</color>
     <color name="ratingAverageBad">#C62828</color>

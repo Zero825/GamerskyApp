@@ -2,7 +2,6 @@ package com.news.gamersky.fragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,18 +29,15 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.news.gamersky.ArticleActivity;
-import com.news.gamersky.MainActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.adapter.NewsRecyclerViewAdapter;
-import com.news.gamersky.customizeview.BannerViewPager;
+import com.news.gamersky.customizeview.FixViewPager;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
-import com.news.gamersky.util.ZoomOutPageTransformer;
 import com.news.gamersky.databean.NewDataBean;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,14 +64,12 @@ public class HomePageFragment extends Fragment {
 
     private SwipeRefreshLayout refreshLayout;
     private Timer timer;
-    private int bannerNum;
-    private BannerViewPager vp;
+    private FixViewPager vp;
     private TextView toptv1;
     private TextView toptv2;
     private ImageView topiv;
     private RecyclerView recyclerView;
-    private ProgressBar progressBar;
-    private ConstraintLayout constraintLayout;
+    private CircularProgressIndicator progressBar;
     private LinearLayoutManager layoutManager;
     private ArrayList<NewDataBean> bannerData;
     private ArrayList<NewDataBean> topData ;
@@ -108,7 +102,6 @@ public class HomePageFragment extends Fragment {
 
     public void init(@NotNull View view, @NotNull View headerView){
 
-        bannerNum=5;
         flag=0;
         lastFlag=0;
         firstRun=true;
@@ -123,12 +116,11 @@ public class HomePageFragment extends Fragment {
 
         progressBar=view.findViewById(R.id.progressBar3);
 
-        constraintLayout=headerView.findViewById(R.id.hc);
         vp =headerView.findViewById(R.id.pager);
-        vp.setPageTransformer(true,new ZoomOutPageTransformer());
-        vp.setOffscreenPageLimit(bannerNum);
+        vp.setPageMargin(AppUtil.dip2px(getContext(),8f));
         myViewpagerAdapter=new MyViewpagerAdapter(bannerData);
         vp.setAdapter(myViewpagerAdapter);
+
         toptv1=headerView.findViewById(R.id.textView2);
         toptv2=headerView.findViewById(R.id.textView3);
         topiv=headerView.findViewById(R.id.imageView2);
@@ -140,6 +132,7 @@ public class HomePageFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         myAdapter= new NewsRecyclerViewAdapter(newsList, getActivity(),headerView);
         recyclerView.setAdapter(myAdapter);
+        recyclerView.setHasFixedSize(true);
 
 
         refreshLayout= view.findViewById(R.id.refreshLayout1);
@@ -152,11 +145,6 @@ public class HomePageFragment extends Fragment {
 
         sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
-        if(sharedPreferences.getBoolean("page_both_sides",true)){
-            constraintLayout.setClipChildren(false);
-        }else {
-            constraintLayout.setClipChildren(true);
-        }
 
 
     }
@@ -206,10 +194,10 @@ public class HomePageFragment extends Fragment {
                         recyclerView.post(new Runnable() {
                             @Override
                             public void run() {
-                                if(vp.getCurrentItem()==bannerNum-1){
-                                    vp.setCurrentItem(0);
+                                if(vp.getCurrentItem()==myViewpagerAdapter.getCount()-1){
+                                    vp.setCurrentItem(0,true);
                                 }else {
-                                    vp.setCurrentItem(tp + 1);
+                                    vp.setCurrentItem(tp + 1,true);
                                 }
                             }
                         });
@@ -258,31 +246,37 @@ public class HomePageFragment extends Fragment {
                     doc = Jsoup.connect("https://wap.gamersky.com/").get();
                     nodeId=doc.getElementsByAttribute("data-nodeId").attr("data-nodeId");
 
-                    Elements content = doc.getElementsByAttributeValue("class","countHit");
-                    for(int i=0;i<bannerNum;i++) {
+                    Document wwwDoc=Jsoup.connect("https://www.gamersky.com/").get();
+
+                    Elements content = wwwDoc.getElementsByClass("Bimg").get(0).getElementsByTag("li");
+                    for(int i=0;i<content.size();i++) {
                         Elements e1 = content.get(i).getElementsByTag("img");
-                        Elements e2 = content.get(i).getElementsByTag("h5");
+                        Elements e2 = content.get(i).getElementsByClass("txt");
                         String imageUrl=e1.attr("src");
                         String title=e2.text();
-                        String src=content.get(i).attr("href");
-                        tempBannerData.add(new NewDataBean(imageUrl,title,src));
+                        String src=content.get(i).getElementsByTag("a").attr("href");
+                        if(AppUtil.urlToId(src)!=null) {
+                            src = "https://wap.gamersky.com/news/Content-" + AppUtil.urlToId(src);
+                            tempBannerData.add(new NewDataBean(imageUrl, title, src));
+                        }
                     }
 
-                    Elements content1 = doc.getElementsByAttributeValue("class","ymw-todaytop");
-                    Elements links = content1.get(0).getElementsByTag("a");
+                    Elements content1 = wwwDoc.getElementsByClass("bgx").get(0)
+                            .getElementsByClass("h1");
+                    Elements links = content1;
 
-                    for (Element link : links) {
-                        String linkHref = link.attr("href");
-                        String linkTitle=link.text();
+                    for (int i=0;i<content1.size();i++) {
+                        String linkHref = content1.get(i).getElementsByTag("a").attr("href");
+                        String linkTitle=content1.get(i).getElementsByTag("a").text();
+                        if(AppUtil.urlToId(linkHref)!=null) {
+                            linkHref="https://wap.gamersky.com/news/Content-" + AppUtil.urlToId(linkHref);
+                        }
                         tempTopData.add(new NewDataBean(linkTitle,linkHref));
                     }
-                    //System.out.println(content1.toString());
 
                     Element es=doc.getElementById("listDataArea");
-                    //System.out.println(es.toString());
 
                     Elements content2 = es.getElementsByTag("li");
-                    //System.out.println(content2.toString());
 
                     for(int i=0;i<content2.size();i++){
                         Elements e=content2.get(i).getElementsByTag("img");
@@ -478,6 +472,7 @@ public class HomePageFragment extends Fragment {
                     .inflate(R.layout.viewpager_banner, container, false);
             TextView textView=v.findViewById(R.id.textView);
             final RoundImageView imageView=v.findViewById(R.id.imageView);
+            imageView.setRound(AppSetting.bigRoundCorner);
             textView.setText(myData.get(position).title);
             if(!AppSetting.isRoundCorner){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -487,7 +482,6 @@ public class HomePageFragment extends Fragment {
             Glide.with(imageView)
                     .load(myData.get(position).imageUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(AppSetting.bigRoundCorner)))
                     .into(imageView);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -508,11 +502,6 @@ public class HomePageFragment extends Fragment {
 
         @Override
         public int getItemPosition(Object object) {
-//            if(!bannerData.get(0).title.equals(myData.get(0).title)){
-//                return POSITION_NONE;
-//            }else {
-//                return POSITION_UNCHANGED;
-//            }
             return POSITION_NONE;
         }
     }
@@ -532,31 +521,24 @@ public class HomePageFragment extends Fragment {
                 topData.addAll(tempTopData);
                 newsList.addAll(tempNewsList);
                 System.out.println("更新ui");
+
                 toptv1.setText(topData.get(0).title);
                 toptv2.setText(topData.get(1).title);
                 myViewpagerAdapter.notifyDataSetChanged();
-//                if(firstRun) {
-//                    vp.setCurrentItem(1);
-//                }
+                vp.setOffscreenPageLimit(myViewpagerAdapter.getCount());
+                myAdapter.notifyDataSetChanged();
 
                 System.out.println("更新ui完毕");
-                if(getActivity()!=null) {
-                    ((MainActivity) getActivity()).showOrHideSplash(false);
-                }
-                myAdapter.notifyDataSetChanged();
                 if(!firstRun){
                     AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_successed),true,true).show();
                 }
                 firstRun=false;
                 topiv.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
+                progressBar.hide();
             }
             if (msg.what==0){
-                if(getActivity()!=null) {
-                    ((MainActivity) getActivity()).showOrHideSplash(false);
-                }
                 AppUtil.getSnackbar(getContext(),recyclerView,getString(R.string.updata_failed),true,true).show();
-                progressBar.setVisibility(View.GONE);
+                progressBar.hide();
                 refreshLayout.setRefreshing(false);
             }
         }
@@ -578,10 +560,10 @@ public class HomePageFragment extends Fragment {
                         int tp=vp.getCurrentItem();
                         //System.out.println(vp.getCurrentItem());
                         // System.out.println("定时启动");
-                        if(vp.getCurrentItem()==bannerNum-1){
-                            vp.setCurrentItem(0);
+                        if(vp.getCurrentItem()==myViewpagerAdapter.getCount()-1){
+                            vp.setCurrentItem(0,true);
                         }else {
-                            vp.setCurrentItem(tp + 1);
+                            vp.setCurrentItem(tp + 1,true);
                         }
                     }
                 });

@@ -7,24 +7,24 @@
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/navigation_game_guide"
-        android:icon="@drawable/icon_game_guide"
-        android:title="@string/title_game_guide" />
-
-    <item
         android:id="@+id/navigation_game_reviews"
         android:icon="@drawable/icon_game_reviews"
         android:title="@string/title_game_reviews" />
+
+    <item
+        android:id="@+id/navigation_game_guide"
+        android:icon="@drawable/icon_game_guide"
+        android:title="@string/title_game_guide" />
 
     <item
         android:id="@+id/navigation_gallery"
         android:icon="@drawable/icon_gallery"
         android:title="@string/title_gallery" />
 
-<!--    <item-->
-<!--        android:id="@+id/navigation_user"-->
-<!--        android:icon="@drawable/icon_user"-->
-<!--        android:title="@string/title_user" />-->
+    <item
+    android:id="@+id/navigation_user"
+    android:icon="@drawable/icon_user"
+    android:title="@string/title_user" />
 
 
 </menu>

@@ -12,12 +12,21 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:background="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/category"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:queryHint="请输入关键字">
 
     </androidx.appcompat.widget.SearchView>
+
+    <Spinner
+        android:id="@+id/category"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:entries="@array/search_category"
+        app:layout_constraintBottom_toBottomOf="@+id/view_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/view_search" />
 
     <ProgressBar
         android:id="@+id/progressBar4"

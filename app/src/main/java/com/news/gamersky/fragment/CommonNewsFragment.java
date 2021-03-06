@@ -85,6 +85,7 @@ public class CommonNewsFragment extends Fragment {
         linearLayoutManager=new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(newsAdapter);
+        recyclerView.setHasFixedSize(true);
         midSwipeRefreshLayout=view.findViewById(R.id.refreshLayout);
         midSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
 
