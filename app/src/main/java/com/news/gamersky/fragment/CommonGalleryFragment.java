@@ -1,5 +1,6 @@
 package com.news.gamersky.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,7 +45,7 @@ import static com.news.gamersky.util.AppUtil.is2s;
 public class CommonGalleryFragment extends Fragment {
     private static final String TAG="CommonGalleryFragment";
 
-    private boolean firstResume,isHomePage;
+    private boolean isFirstResume,isFirstLoad,isHomePage;
     private int page,flag,lastFlag;
     private String src,nodeId,generalId,sort;
     private ExecutorService executor;
@@ -57,32 +58,39 @@ public class CommonGalleryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_common_gallery,container,false);
+        return inflater.inflate(R.layout.fragment_common_gallery,container,false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         Bundle bundle=getArguments();
         if(bundle!=null){
             src=bundle.getString("src");
             isHomePage=bundle.getBoolean("isHomePage");
-            init(view);
+            init();
             startListen();
         }
-        return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.i(TAG, "onResume: ");
-        if(firstResume&&src!=null) {
-            firstResume=false;
+        if(isFirstResume&&src!=null) {
+            isFirstResume=false;
             loadData("time_desc");
         }
 
     }
 
-    public void init(View view){
-        Log.i(TAG, "init: "+"初始化");
 
-        firstResume=true;
+    public void init(){
+        Log.i(TAG, "init: "+"初始化");
+        View view=getView();
+
+        isFirstResume=true;
+        isFirstLoad=true;
         flag=0;
         lastFlag=0;
         page=1;
@@ -248,12 +256,30 @@ public class CommonGalleryFragment extends Fragment {
                                 }
 
                                 swipeRefreshLayout.setRefreshing(false);
+                                if(!isFirstLoad&&mPageIndex==1) {
+                                    if (isHomePage) {
+                                        AppUtil.getSnackbar(getContext(), recyclerView, getString(R.string.updata_successed), true, true).show();
+                                    } else {
+                                        AppUtil.getSnackbar(getContext(), recyclerView, getString(R.string.updata_successed), true, false).show();
+                                    }
+                                }else {
+                                    isFirstLoad=false;
+                                }
                             }
                         });
                     }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                     swipeRefreshLayout.setRefreshing(false);
+                    if(!isFirstLoad&&mPageIndex==1) {
+                        if (isHomePage) {
+                            AppUtil.getSnackbar(getContext(), recyclerView, getString(R.string.updata_failed), true, true).show();
+                        } else {
+                            AppUtil.getSnackbar(getContext(), recyclerView, getString(R.string.updata_failed), true, false).show();
+                        }
+                    }else {
+                        isFirstLoad=false;
+                    }
                     if(page>1){
                         page--;
                         flag=lastFlag;

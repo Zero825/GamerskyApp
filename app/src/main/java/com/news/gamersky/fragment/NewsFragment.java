@@ -50,14 +50,18 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_news, container, false);
-        init(view);
-        startListen();
-        return view;
+        return inflater.inflate(R.layout.fragment_news, container, false);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        init();
+        startListen();
+    }
 
-    private void init(View view){
+    private void init(){
+        View view=getView();
 
         logo=view.findViewById(R.id.imageView4);
         searchBtn=view.findViewById(R.id.imageView11);

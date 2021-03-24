@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -31,6 +32,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
@@ -39,6 +41,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.customizeview.FixViewPager;
 import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
@@ -72,6 +75,7 @@ public class ArticleFragment extends Fragment {
     private final static String TAG="ArticleFragment";
 
     private String  data_src;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ArticleWebView webView;
     private ConstraintLayout navListView;
     private RecyclerView recyclerView;
@@ -91,21 +95,26 @@ public class ArticleFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_article, container, false);
+        return inflater.inflate(R.layout.fragment_article, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
             data_src=args.getString("data_src");
             Log.i("TAG", "onCreateView: "+data_src);
-            init(view);
+            init();
             startListen();
             loadData(data_src);
         }
-        return view;
     }
 
+    public void init(){
+        View view=getView();
 
-    @SuppressLint("ClickableViewAccessibility")
-    public void init(View view){
+        swipeRefreshLayout=view.findViewById(R.id.swipeRefreshLayout);
         progressBar=view.findViewById(R.id.progressBar);
         webView=view.findViewById(R.id.web);
         navView=view.findViewById(R.id.article_nav);
@@ -118,6 +127,8 @@ public class ArticleFragment extends Fragment {
         pinye=true;
         jsonArray=new JSONArray();
         listData=new ArrayList<>();
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.hasFixedSize();
@@ -149,92 +160,8 @@ public class ArticleFragment extends Fragment {
                 //startActivity(intent,ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
             }
         },"jsCallJavaObj");
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                setWebImageClick(view);
-                int readProgress=ReadingProgressUtil.getProgress(getContext(),data_src);
-                if(readProgress!=-1) {
-                    webView.scrollTo(0,readProgress);
-                }
-            }
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url){
-                Log.i("TAG", "shouldOverrideUrlLoading: "+url);
-                if(url.contains("gamersky.com/news")){
-                    String wapUrl= "https://wap.gamersky.com/news/Content-" + AppUtil.urlToId(url)+ ".html";
-                    Intent intent=new Intent(getContext(), ArticleActivity.class);
-                    intent.putExtra("new_data",new NewDataBean("",wapUrl));
-                    startActivity(intent);
-                }else if(url.contains("http")){
-                    Intent intent = new Intent();
-                    Uri contentUrl = Uri.parse(url);
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.setData(contentUrl);
-                    startActivity(intent);
-                }
-                return true;
-            }
-
-            @Nullable
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                //Log.i(TAG, "shouldInterceptRequest: " + request.getUrl());
-                HttpURLConnection connection = null;
-                String url=request.getUrl().toString();
-                if(!url.contains("http")){
-                    return super.shouldInterceptRequest(view, request);
-                }
-                try {
-                    connection= (HttpURLConnection) new URL(url).openConnection();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(connection!=null){
-                    List<String> contentTypeList=connection.getHeaderFields().get("Content-Type");
-                    if(contentTypeList!=null&&contentTypeList.get(0).startsWith("image")){
-                        String contentType=contentTypeList.get(0);
-                        //Log.i(TAG, "shouldInterceptRequest: "+contentType);
-                        byte[] bytes=null;
-                        if(contentType.contains("gif")){
-                            try {
-                                FutureTarget<byte[]> target = Glide.with(getContext())
-                                        .as(byte[].class)
-                                        .load(url)
-                                        .decode(GifDrawable.class)
-                                        .submit();
-                                bytes=target.get();
-                            } catch (ExecutionException|InterruptedException|NullPointerException e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            try {
-                                FutureTarget<Bitmap> target = Glide.with(getContext())
-                                        .asBitmap()
-                                        .load(url)
-                                        .submit();
-                                Bitmap bitmap = target.get();
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                                bytes=baos.toByteArray();
-                            } catch (ExecutionException|InterruptedException|NullPointerException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if(bytes!=null) {
-                            connection.disconnect();
-                            Log.i(TAG, "shouldInterceptRequest: "+"return image");
-                            return new WebResourceResponse(contentType, "utf-8", new ByteArrayInputStream(bytes));
-                        }
-                    }
-
-                }
-                return super.shouldInterceptRequest(view, request);
-            }
-
-
-        });
+        webView.setWebViewClient(new ArticleWebViewClient());
+        webView.setWebChromeClient(new ArticleWebChromeClient());
         webView.loadDataWithBaseURL("file:///android_asset", "<div></div>", "text/html", "utf-8", null);
 
     }
@@ -424,7 +351,7 @@ public class ArticleFragment extends Fragment {
                         webView.post(new Runnable() {
                             @Override
                             public void run() {
-                                progressBar.setProgressCompat(1,true);
+                                    //progressBar.setProgressCompat(1, true);
                             }
                         });
 
@@ -467,6 +394,7 @@ public class ArticleFragment extends Fragment {
                         //Log.i("TAG", "run: "+finalS);
                         webView.loadDataWithBaseURL("file:///android_asset", getNewContent(finalS), "text/html", "utf-8", null);
                         progressBar.hide();
+                        swipeRefreshLayout.setRefreshing(false);
 
 
                     }
@@ -493,6 +421,14 @@ public class ArticleFragment extends Fragment {
 
     @SuppressLint("ClickableViewAccessibility")
     public void startListen(){
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData(data_src);
+            }
+        });
+
         navView.findViewById(R.id.imageView14).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -551,10 +487,14 @@ public class ArticleFragment extends Fragment {
                 float y2 = 0;
                 float k = 0;
                 boolean back=true;
+                FixViewPager fixViewPager;
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     //Log.i("TAG", "onTouch: "+event.toString());
+                    if(fixViewPager==null) {
+                        fixViewPager = (FixViewPager) v.getParent().getParent().getParent();
+                    }
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             x1=event.getX();
@@ -562,14 +502,15 @@ public class ArticleFragment extends Fragment {
                             x2 = 0;
                             y2 = 0;
                             back=true;
+                            fixViewPager.requestDisallowInterceptTouchEvent(true);
                             break;
                         case MotionEvent.ACTION_MOVE:
                             if(x2>event.getX()){
                                 //Log.i("TAG", "onTouch: "+icon_back+"\t"+x2+"\t"+event.getX());
-                                v.getParent().requestDisallowInterceptTouchEvent(false);
+                                fixViewPager.requestDisallowInterceptTouchEvent(false);
                                 back=false;
                             }else {
-                                v.getParent().requestDisallowInterceptTouchEvent(true);
+                                fixViewPager.requestDisallowInterceptTouchEvent(true);
                             }
                             x2=event.getX();
                             break;
@@ -581,6 +522,23 @@ public class ArticleFragment extends Fragment {
                             if(x2-x1>dis&&Math.abs(k)<stc&&back){
                                 getActivity().finish();
                             }
+                            if(listShowed){
+                                showOrHideList();
+                            }
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }else {
+            webView.setOnTouchListener(new View.OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    //Log.i("TAG", "onTouch: "+event.toString());
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_CANCEL:
+                        case MotionEvent.ACTION_UP:
                             if(listShowed){
                                 showOrHideList();
                             }
@@ -809,6 +767,106 @@ public class ArticleFragment extends Fragment {
         public void setCurrentSelected(int currentSelected) {
             this.currentSelected = currentSelected;
             notifyDataSetChanged();
+        }
+    }
+
+    public class ArticleWebViewClient extends WebViewClient{
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            setWebImageClick(view);
+            int readProgress=ReadingProgressUtil.getProgress(getContext(),data_src);
+            if(readProgress!=-1) {
+                webView.scrollTo(0,readProgress);
+            }
+        }
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url){
+            Log.i("TAG", "shouldOverrideUrlLoading: "+url);
+            if(url.contains("gamersky.com/news")){
+                String wapUrl= "https://wap.gamersky.com/news/Content-" + AppUtil.urlToId(url)+ ".html";
+                Intent intent=new Intent(getContext(), ArticleActivity.class);
+                intent.putExtra("new_data",new NewDataBean("",wapUrl));
+                startActivity(intent);
+            }else if(url.contains("http")){
+                Intent intent = new Intent();
+                Uri contentUrl = Uri.parse(url);
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(contentUrl);
+                startActivity(intent);
+            }
+            return true;
+        }
+
+        @Nullable
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            //Log.i(TAG, "shouldInterceptRequest: " + request.getUrl());
+            HttpURLConnection connection = null;
+            String url=request.getUrl().toString();
+            if(!url.contains("http")){
+                return super.shouldInterceptRequest(view, request);
+            }
+            try {
+                connection= (HttpURLConnection) new URL(url).openConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(connection!=null){
+                List<String> contentTypeList=connection.getHeaderFields().get("Content-Type");
+                if(contentTypeList!=null&&contentTypeList.get(0).startsWith("image")){
+                    String contentType=contentTypeList.get(0);
+                    //Log.i(TAG, "shouldInterceptRequest: "+contentType);
+                    byte[] bytes=null;
+                    if(contentType.contains("gif")){
+                        try {
+                            FutureTarget<byte[]> target = Glide.with(getContext())
+                                    .as(byte[].class)
+                                    .load(url)
+                                    .decode(GifDrawable.class)
+                                    .submit();
+                            bytes=target.get();
+                        } catch (ExecutionException|InterruptedException|NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        try {
+                            FutureTarget<Bitmap> target = Glide.with(getContext())
+                                    .asBitmap()
+                                    .load(url)
+                                    .submit();
+                            Bitmap bitmap = target.get();
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                            bytes=baos.toByteArray();
+                        } catch (ExecutionException|InterruptedException|NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(bytes!=null) {
+                        connection.disconnect();
+                        //Log.i(TAG, "shouldInterceptRequest: "+"return image");
+                        return new WebResourceResponse(contentType, "utf-8", new ByteArrayInputStream(bytes));
+                    }
+                }
+
+            }
+            return super.shouldInterceptRequest(view, request);
+        }
+
+    }
+
+    public class ArticleWebChromeClient extends WebChromeClient{
+        @Override
+        public void onShowCustomView(View view, CustomViewCallback callback) {
+            //super.onShowCustomView(view, callback);
+            Log.i(TAG, "onShowCustomView: ");
+        }
+
+        @Override
+        public void onHideCustomView() {
+            //super.onHideCustomView();
+            Log.i(TAG, "onHideCustomView: ");
         }
     }
 

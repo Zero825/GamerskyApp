@@ -10,6 +10,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.news.gamersky.R;
+
 public class IndicatorView extends View {
     private final static String TAG="IndicatorView";
     private Paint paint;
@@ -62,19 +64,23 @@ public class IndicatorView extends View {
                 }
                 canvas.drawCircle(startX + i * 30, startY, 8, paint);
                 if (i == nowPosition) {
-                    paint.setColor(Color.GRAY);
+                    paint.setColor(getContext().getColor(R.color.darkMask));
                 }
             }
         }
     }
 
     public void setIndicatorSize(int indicatorSize) {
-        this.indicatorSize = indicatorSize;
-        invalidate();
+        if(this.indicatorSize != indicatorSize) {
+            this.indicatorSize = indicatorSize;
+            invalidate();
+        }
     }
 
     public void setNowPosition(int nowPosition) {
-        this.nowPosition = nowPosition;
-        invalidate();
+        if(this.nowPosition != nowPosition) {
+            this.nowPosition = nowPosition;
+            invalidate();
+        }
     }
 }

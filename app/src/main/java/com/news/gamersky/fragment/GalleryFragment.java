@@ -62,13 +62,19 @@ public class GalleryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_gallery, container, false);
-        init(view);
-        loadTab();
-        return view;
+        return inflater.inflate(R.layout.fragment_gallery, container, false);
     }
 
-    public void init(View view){
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        init();
+        loadTab();
+    }
+
+    public void init(){
+        View view=getView();
+
         Bundle bundle=getArguments();
         if(bundle!=null){
             src=bundle.getString("src");

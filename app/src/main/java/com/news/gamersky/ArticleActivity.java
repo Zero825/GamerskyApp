@@ -1,13 +1,16 @@
 package com.news.gamersky;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
@@ -19,10 +22,14 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
 import com.news.gamersky.customizeview.FixViewPager;
+import com.news.gamersky.dao.UserFavoriteDao;
+import com.news.gamersky.database.AppDataBaseSingleton;
 import com.news.gamersky.databean.NewDataBean;
+import com.news.gamersky.entity.UserFavorite;
 import com.news.gamersky.fragment.ArticleFragment;
 import com.news.gamersky.fragment.CommentFragment;
 import com.news.gamersky.setting.AppSetting;
+import com.news.gamersky.util.UserMsgUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +39,7 @@ import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIB
 
 
 public class ArticleActivity extends AppCompatActivity{
+    private final static String TAG="ArticleActivity";
 
     private NewDataBean new_data;
     private ImageView imageView1;
@@ -53,7 +61,7 @@ public class ArticleActivity extends AppCompatActivity{
     public void init(){
 //        getWindow().getDecorView()
 //                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-        // ATTENTION: This was auto-generated to handle app links.
+
         Intent appLinkIntent = getIntent();
         String appLinkAction = appLinkIntent.getAction();
         Uri appLinkData = appLinkIntent.getData();
@@ -184,14 +192,46 @@ public class ArticleActivity extends AppCompatActivity{
         if(new_data.title.equals("")){
             FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
             Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
-            new_data.title=((ArticleFragment) fragment).getNewTitle();
+            if(fragment!=null) {
+                new_data.title = ((ArticleFragment) fragment).getNewTitle();
+            }
         }
         shareIntent.putExtra(Intent.EXTRA_TEXT,new_data.title+new_data.src);
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_to)));
     }
 
     public void addOrDeleteFavorite(){
-
+        Thread databaseThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UserFavoriteDao userFavoriteDao=AppDataBaseSingleton.getAppDatabase()
+                        .userFavoriteDao();
+                List<UserFavorite> userFavoriteArrayList=userFavoriteDao
+                        .findByUserNameAndHref(UserMsgUtil.getUserName(ArticleActivity.this),new_data.src);
+                if(userFavoriteArrayList.size()==0){
+                    Log.i(TAG, "run: ");
+                    UserFavorite userFavorite=new UserFavorite();
+                    if(new_data.title.equals("")){
+                        FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
+                        Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
+                        if(fragment!=null) {
+                            new_data.title=((ArticleFragment) fragment).getNewTitle();
+                        }
+                    }
+                    userFavorite.userName=UserMsgUtil.getUserName(ArticleActivity.this);
+                    userFavorite.title=new_data.title;
+                    userFavorite.href=new_data.src;
+                    if(userFavorite.href.contains("wap.gamersky.com/gl")){
+                        userFavorite.type=UserFavorite.TYPE_HANDBOOK;
+                    }else {
+                        userFavorite.type=UserFavorite.TYPE_NEW;
+                    }
+                    userFavorite.time=String.valueOf(System.currentTimeMillis());
+                    userFavoriteDao.insertUserFavorite(userFavorite);
+                }
+            }
+        });
+        databaseThread.start();
     }
 
     @Override
@@ -199,5 +239,8 @@ public class ArticleActivity extends AppCompatActivity{
         super.onBackPressed();
     }
 
-
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
 }

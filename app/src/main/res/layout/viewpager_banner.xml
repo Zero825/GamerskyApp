@@ -6,12 +6,11 @@
     android:orientation="vertical">
 
 
-    <com.news.gamersky.customizeview.RoundImageView
+    <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="180dp"
         android:foreground="@drawable/pressed_roundimage"
-        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,10 +21,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:gravity="left"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:text="TextView"
         android:textColor="@color/textColorBanner"
         android:textSize="18sp"

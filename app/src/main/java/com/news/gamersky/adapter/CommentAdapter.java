@@ -80,18 +80,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
         if(viewType==2){
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.recyclerview_comment, parent, false);
-            GridLayout gridlayout=v.findViewById(R.id.imageContainer);
-            LinearLayout linearLayout=v.findViewById(R.id.repliesContainer);
-            for(int i=0;i<9;i++){
-                gridlayout.addView(LayoutInflater.from(context)
-                        .inflate(R.layout.gridlayout_comment_image, gridlayout, false));
-            }
-            if(unfoldReplies) {
-                for (int i = 0; i < 5; i++) {
-                    linearLayout.addView(LayoutInflater.from(context)
-                            .inflate(R.layout.recyclerview_item_reply, linearLayout, false));
-                }
-            }
+
         }
         if(viewType==3){
             v = LayoutInflater.from(parent.getContext())
@@ -169,13 +158,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
                         .into(holder.imageView);
             }
 
-            if(tempData.images.size()==0){
-                holder.gridLayout.setVisibility(View.GONE);
-            }else {
-                holder.gridLayout.setVisibility(View.VISIBLE);
-            }
+
 
             for(int i=0;i<tempData.images.size();i++){
+
+                if(holder.gridLayout.getChildAt(i)==null){
+                    holder.gridLayout.addView(LayoutInflater.from(context)
+                            .inflate(R.layout.gridlayout_comment_image, holder.gridLayout, false));
+                }
+
                 ImageViewHolder imageViewHolder;
                 if(holder.gridLayout.getChildAt(i).getTag()==null){
                     imageViewHolder= new ImageViewHolder(holder.gridLayout.getChildAt(i));
@@ -183,6 +174,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
                 }else {
                     imageViewHolder= (ImageViewHolder) holder.gridLayout.getChildAt(i).getTag();
                 }
+
+
                 Glide.with(imageViewHolder.imageView)
                         .load(tempData.images.get(i))
                         .transition(DrawableTransitionOptions.withCrossFade())
@@ -208,17 +201,23 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
                     holder.gridLayout.getChildAt(i).setVisibility(View.GONE);
                 }
             }
-
-
-            if(tempData.replies.size()==0||!unfoldReplies){
-                holder.linearLayout.setVisibility(View.GONE);
+            if(tempData.images.size()==0){
+                holder.gridLayout.setVisibility(View.GONE);
             }else {
-                holder.linearLayout.setVisibility(View.VISIBLE);
+                holder.gridLayout.setVisibility(View.VISIBLE);
             }
+
+
+
 
             if(unfoldReplies) {
                 for (int i = 0; i < Math.min(tempData.replies.size(), 5); i++) {
-                    CommentDataBean commentDataBean = tempData.replies.get(i);
+
+                    if(holder.linearLayout.getChildAt(i)==null){
+                        holder.linearLayout.addView(LayoutInflater.from(context)
+                                .inflate(R.layout.recyclerview_item_reply, holder.linearLayout, false));
+                    }
+
                     ReplyViewHolder replyViewHolder;
                     if (holder.linearLayout.getChildAt(i).getTag() == null) {
                         replyViewHolder = new ReplyViewHolder(holder.linearLayout.getChildAt(i));
@@ -226,6 +225,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
                     } else {
                         replyViewHolder = (ReplyViewHolder) holder.linearLayout.getChildAt(i).getTag();
                     }
+
+                    CommentDataBean commentDataBean = tempData.replies.get(i);
                     if (!commentDataBean.userImage.equals("")) {
                         Glide.with(replyViewHolder.imageView)
                                 .load(commentDataBean.userImage)
@@ -252,6 +253,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
                     } else {
                         holder.linearLayout.getChildAt(i).setVisibility(View.GONE);
                     }
+                }
+                if(tempData.replies.size()==0||!unfoldReplies){
+                    holder.linearLayout.setVisibility(View.GONE);
+                }else {
+                    holder.linearLayout.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -281,7 +287,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
         moreData=!b;
     }
 
-    public  class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textView;
         public TextView textView1;
@@ -314,7 +320,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
         }
     }
 
-    public class ReplyViewHolder{
+    public static class ReplyViewHolder{
         public TextView textView1,textView2,textView3,textView4,textView5,textView6;
         public RoundImageView imageView;
 
@@ -329,7 +335,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
         }
     }
 
-    public class ImageViewHolder{
+    public static class ImageViewHolder{
         public RoundImageView imageView;
 
         public ImageViewHolder(View view){

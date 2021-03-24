@@ -52,6 +52,7 @@ import static com.news.gamersky.util.AppUtil.is2s;
 public class ReviewsFragment extends Fragment {
     private static final String TAG="ReviewsFragment";
 
+    private View view,headerView;
     private ObjectAnimator arrowAnimator;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
@@ -110,15 +111,20 @@ public class ReviewsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_reviews, container, false);
-        View headerView=inflater.inflate(R.layout.recyclerview_reviews_header, container, false);
-        init(view,headerView);
-        loadTag();
-        loadData(tagSrc,false);
+        view=inflater.inflate(R.layout.fragment_reviews, container, false);
+        headerView=inflater.inflate(R.layout.recyclerview_reviews_header, container, false);
         return view;
     }
 
-    public void init(View view,View headerView){
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        init(view,headerView);
+        loadTag();
+        loadData(tagSrc,false);
+    }
+
+    public void init(View view, View headerView){
 
         recyclerView=view.findViewById(R.id.recyclerView);
         swipeRefreshLayout=view.findViewById(R.id.swipeRefreshLayout);

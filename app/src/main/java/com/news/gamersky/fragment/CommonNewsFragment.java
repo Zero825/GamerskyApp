@@ -56,16 +56,19 @@ public class CommonNewsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_common_news, container, false);
+        return inflater.inflate(R.layout.fragment_common_news, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
             src=args.getString("src");
             nodeIdPos=args.getInt("nodeIdPos");
-            init(view);
-            //loadNews();
+            init();
             startListen();
         }
-        return view;
     }
 
     @Override
@@ -78,7 +81,9 @@ public class CommonNewsFragment extends Fragment {
     }
 
 
-    public void init(View view){
+    public void init(){
+        View view=getView();
+
         newsData=new ArrayList<>();
         newsAdapter=new NewsRecyclerViewAdapter(newsData,getActivity(),null);
         recyclerView=view.findViewById(R.id.recyclerView);

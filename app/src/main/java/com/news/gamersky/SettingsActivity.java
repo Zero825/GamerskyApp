@@ -76,9 +76,15 @@ public class SettingsActivity extends AppCompatActivity {
             if(switchPreference.isChecked()){
                 seekBarPreference.setVisible(true);
                 seekBarPreference1.setVisible(true);
+            }else {
+                seekBarPreference.setVisible(false);
+                seekBarPreference1.setVisible(false);
             }
+
             if(!switchPreference1.isChecked()){
                 switchPreference2.setVisible(true);
+            }else {
+                switchPreference2.setVisible(false);
             }
 
 

@@ -63,6 +63,7 @@ public class RoundImageView extends AppCompatImageView {
     @Override
     protected void onDraw(Canvas canvas) {
 
+
         if(!isCircle&&round==0){
             super.onDraw(canvas);
             return;
@@ -86,6 +87,7 @@ public class RoundImageView extends AppCompatImageView {
             }
             canvas.clipPath(path);
             super.onDraw(canvas);
+
         }else {
             Bitmap bitmap = Bitmap.createBitmap(width,
                         height, Bitmap.Config.ARGB_8888);

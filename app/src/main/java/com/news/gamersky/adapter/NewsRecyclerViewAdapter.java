@@ -1,10 +1,10 @@
 package com.news.gamersky.adapter;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,24 +23,25 @@ import com.news.gamersky.R;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.setting.AppSetting;
-import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.ReadingProgressUtil;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
+public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<NewDataBean> mDataset;
     private Context context;
-    private View hasheader;
+    private View headerView;
     private boolean moreData;
     private boolean imageSide;
 
 
 
-    public NewsRecyclerViewAdapter(List<NewDataBean> dataset, Context context, View hasHeader) {
+    public NewsRecyclerViewAdapter(List<NewDataBean> dataset, Context context, View headerView) {
         this.mDataset = dataset;
         this.context = context;
-        this.hasheader=hasHeader;
+        this.headerView=headerView;
         this.moreData=true;
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -51,7 +52,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position){
         int i=0;
 
-        if(hasheader!=null){
+        if(headerView!=null){
             if(position==0) i=2;
             if(position==mDataset.size()+1) i=1;
         }else if(position==mDataset.size()){
@@ -60,9 +61,11 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
         return i;
     }
 
+    @NotNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v=null;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+        View v;
+        //Log.i("TAG", "onCreateViewHolder: "+viewType);
         if(viewType==0){
             if(imageSide){
                 v = LayoutInflater.from(parent.getContext())
@@ -79,11 +82,9 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
             return new FooterViewHolder(v);
         }
         if(viewType==2){
-            HeaderViewHolder headerViewHolder=new HeaderViewHolder(hasheader);
-            headerViewHolder.setIsRecyclable(false);
-            return headerViewHolder;
+            return new HeaderViewHolder(headerView);
         }
-        return new NewsListViewHolder(v);
+        return null;
     }
 
     @Override
@@ -91,21 +92,21 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
         int vt=holder.getItemViewType();
         //Log.i("TAG", "onBindViewHolder: "+vt+"    "+position);
         if(vt==0){
-            if(hasheader!=null){
+            if(headerView!=null){
                 ((NewsListViewHolder) holder).bindView(position-1);
             }else {
                 ((NewsListViewHolder) holder).bindView(position);
             }
         }
         if(vt==1){
-            ((FooterViewHolder)holder).bindView(position);
+            ((FooterViewHolder)holder).bindView();
         }
 
     }
 
     @Override
     public int getItemCount() {
-        if(hasheader!=null){
+        if(headerView!=null){
             return mDataset.size()+2;
         }
         return mDataset.size()+1;
@@ -136,13 +137,13 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
             textView2.setText(mDataset.get(position).date);
             textView.setText(Html.fromHtml(mDataset.get(position).title));
             if(ReadingProgressUtil.getNewsClick(context,mDataset.get(position).id)){
-                textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
+                textView.setTextColor(context.getColor(R.color.defaultColor));
             }else {
-                textView.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+                textView.setTextColor(context.getColor(R.color.textColorPrimary));
             }
             textView3.setText(mDataset.get(position).sort);
             if (!mDataset.get(position).commentCount.equals("")) {
-                textView4.setText(mDataset.get(position).commentCount + "评论");
+                textView4.setText(mDataset.get(position).commentCount + context.getString(R.string.comment));
             }else {
                 textView4.setText("");
             }
@@ -157,7 +158,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
                 public void onClick(View v) {
                     if(PreferenceManager.getDefaultSharedPreferences(context)
                             .getBoolean("save_article_click",true)){
-                        textView.setTextColor(context.getResources().getColor(R.color.defaultColor));
+                        textView.setTextColor(context.getColor(R.color.defaultColor));
                         ReadingProgressUtil.putNewsClick(context,mDataset.get(position).id,true);
                     }
                     Intent intent=new Intent(context, ArticleActivity.class);
@@ -184,7 +185,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
             textView=v.findViewById(R.id.textView8);
         }
 
-        public void bindView(int position){
+        public void bindView(){
 
             if(mDataset.size()==0){
                 textView.setVisibility(View.GONE);
@@ -200,7 +201,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public class HeaderViewHolder extends RecyclerView.ViewHolder{
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder{
 
         public HeaderViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -195,18 +195,7 @@ public class LoginActivity extends AppCompatActivity {
             }else {
                 loginActivity.setResult(LOGIN_SUCCESS);
                 UserMsgUtil.putUserName(loginActivity,userName);
-                AppUtil.getSnackbar(loginActivity,loginActivity.layoutView,
-                        loginActivity.getString(R.string.success_login)
-                        ,false,false)
-                        .addCallback(new Snackbar.Callback(){
-                            @Override
-                            public void onDismissed(Snackbar transientBottomBar, int event) {
-                                super.onDismissed(transientBottomBar, event);
-                                loginActivity.finish();
-                            }
-                        })
-                        .show();
-
+                loginActivity.finish();
             }
 
         }

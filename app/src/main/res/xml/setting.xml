@@ -137,7 +137,7 @@
             app:min="10"
             app:showSeekBarValue="true"
             app:summary="默认值：10"
-            app:title="滑动返回触发距离"></SeekBarPreference>
+            app:title="滑动返回触发距离" />
         <SeekBarPreference
             android:defaultValue="50"
             android:key="swipe_sides_sensitivity"

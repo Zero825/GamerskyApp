@@ -85,20 +85,25 @@ public class CommentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_comment, container, false);
+        return inflater.inflate(R.layout.fragment_comment, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
             data_src = args.getString("data_src");
             Log.i("TAG", "init: 评论片接收到的链接"+data_src);
-            init(view);
+            init();
             loadComment();
             startListener();
         }
-        return view;
     }
 
+    public void init(){
+        View view=getView();
 
-    public void init(View view){
         loadimageView=view.findViewById(R.id.imageView9);
         loadtextView=view.findViewById(R.id.textView7);
         recyclerView=view.findViewById(R.id.comment_recycler_view);
@@ -167,17 +172,12 @@ public class CommentFragment extends Fragment {
                     updateSuspensionBar();
                 }
 
-               int lastItem=layoutManager.findLastVisibleItemPosition();
-               int dataNum=allCommentData.size()+hotCommentData.size();
-               int line=dataNum;
-               if(lastItem>dataNum){
-                   line=dataNum+1;
-               }
-                //System.out.println(lastItem+"      "+flag+"       "+line);
-                if(lastItem>10&&lastItem!=flag&&lastItem==line){
+                int lastItem=layoutManager.findLastVisibleItemPosition();
+                int line=commentAdapter.getItemCount()-1;
+                //System.out.println(lastItem+"      "+lastFlag+"      "+flag+"       "+line);
+                if(lastItem!=flag&&lastItem==line&&!isFirst){
                     lastFlag=flag;
-                    flag=lastItem;
-                    System.out.println("加载评论");
+                    flag=line;
                     executor.submit(loadMoreComment());
                 }
 
@@ -216,7 +216,9 @@ public class CommentFragment extends Fragment {
         }
         else {
             if (mCurrentPosition <= hotCommentData.size()) {
-                title.setText(getString(R.string.hot_comment));
+                if(isAdded()) {
+                    title.setText(getString(R.string.hot_comment));
+                }
                 orderTitle.setVisibility(View.INVISIBLE);
             } else {
                 title.setText(getString(R.string.all_comment));
@@ -540,39 +542,25 @@ public class CommentFragment extends Fragment {
                             @Override
                             public void run() {
                                 refreshLayout.setRefreshing(false);
-                                Timer temp=new Timer();
-                                temp.schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-
-                                                hotCommentData.clear();
-                                                allCommentData.clear();
-                                                hotCommentData.addAll(tempHotCommentData);
-                                                allCommentData.addAll(tempAllCommentData);
-                                                commentAdapter.notifyDataSetChanged();
-                                                loadtextView.setText("加载成功");
-                                                loadtextView.setVisibility(View.GONE);
-                                                loadimageView.setVisibility(View.GONE);
-                                                commentHeader.setVisibility(View.VISIBLE);
-                                                ((AnimationDrawable) loadimageView.getDrawable()).stop();
-                                                if(allCommentData.size()!=0&&
-                                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
-                                                    commentAdapter.setNoMore(true);
-                                                }
-                                                updateSuspensionBar();
-                                                if(!isFirst) {
-                                                    AppUtil.getSnackbar(getContext(), recyclerView, getResources().getString(R.string.succeed_comment_load),true,false).show();
-                                                }
-                                                isFirst=false;
-                                            }
-                                        });
-
-                                    }
-                                },200);
-
+                                hotCommentData.clear();
+                                allCommentData.clear();
+                                hotCommentData.addAll(tempHotCommentData);
+                                allCommentData.addAll(tempAllCommentData);
+                                commentAdapter.notifyDataSetChanged();
+                                loadtextView.setText("加载成功");
+                                loadtextView.setVisibility(View.GONE);
+                                loadimageView.setVisibility(View.GONE);
+                                commentHeader.setVisibility(View.VISIBLE);
+                                ((AnimationDrawable) loadimageView.getDrawable()).stop();
+                                if(allCommentData.size()!=0&&
+                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
+                                    commentAdapter.setNoMore(true);
+                                }
+                                updateSuspensionBar();
+                                if(!isFirst) {
+                                    AppUtil.getSnackbar(getContext(), recyclerView, getResources().getString(R.string.succeed_comment_load),true,false).show();
+                                }
+                                isFirst=false;
                             }
                         });
 
@@ -741,39 +729,25 @@ public class CommentFragment extends Fragment {
                             @Override
                             public void run() {
                                 refreshLayout.setRefreshing(false);
-                                Timer temp=new Timer();
-                                temp.schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-
-                                                hotCommentData.clear();
-                                                allCommentData.clear();
-                                                hotCommentData.addAll(tempHotCommentData);
-                                                allCommentData.addAll(tempAllCommentData);
-                                                commentAdapter.notifyDataSetChanged();
-                                                loadtextView.setText("加载成功");
-                                                loadtextView.setVisibility(View.GONE);
-                                                loadimageView.setVisibility(View.GONE);
-                                                commentHeader.setVisibility(View.VISIBLE);
-                                                ((AnimationDrawable) loadimageView.getDrawable()).stop();
-                                                if(allCommentData.size()!=0&&
-                                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
-                                                    commentAdapter.setNoMore(true);
-                                                }
-                                                updateSuspensionBar();
-                                                if(!isFirst) {
-                                                    AppUtil.getSnackbar(getContext(), recyclerView, getResources().getString(R.string.succeed_comment_load),true,false).show();
-                                                }
-                                                isFirst=false;
-                                            }
-                                        });
-
-                                    }
-                                },200);
-
+                                hotCommentData.clear();
+                                allCommentData.clear();
+                                hotCommentData.addAll(tempHotCommentData);
+                                allCommentData.addAll(tempAllCommentData);
+                                commentAdapter.notifyDataSetChanged();
+                                loadtextView.setText("加载成功");
+                                loadtextView.setVisibility(View.GONE);
+                                loadimageView.setVisibility(View.GONE);
+                                commentHeader.setVisibility(View.VISIBLE);
+                                ((AnimationDrawable) loadimageView.getDrawable()).stop();
+                                if(allCommentData.size()!=0&&
+                                        (allCommentData.get(allCommentData.size()-1).floor.equals("1楼")||allCommentData.size()<10)){
+                                    commentAdapter.setNoMore(true);
+                                }
+                                updateSuspensionBar();
+                                if(!isFirst) {
+                                    AppUtil.getSnackbar(getContext(), recyclerView, getResources().getString(R.string.succeed_comment_load),true,false).show();
+                                }
+                                isFirst=false;
                             }
                         });
                     } catch (Exception e) {
@@ -982,6 +956,7 @@ public class CommentFragment extends Fragment {
                         } catch (Exception e) {
                             e.printStackTrace();
                             flag=lastFlag;
+                            page--;
                         }
                     }
                     else {

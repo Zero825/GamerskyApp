@@ -39,7 +39,8 @@
             android:label="@string/title_activity_settings"
             android:launchMode="singleTop"
             android:theme="@style/SettingsTheme" />
-        <activity android:name=".ArticleActivity">
+        <activity android:name=".ArticleActivity"
+            android:configChanges="orientation|screenSize|uiMode">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 

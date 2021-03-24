@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.github.piasy:BigImageViewer:1.6.5'
     implementation 'com.github.piasy:GlideImageLoader:1.6.5'
     implementation 'com.github.piasy:GlideImageViewFactory:1.6.5'
+    implementation 'com.billy.android:smart-swipe:1.1.2'
 
     def room_version = "2.2.5"
 
