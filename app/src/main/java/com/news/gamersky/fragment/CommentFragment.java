@@ -169,7 +169,9 @@ public class CommentFragment extends Fragment {
                     } else {
                         commentHeader.setY(0);
                     }
+
                     updateSuspensionBar();
+
                 }
 
                 int lastItem=layoutManager.findLastVisibleItemPosition();
@@ -218,16 +220,18 @@ public class CommentFragment extends Fragment {
             if (mCurrentPosition <= hotCommentData.size()) {
                 if(isAdded()) {
                     title.setText(getString(R.string.hot_comment));
+                    orderTitle.setVisibility(View.INVISIBLE);
                 }
-                orderTitle.setVisibility(View.INVISIBLE);
             } else {
-                title.setText(getString(R.string.all_comment));
-                if(order.equals("createTimeDESC")){
-                    orderTitle.setText(getString(R.string.newest));
-                }else {
-                    orderTitle.setText(getString(R.string.earliest));
+                if(isAdded()) {
+                    title.setText(getString(R.string.all_comment));
+                    if (order.equals("createTimeDESC")) {
+                        orderTitle.setText(getString(R.string.newest));
+                    } else {
+                        orderTitle.setText(getString(R.string.earliest));
+                    }
+                    orderTitle.setVisibility(View.VISIBLE);
                 }
-                orderTitle.setVisibility(View.VISIBLE);
             }
         }
     }

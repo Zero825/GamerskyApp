@@ -377,6 +377,7 @@ public class ArticleFragment extends Fragment {
                             webView.post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    progressBar.setIndeterminate(false);
                                     progressBar.setProgressCompat(finalI,true);
                                 }
                             });

@@ -8,8 +8,14 @@ import com.news.gamersky.util.AppUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Test;
+import org.jsoup.Jsoup;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -23,23 +29,6 @@ public class TestDemo {
 
     @Test
     public void test(){
-
-//        String password1="123456";
-//        String password2="12345";
-//        try {
-//            MessageDigest messageDigest=MessageDigest.getInstance("SHA-256");
-//            messageDigest.update(password1.getBytes());
-//            byte[] bytesResult1=messageDigest.digest();
-//            messageDigest.update(password2.getBytes());
-//            byte[] bytesResult2=messageDigest.digest();
-//            System.out.println(AppUtil.compereByteArray(bytesResult1,bytesResult2));
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        }
-
-
-
     }
-
 
 }
