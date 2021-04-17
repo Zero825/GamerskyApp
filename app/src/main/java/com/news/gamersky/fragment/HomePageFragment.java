@@ -482,16 +482,29 @@ public class HomePageFragment extends Fragment {
                             return false;
                         }
 
-                        @RequiresApi(api = Build.VERSION_CODES.O_MR1)
                         @Override
-                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                            Color primaryColor=WallpaperColors.fromBitmap(resource).getPrimaryColor();
-                            int bg=Color.argb(127f,primaryColor.red(),primaryColor.green(),primaryColor.blue());
-                            textView.setBackgroundColor(bg);
-                            if(AppUtil.isDark(primaryColor.toArgb())){
-                                textView.setTextColor(getContext().getColor(R.color.textColorBanner));
-                            }else {
-                                textView.setTextColor(getContext().getColor(R.color.darkBackground));
+                        public boolean onResourceReady(final Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
+                                Thread getColorThread=new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final Color primaryColor = WallpaperColors.fromBitmap(resource).getPrimaryColor();
+                                        final int bg=Color.argb(127f,primaryColor.red(),primaryColor.green(),primaryColor.blue());
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                textView.setBackgroundColor(bg);
+                                                if(AppUtil.isDark(primaryColor.toArgb())){
+                                                    textView.setTextColor(getContext().getColor(R.color.textColorBanner));
+                                                }else {
+                                                    textView.setTextColor(getContext().getColor(R.color.darkBackground));
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                                getColorThread.start();
+
                             }
                             return false;
                         }

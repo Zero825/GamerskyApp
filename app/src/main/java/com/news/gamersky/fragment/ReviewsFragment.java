@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -30,6 +31,7 @@ import com.news.gamersky.adapter.GameListRecyclerViewAdapter;
 import com.news.gamersky.customizeview.LineFeedRadioGroup;
 import com.news.gamersky.databean.GameListDataBean;
 import com.news.gamersky.util.AppUtil;
+import com.news.gamersky.util.UIUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -185,7 +187,7 @@ public class ReviewsFragment extends Fragment {
         recyclerView.setAdapter(gameListRecyclerViewAdapter);
         recyclerView.hasFixedSize();
 
-
+        view.findViewById(R.id.reviewsBar).setPadding(0, UIUtil.getStatusBarHeight(),0,0);
 
     }
 

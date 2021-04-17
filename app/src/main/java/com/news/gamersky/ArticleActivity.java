@@ -228,6 +228,7 @@ public class ArticleActivity extends AppCompatActivity{
                     }
                     userFavorite.time=String.valueOf(System.currentTimeMillis());
                     userFavoriteDao.insertUserFavorite(userFavorite);
+
                 }
             }
         });

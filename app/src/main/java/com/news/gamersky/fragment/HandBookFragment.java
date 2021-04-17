@@ -37,6 +37,7 @@ import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
+import com.news.gamersky.util.UIUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -87,6 +88,7 @@ public class HandBookFragment extends Fragment {
         dataSrc="https://www.gamersky.com/handbook/";
         firstRun=true;
 
+        view.findViewById(R.id.handbookContainer).setPadding(0, UIUtil.getStatusBarHeight(),0,0);
     }
 
     public void loadData(){

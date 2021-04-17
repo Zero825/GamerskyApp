@@ -25,6 +25,7 @@ import com.news.gamersky.R;
 import com.news.gamersky.SearchActivity;
 import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
 import com.news.gamersky.customizeview.FixViewPager;
+import com.news.gamersky.util.UIUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -103,6 +104,7 @@ public class GalleryFragment extends Fragment {
         hotSortText=view.findViewById(R.id.sortHot);
         logoGallery=view.findViewById(R.id.logoGallery);
 
+        view.findViewById(R.id.gallery_bar).setPadding(0, UIUtil.getStatusBarHeight(),0,0);
     }
 
     public void loadTab(){

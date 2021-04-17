@@ -169,37 +169,39 @@ public class GameDetailActivity extends AppCompatActivity {
                         return false;
                     }
 
-                    @RequiresApi(api = Build.VERSION_CODES.O_MR1)
+
                     @Override
                     public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                        primaryColor=WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
-                        ((CardView)findViewById(R.id.cardView)).setCardBackgroundColor(primaryColor);
-                        findViewById(R.id.appBarLayout).setBackgroundColor(primaryColor);
-                        GradientDrawable gradientDrawable=new GradientDrawable();
-                        gradientDrawable.setColors(new int[]{Color.TRANSPARENT,primaryColor});
-                        gradientDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-                        findViewById(R.id.gradientView).setBackground(gradientDrawable);
-                        cardIsDark=AppUtil.isDark(primaryColor);
-                        int color;
-                        if(cardIsDark){
-                            color=Color.WHITE;
-                        }else {
-                            color=Color.BLACK;
-                        }
-                        title.setTextColor(color);
-                        ((TextView)findViewById(R.id.gameTitle)).setTextColor(color);
-                        ((TextView)findViewById(R.id.enTitle)).setTextColor(color);
-                        ((TextView)findViewById(R.id.gameTime)).setTextColor(color);
-                        ((TextView)findViewById(R.id.tag)).setTextColor(color);
-                        ((TextView)findViewById(R.id.chinese)).setTextColor(color);
-                        ((TextView)findViewById(R.id.issue)).setTextColor(color);
-                        ((TextView)findViewById(R.id.time)).setTextColor(color);
-                        ((TextView)findViewById(R.id.more_images)).setTextColor(color);
-                        ((TextView)findViewById(R.id.introduction)).setTextColor(color);
-                        LineFeedRadioGroup lineFeedRadioGroup=((LineFeedRadioGroup)findViewById(R.id.lineFeedRadioGroup));
-                        for(int i=0;i<lineFeedRadioGroup.getChildCount();i++){
-                            RadioButton radioButton= (RadioButton) lineFeedRadioGroup.getChildAt(i);
-                            radioButton.setTextColor(color);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                            primaryColor=WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
+                            ((CardView)findViewById(R.id.cardView)).setCardBackgroundColor(primaryColor);
+                            findViewById(R.id.appBarLayout).setBackgroundColor(primaryColor);
+                            GradientDrawable gradientDrawable=new GradientDrawable();
+                            gradientDrawable.setColors(new int[]{Color.TRANSPARENT,primaryColor});
+                            gradientDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+                            findViewById(R.id.gradientView).setBackground(gradientDrawable);
+                            cardIsDark=AppUtil.isDark(primaryColor);
+                            int color;
+                            if(cardIsDark){
+                                color=Color.WHITE;
+                            }else {
+                                color=Color.BLACK;
+                            }
+                            title.setTextColor(color);
+                            ((TextView)findViewById(R.id.gameTitle)).setTextColor(color);
+                            ((TextView)findViewById(R.id.enTitle)).setTextColor(color);
+                            ((TextView)findViewById(R.id.gameTime)).setTextColor(color);
+                            ((TextView)findViewById(R.id.tag)).setTextColor(color);
+                            ((TextView)findViewById(R.id.chinese)).setTextColor(color);
+                            ((TextView)findViewById(R.id.issue)).setTextColor(color);
+                            ((TextView)findViewById(R.id.time)).setTextColor(color);
+                            ((TextView)findViewById(R.id.more_images)).setTextColor(color);
+                            ((TextView)findViewById(R.id.introduction)).setTextColor(color);
+                            LineFeedRadioGroup lineFeedRadioGroup=((LineFeedRadioGroup)findViewById(R.id.lineFeedRadioGroup));
+                            for(int i=0;i<lineFeedRadioGroup.getChildCount();i++){
+                                RadioButton radioButton= (RadioButton) lineFeedRadioGroup.getChildAt(i);
+                                radioButton.setTextColor(color);
+                            }
                         }
                         return false;
                     }

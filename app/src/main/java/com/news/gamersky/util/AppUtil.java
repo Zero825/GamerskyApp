@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class AppUtil {
@@ -104,10 +105,10 @@ public class AppUtil {
      */
     public static String format(long timeStamp) {
         long curTimeMillis = System.currentTimeMillis();
-        Date curDate = new Date(curTimeMillis);
-        int todayHoursSeconds = curDate.getHours() * 60 * 60;
-        int todayMinutesSeconds = curDate.getMinutes() * 60;
-        int todaySeconds = curDate.getSeconds();
+        Calendar calendar=Calendar.getInstance();
+        int todayHoursSeconds = calendar.get(Calendar.HOUR_OF_DAY) * 60 * 60;
+        int todayMinutesSeconds = calendar.get(Calendar.MINUTE) * 60;
+        int todaySeconds = calendar.get(Calendar.SECOND);
         int todayMillis = (todayHoursSeconds + todayMinutesSeconds + todaySeconds) * 1000;
         long todayStartMillis = curTimeMillis - todayMillis;
         SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");

@@ -40,6 +40,7 @@ import com.news.gamersky.dialog.SignOutDialogFragment;
 import com.news.gamersky.entity.User;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
+import com.news.gamersky.util.UIUtil;
 import com.news.gamersky.util.UserMsgUtil;
 
 public class UserFragment extends Fragment {
@@ -61,6 +62,7 @@ public class UserFragment extends Fragment {
     }
 
     public void init(){
+        getView().findViewById(R.id.userMsg).setPadding(0, UIUtil.getStatusBarHeight(),0,0);
         lodaUserMsg(getView());
     }
 

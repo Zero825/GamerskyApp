@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -13,9 +14,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.github.piasy.biv.BigImageViewer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.news.gamersky.database.AppDatabase;
 import com.news.gamersky.fragment.GalleryFragment;
@@ -26,6 +32,7 @@ import com.news.gamersky.fragment.UserFragment;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.NightModeUtil;
+import com.news.gamersky.util.UIUtil;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -67,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void init(){
+
+        final Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        window.setStatusBarColor(Color.TRANSPARENT);
+
+
         exitTime=0;
 
         showAnimator=new ObjectAnimator();
@@ -90,8 +104,11 @@ public class MainActivity extends AppCompatActivity {
             navView.setLabelVisibilityMode(Integer.parseInt(sharedPreferences.getString("bottom_mode","1")));
         }
 
+        clearGlideDiskCache(sharedPreferences.getBoolean("auto_clear_cache",true));
+
         AppDatabase db = Room.databaseBuilder(ThisApp.getContext(),
                 AppDatabase.class, "app_database").build();
+
     }
 
     public void startListen(){
@@ -233,6 +250,19 @@ public class MainActivity extends AppCompatActivity {
             hideAnimator = ObjectAnimator.ofFloat(navView, "translationY", navView.getTranslationY(), navView.getHeight());
             hideAnimator.setDuration(300);
             hideAnimator.start();
+        }
+    }
+
+    public void clearGlideDiskCache(boolean b){
+        if(b) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Glide.get(MainActivity.this).clearDiskCache();
+                    BigImageViewer.imageLoader().cancelAll();
+                }
+            }).start();
+            new WebView(MainActivity.this).clearCache(true);
         }
     }
 

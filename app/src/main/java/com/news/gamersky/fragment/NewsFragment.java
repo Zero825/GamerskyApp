@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.webkit.WebView;
 import android.widget.ImageView;
 
@@ -27,6 +28,7 @@ import com.news.gamersky.R;
 import com.news.gamersky.SearchActivity;
 import com.news.gamersky.SettingsActivity;
 import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
+import com.news.gamersky.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CU
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
 
 public class NewsFragment extends Fragment {
+    private final static String TAG="NewsFragment";
 
     private ImageView logo;
     private ImageView searchBtn;
@@ -61,7 +64,7 @@ public class NewsFragment extends Fragment {
     }
 
     private void init(){
-        View view=getView();
+        final View view=getView();
 
         logo=view.findViewById(R.id.imageView4);
         searchBtn=view.findViewById(R.id.imageView11);
@@ -97,8 +100,19 @@ public class NewsFragment extends Fragment {
         viewPager.setOffscreenPageLimit(fragmentAdapter.getCount());
         tabLayout.setupWithViewPager(viewPager);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        clearGlideDiskCache(sharedPreferences.getBoolean("auto_clear_cache",true));
+        getActivity().getWindow().getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                UIUtil.setStatusBarHeight(insets.getStableInsetTop());
+                Log.i(TAG, "onApplyWindowInsets: "+UIUtil.getStatusBarHeight());
+                view.findViewById(R.id.newsBar).setPadding(0, UIUtil.getStatusBarHeight(),0,0);
+                getActivity().getWindow().getDecorView().setOnApplyWindowInsetsListener(null);
+                return insets;
+            }
+        });
+
+
+
     }
 
     private void startListen(){
@@ -143,18 +157,7 @@ public class NewsFragment extends Fragment {
         }
     }
 
-    public void clearGlideDiskCache(boolean b){
-        if(b) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Glide.get(getContext()).clearDiskCache();
-                    BigImageViewer.imageLoader().cancelAll();
-                }
-            }).start();
-            new WebView(getContext()).clearCache(true);
-        }
-    }
+
 
     public void startAnimator(View view){
         ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view, "ScaleX", view.getScaleX(),1.15f);
