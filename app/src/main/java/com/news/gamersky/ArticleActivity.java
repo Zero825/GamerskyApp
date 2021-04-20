@@ -208,12 +208,12 @@ public class ArticleActivity extends AppCompatActivity{
                         .userFavoriteDao();
                 List<UserFavorite> userFavoriteArrayList=userFavoriteDao
                         .findByUserNameAndHref(UserMsgUtil.getUserName(ArticleActivity.this),new_data.src);
+                FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
+                final Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
                 if(userFavoriteArrayList.size()==0){
                     Log.i(TAG, "run: ");
                     UserFavorite userFavorite=new UserFavorite();
                     if(new_data.title.equals("")){
-                        FragmentManager fragmentManager=ArticleActivity.this.getSupportFragmentManager();
-                        Fragment fragment=fragmentManager.findFragmentByTag("android:switcher:"+viewPager.getId()+":"+0);
                         if(fragment!=null) {
                             new_data.title=((ArticleFragment) fragment).getNewTitle();
                         }
@@ -228,7 +228,23 @@ public class ArticleActivity extends AppCompatActivity{
                     }
                     userFavorite.time=String.valueOf(System.currentTimeMillis());
                     userFavoriteDao.insertUserFavorite(userFavorite);
-
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(fragment!=null) {
+                                ((ArticleFragment) fragment).showSnackbar(getString(R.string.success_favor));
+                            }
+                        }
+                    });
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(fragment!=null) {
+                                ((ArticleFragment) fragment).showSnackbar(getString(R.string.repeat_favor));
+                            }
+                        }
+                    });
                 }
             }
         });

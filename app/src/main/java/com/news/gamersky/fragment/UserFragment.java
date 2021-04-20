@@ -4,32 +4,25 @@ import android.app.WallpaperColors;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.news.gamersky.LoginActivity;
 import com.news.gamersky.R;
@@ -37,11 +30,12 @@ import com.news.gamersky.SettingsActivity;
 import com.news.gamersky.UserFavoritesActivity;
 import com.news.gamersky.customizeview.RoundImageView;
 import com.news.gamersky.dialog.SignOutDialogFragment;
-import com.news.gamersky.entity.User;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.UIUtil;
 import com.news.gamersky.util.UserMsgUtil;
+
+import org.jetbrains.annotations.NotNull;
 
 public class UserFragment extends Fragment {
     private final static String TAG="UserFragment";
@@ -100,13 +94,11 @@ public class UserFragment extends Fragment {
                 if(UserMsgUtil.getUserName(getContext()).equals(getString(R.string.user_name))){
                     Intent intent=new Intent(getContext(), LoginActivity.class);
                     startActivityForResult(intent,LOGIN_REQUEST);
-                }else {
-                    Intent toGallery = new Intent(Intent.ACTION_PICK);
-                    toGallery.setType("image/*");
-                    startActivityForResult(toGallery, GALLERY_REQUEST);
                 }
             }
         });
+        registerForContextMenu(view.findViewById(R.id.userAvatar));
+
     }
 
     @Override
@@ -133,6 +125,43 @@ public class UserFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateContextMenu(@NotNull ContextMenu menu, @NotNull View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = requireActivity().getMenuInflater();
+        inflater.inflate(R.menu.user_avatar_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.select_avatar){
+            if(!UserMsgUtil.getUserName(getContext()).equals(getString(R.string.user_name))){
+                selectAvatar();
+            }
+            return true;
+        }else if(item.getItemId()==R.id.clear_avatar){
+            if(!UserMsgUtil.getUserName(getContext()).equals(getString(R.string.user_name))){
+                View view=getView();
+                if(view!=null) {
+                    UserMsgUtil.putUserAvatar(getContext(),UserMsgUtil.getUserName(getContext()),"");
+                    lodaUserMsg(view);
+                }
+            }
+            return true;
+        }else if(item.getItemId()==R.id.cancel){
+            return true;
+        }else {
+            return super.onContextItemSelected(item);
+        }
+    }
+
+    private void selectAvatar(){
+        Intent toGallery = new Intent(Intent.ACTION_PICK);
+        toGallery.setType("image/*");
+        startActivityForResult(toGallery, GALLERY_REQUEST);
+    }
+
     public void lodaUserMsg(View view){
         final TextView userName=view.findViewById(R.id.userName);
         final RoundImageView userAvatar=view.findViewById(R.id.userAvatar);
@@ -151,22 +180,23 @@ public class UserFragment extends Fragment {
                             return false;
                         }
 
-                        @RequiresApi(api = Build.VERSION_CODES.O_MR1)
                         @Override
                         public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                            int primaryColor= WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
-                            userMsgBg.setImageDrawable(new ColorDrawable(primaryColor));
-                            if(AppUtil.isDark(primaryColor)){
-                                userName.setTextColor(getContext().getColor(R.color.textColorBanner));
-                            }else {
-                                userName.setTextColor(getContext().getColor(R.color.darkBackground));
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
+                                int primaryColor = WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
+                                userMsgBg.setImageDrawable(new ColorDrawable(primaryColor));
+                                if(AppUtil.isDark(primaryColor)){
+                                    userName.setTextColor(getContext().getColor(R.color.textColorBanner));
+                                }else {
+                                    userName.setTextColor(getContext().getColor(R.color.darkBackground));
+                                }
                             }
                             return false;
                         }
                     })
                     .into(userAvatar);
         }else {
-            Glide.with(userAvatar).load(getContext().getDrawable(R.drawable.avatar)).centerCrop().into(userAvatar);
+            Glide.with(userAvatar).load(R.drawable.avatar).centerCrop().into(userAvatar);
         }
     }
 

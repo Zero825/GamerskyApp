@@ -69,14 +69,15 @@ public class AppUtil {
     public static Snackbar getSnackbar(Context context,View view,String msg,boolean primaryColor,boolean setAnchorView){
         Snackbar snackbar= Snackbar.make(view,msg,1500);
         if(primaryColor){
-            snackbar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
-            snackbar.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+            snackbar.setBackgroundTint(context.getColor(R.color.colorPrimary));
+            snackbar.setTextColor(context.getColor(R.color.textColorPrimary));
         }
         //snackbar.getView().setElevation(0f);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         if(!sharedPreferences.getBoolean("no_bottombar",false)&&setAnchorView){
             snackbar.setAnchorView(R.id.nav_view);
         }
+//        snackbar.setAnchorView(R.id.nav_view);
         return snackbar;
     }
 

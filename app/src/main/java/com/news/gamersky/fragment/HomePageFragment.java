@@ -311,7 +311,7 @@ public class HomePageFragment extends Fragment {
                             connection.disconnect();
                         }
                     }
-
+                    
                     Message message=Message.obtain();
                     message.what=1;
                     refreshHandler.sendMessage(message);

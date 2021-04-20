@@ -38,6 +38,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.FutureTarget;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.snackbar.Snackbar;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
@@ -175,6 +176,14 @@ public class ArticleFragment extends Fragment {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public void showSnackbar(String msg){
+        Snackbar snackbar=AppUtil.getSnackbar(requireContext(),webView,msg,false,false);
+        if(navView.getVisibility()==View.VISIBLE){
+            snackbar.setAnchorView(navView);
+        }
+        snackbar.show();
     }
 
     /**
