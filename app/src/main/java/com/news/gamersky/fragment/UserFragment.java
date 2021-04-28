@@ -22,6 +22,8 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.news.gamersky.LoginActivity;
@@ -173,6 +175,7 @@ public class UserFragment extends Fragment {
             Glide.with(userAvatar)
                     .asBitmap()
                     .load(userAvatarPath)
+                    .transition(BitmapTransitionOptions.withCrossFade())
                     .centerCrop()
                     .listener(new RequestListener<Bitmap>() {
                         @Override
@@ -181,16 +184,29 @@ public class UserFragment extends Fragment {
                         }
 
                         @Override
-                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
-                                int primaryColor = WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
-                                userMsgBg.setImageDrawable(new ColorDrawable(primaryColor));
-                                if(AppUtil.isDark(primaryColor)){
-                                    userName.setTextColor(getContext().getColor(R.color.textColorBanner));
-                                }else {
-                                    userName.setTextColor(getContext().getColor(R.color.darkBackground));
+                        public boolean onResourceReady(final Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
+                                        final int primaryColor = WallpaperColors.fromBitmap(resource).getPrimaryColor().toArgb();
+                                        userMsgBg.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Glide.with(userMsgBg)
+                                                        .load(new ColorDrawable(primaryColor))
+                                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                                        .into(userMsgBg);
+                                                if(AppUtil.isDark(primaryColor)){
+                                                    userName.setTextColor(getContext().getColor(R.color.textColorBanner));
+                                                }else {
+                                                    userName.setTextColor(getContext().getColor(R.color.darkBackground));
+                                                }
+                                            }
+                                        });
+                                    }
                                 }
-                            }
+                            }).start();
                             return false;
                         }
                     })

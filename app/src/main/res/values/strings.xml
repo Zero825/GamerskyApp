@@ -39,6 +39,7 @@
     <string name="updata_successed">更新成功</string>
     <string name="updata_failed">更新失败</string>
     <string name="player_comment">玩家评论</string>
+    <string name="delete_select">删除所选</string>
 
     <string name="all">全部</string>
     <string name="game_genres">游戏类型</string>

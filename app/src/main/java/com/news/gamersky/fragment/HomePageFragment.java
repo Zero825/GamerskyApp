@@ -48,6 +48,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.news.gamersky.ArticleActivity;
 import com.news.gamersky.R;
+import com.news.gamersky.adapter.BannerAdapter;
 import com.news.gamersky.adapter.NewsRecyclerViewAdapter;
 import com.news.gamersky.customizeview.BannerViewpager;
 import com.news.gamersky.customizeview.FixViewPager;
@@ -94,8 +95,8 @@ public class HomePageFragment extends Fragment {
     private ArrayList<NewDataBean> tempBannerData;
     private ArrayList<NewDataBean> tempTopData;
     private ArrayList<NewDataBean> tempNewsList;
-    private NewsRecyclerViewAdapter myAdapter;
-    private MyViewpagerAdapter myViewpagerAdapter;
+    private NewsRecyclerViewAdapter newsRecyclerViewAdapter;
+    private BannerAdapter bannerAdapter;
     private String nodeId;
     private RefreshHandler refreshHandler;
     private ExecutorService executor;
@@ -138,8 +139,8 @@ public class HomePageFragment extends Fragment {
 
         vp =headerView.findViewById(R.id.pager);
         vp.setPageMargin(AppUtil.dip2px(getContext(),8f));
-        myViewpagerAdapter=new MyViewpagerAdapter(bannerData);
-        vp.setAdapter(myViewpagerAdapter);
+        bannerAdapter=new BannerAdapter(bannerData);
+        vp.setAdapter(bannerAdapter);
         vp.setOffscreenPageLimit(10);
 
         toptv1=headerView.findViewById(R.id.textView2);
@@ -151,8 +152,8 @@ public class HomePageFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        myAdapter= new NewsRecyclerViewAdapter(newsList, getContext(),headerView);
-        recyclerView.setAdapter(myAdapter);
+        newsRecyclerViewAdapter= new NewsRecyclerViewAdapter(newsList, getContext(),headerView);
+        recyclerView.setAdapter(newsRecyclerViewAdapter);
         recyclerView.setHasFixedSize(true);
 
 
@@ -204,7 +205,7 @@ public class HomePageFragment extends Fragment {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 int lastItem=layoutManager.findLastVisibleItemPosition();
-                int dataNum=myAdapter.getItemCount();
+                int dataNum=newsRecyclerViewAdapter.getItemCount();
                 int line=dataNum-5;
 
 
@@ -422,7 +423,7 @@ public class HomePageFragment extends Fragment {
                         @Override
                         public void run() {
                             newsList.addAll(tempData);
-                            myAdapter.notifyItemRangeInserted(myAdapter.getItemCount(),tempData.size());
+                            newsRecyclerViewAdapter.notifyItemRangeInserted(newsRecyclerViewAdapter.getItemCount(),tempData.size());
                         }
                     });
                 }catch (Exception e){
@@ -438,100 +439,7 @@ public class HomePageFragment extends Fragment {
     }
 
 
-    public class  MyViewpagerAdapter extends PagerAdapter{
-        private ArrayList<NewDataBean> myData;
 
-
-        public MyViewpagerAdapter(ArrayList<NewDataBean> myData){
-            this.myData=myData;
-        }
-        @Override
-        public int getCount() {
-            return myData.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view==object;
-        }
-
-        @NotNull
-        @Override
-        public Object instantiateItem(ViewGroup container, final int position) {
-            View v = LayoutInflater.from(container.getContext())
-                    .inflate(R.layout.viewpager_banner, container, false);
-            final TextView textView=v.findViewById(R.id.textView);
-            final ImageView imageView=v.findViewById(R.id.imageView);
-            textView.setText(myData.get(position).title);
-            if(!AppSetting.isRoundCorner){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    imageView.setForeground(getContext().getDrawable(R.drawable.pressed_drawable_roundimage));
-                }
-            }
-            Glide.with(imageView)
-                    .asBitmap()
-                    .load(myData.get(position).imageUrl)
-                    .transition(BitmapTransitionOptions.withCrossFade())
-                    .apply(new RequestOptions()
-                                    .transform(new MultiTransformation
-                                            (new CenterCrop(), new RoundedCorners(AppSetting.bigRoundCorner)))
-                    )
-                    .listener(new RequestListener<Bitmap>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(final Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
-                                Thread getColorThread=new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        final Color primaryColor = WallpaperColors.fromBitmap(resource).getPrimaryColor();
-                                        final int bg=Color.argb(127f,primaryColor.red(),primaryColor.green(),primaryColor.blue());
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                textView.setBackgroundColor(bg);
-                                                if(AppUtil.isDark(primaryColor.toArgb())){
-                                                    textView.setTextColor(getContext().getColor(R.color.textColorBanner));
-                                                }else {
-                                                    textView.setTextColor(getContext().getColor(R.color.darkBackground));
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                                getColorThread.start();
-
-                            }
-                            return false;
-                        }
-                    })
-                    .into(imageView);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent=new Intent(getActivity(), ArticleActivity.class);
-                    intent.putExtra("new_data",myData.get(position));
-                    startActivity(intent);
-                }
-            });
-            container.addView(v);
-            return v;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-
-//        @Override
-//        public int getItemPosition(Object object) {
-//            return POSITION_NONE;
-//        }
-    }
 
 
 
@@ -551,8 +459,8 @@ public class HomePageFragment extends Fragment {
 
                 toptv1.setText(topData.get(0).title);
                 toptv2.setText(topData.get(1).title);
-                myViewpagerAdapter.notifyDataSetChanged();
-                myAdapter.notifyDataSetChanged();
+                bannerAdapter.notifyDataSetChanged();
+                newsRecyclerViewAdapter.notifyDataSetChanged();
 
                 System.out.println("更新ui完毕");
                 if(!firstRun){

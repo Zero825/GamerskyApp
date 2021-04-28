@@ -1,11 +1,7 @@
 package com.news.gamersky;
 
-import android.content.ContentUris;
-import android.database.Cursor;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
@@ -16,10 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.news.gamersky.adapter.ViewPagerFragmentAdapter;
-import com.news.gamersky.databean.PictureDataBean;
 import com.news.gamersky.entity.UserFavorite;
-import com.news.gamersky.fragment.CommonNewsFragment;
-import com.news.gamersky.fragment.HomePageFragment;
 import com.news.gamersky.fragment.UserArticleListFragment;
 
 import java.util.ArrayList;
@@ -32,6 +25,11 @@ public class UserFavoritesActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private ViewPagerFragmentAdapter fragmentAdapter;
+    private ArrayList<Fragment> fragments;
+
+    public static final int NORMAL_MODE=0;
+    public static final int DELETE_MODE=1;
+    private int mode=0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +47,7 @@ public class UserFavoritesActivity extends AppCompatActivity {
         tabTitles.add(getString(R.string.article));
         tabTitles.add(getString(R.string.handbook));
 
-        ArrayList<Fragment> fragments=new ArrayList<>();
+        fragments=new ArrayList<>();
         fragments.add(new UserArticleListFragment());
         fragments.add(new UserArticleListFragment());
 
@@ -77,5 +75,53 @@ public class UserFavoritesActivity extends AppCompatActivity {
                 finish();
             }
         });
+        findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mode==NORMAL_MODE){
+                    showOrHideDeleteBar(true);
+                    mode=DELETE_MODE;
+                    for(Fragment fragment:fragments){
+                        ((UserArticleListFragment)fragment).enterDeleteMode();
+                    }
+                }else if(mode==DELETE_MODE){
+                    showOrHideDeleteBar(false);
+                    mode=NORMAL_MODE;
+                    for(Fragment fragment:fragments){
+                        ((UserArticleListFragment)fragment).exitDeleteMode();
+                    }
+                }
+            }
+        });
+        findViewById(R.id.delete_all).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(Fragment fragment:fragments){
+                    ((UserArticleListFragment)fragment).deleteFavorites();
+                }
+            }
+        });
+        findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOrHideDeleteBar(false);
+                mode=NORMAL_MODE;
+                for(Fragment fragment:fragments){
+                    ((UserArticleListFragment)fragment).exitDeleteMode();
+                }
+            }
+        });
     }
+
+    public void showOrHideDeleteBar(boolean show){
+        View view=findViewById(R.id.delete_bar);
+        if(show){
+            ObjectAnimator.ofFloat(view,"translationY",view.getTranslationY(),0f)
+                    .setDuration(300).start();
+        }else {
+            ObjectAnimator.ofFloat(view,"translationY",view.getTranslationY(),(float) view.getHeight())
+                    .setDuration(300).start();
+        }
+    }
+
 }

@@ -44,7 +44,6 @@ import com.news.gamersky.ImagesBrowserActivity;
 import com.news.gamersky.R;
 import com.news.gamersky.customizeview.FixViewPager;
 import com.news.gamersky.databean.NewDataBean;
-import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.NightModeUtil;
 import com.news.gamersky.util.ReadingProgressUtil;
@@ -64,12 +63,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
-import okhttp3.Request;
+
 
 
 public class ArticleFragment extends Fragment {

@@ -17,6 +17,9 @@ public interface UserFavoriteDao {
     @Query("SELECT * FROM user_favorites WHERE user_name=:userName AND href=:href")
     List<UserFavorite> findByUserNameAndHref(String userName,String href);
 
+    @Query("Delete FROM user_favorites WHERE user_name=:userName AND href=:href")
+    void deleteByUserNameAndHref(String userName,String href);
+
     @Insert
     void insertUserFavorite (UserFavorite userFavorite);
 

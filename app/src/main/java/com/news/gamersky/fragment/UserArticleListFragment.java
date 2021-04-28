@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.news.gamersky.R;
 import com.news.gamersky.adapter.UserArticleListAdapter;
+import com.news.gamersky.dao.UserFavoriteDao;
 import com.news.gamersky.database.AppDataBaseSingleton;
 import com.news.gamersky.entity.UserFavorite;
 import com.news.gamersky.util.UserMsgUtil;
@@ -25,6 +26,7 @@ public class UserArticleListFragment extends Fragment {
     private final static String TAG="UserArticleListFragment";
 
     private RecyclerView recyclerView;
+    private UserArticleListAdapter userArticleListAdapter;
     private List<UserFavorite> userFavoriteList;
 
     @Nullable
@@ -45,11 +47,12 @@ public class UserArticleListFragment extends Fragment {
 
     public void init(){
         userFavoriteList=new ArrayList<>();
+        userArticleListAdapter=new UserArticleListAdapter(userFavoriteList);
 
         recyclerView=getView().findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(new UserArticleListAdapter(userFavoriteList));
+        recyclerView.setAdapter(userArticleListAdapter);
     }
 
     public void loadData(){
@@ -62,6 +65,7 @@ public class UserArticleListFragment extends Fragment {
                             .userFavoriteDao().findByUserNameAndType(UserMsgUtil.getUserName(getContext()),type);
                     Log.i(TAG, "run: "+tempData.size());
                     if(tempData.size()>0) {
+                        userFavoriteList.clear();
                         userFavoriteList.addAll(tempData);
                         recyclerView.post(new Runnable() {
                             @Override
@@ -73,6 +77,45 @@ public class UserArticleListFragment extends Fragment {
                 }
             });
             databaseThread.start();
+        }
+    }
+
+    public void enterDeleteMode(){
+        if(userArticleListAdapter!=null){
+            userArticleListAdapter.enterDeleteMode();
+        }
+    }
+
+    public void deleteFavorites(){
+        Thread databaseThread =new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(userArticleListAdapter==null){
+                    return;
+                }
+
+                UserFavoriteDao userFavoriteDao=AppDataBaseSingleton.getAppDatabase()
+                        .userFavoriteDao();
+
+                String userName=UserMsgUtil.getUserName(requireContext());
+
+                List<String> hrefs = userArticleListAdapter.getDeleteList();
+
+
+                for(String href:hrefs){
+                    userFavoriteDao.deleteByUserNameAndHref(userName,href);
+                }
+
+                loadData();
+
+            }
+        });
+        databaseThread.start();
+    }
+
+    public void exitDeleteMode(){
+        if(userArticleListAdapter!=null){
+            userArticleListAdapter.exitDeleteMode();
         }
     }
 }
