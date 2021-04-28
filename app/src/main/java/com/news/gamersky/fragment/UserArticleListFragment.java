@@ -64,16 +64,14 @@ public class UserArticleListFragment extends Fragment {
                     final List<UserFavorite> tempData=AppDataBaseSingleton.getAppDatabase()
                             .userFavoriteDao().findByUserNameAndType(UserMsgUtil.getUserName(getContext()),type);
                     Log.i(TAG, "run: "+tempData.size());
-                    if(tempData.size()>0) {
-                        userFavoriteList.clear();
-                        userFavoriteList.addAll(tempData);
-                        recyclerView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                recyclerView.getAdapter().notifyDataSetChanged();
-                            }
-                        });
-                    }
+                    userFavoriteList.clear();
+                    userFavoriteList.addAll(tempData);
+                    recyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.getAdapter().notifyDataSetChanged();
+                        }
+                    });
                 }
             });
             databaseThread.start();

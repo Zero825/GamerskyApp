@@ -72,16 +72,14 @@ public class UserArticleListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             if(mode==UserFavoritesActivity.NORMAL_MODE) {
                 userArticleListViewHolder.checkBox.setVisibility(View.GONE);
                 userArticleListViewHolder.itemOnClickListener.enable=true;
-                userArticleListViewHolder.itemOnClickListener.position=position;
+                userArticleListViewHolder.itemOnCheckedChangeListener.enable=false;
                 userArticleListViewHolder.itemOnClickListener.userFavorite=data.get(position);
             }else {
                 userArticleListViewHolder.checkBox.setVisibility(View.VISIBLE);
                 userArticleListViewHolder.itemOnClickListener.enable=false;
+                userArticleListViewHolder.itemOnCheckedChangeListener.enable=true;
                 userArticleListViewHolder.itemOnCheckedChangeListener.userFavorite=data.get(position);
-
             }
-
-
 
         }
     }
@@ -108,22 +106,23 @@ public class UserArticleListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private static class ItemOnCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
         private UserFavorite userFavorite;
-        private boolean enable=true;
+        private boolean enable=false;
         private List<String> deleteList;
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(isChecked){
-                deleteList.add(userFavorite.href);
-            }else {
-                deleteList.remove(userFavorite.href);
+            if(enable&&userFavorite!=null) {
+                if (isChecked) {
+                    deleteList.add(userFavorite.href);
+                } else {
+                    deleteList.remove(userFavorite.href);
+                }
             }
         }
     }
 
     private static class ItemOnClickListener implements View.OnClickListener {
 
-        private int position=-1;
         private UserFavorite userFavorite;
         private boolean enable=true;
 
@@ -134,6 +133,9 @@ public class UserArticleListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 NewDataBean newDataBean = new NewDataBean(userFavorite.title, userFavorite.href);
                 intent.putExtra("new_data", newDataBean);
                 v.getContext().startActivity(intent);
+            }else if(!enable){
+                CheckBox checkBox=(CheckBox)v.findViewById(R.id.checkBox);
+                checkBox.setChecked(!checkBox.isChecked());
             }
         }
     }
