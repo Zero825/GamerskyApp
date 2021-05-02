@@ -65,6 +65,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -226,18 +227,11 @@ public class HomePageFragment extends Fragment {
         flag=0;
         lastFlag=0;
 
-        new Thread(){
+        Thread headerLoad=new Thread(new Runnable() {
             @Override
-            public void run(){
-
-                Document doc = null;
+            public void run() {
                 try {
-
-                    doc = Jsoup.connect("https://wap.gamersky.com/").get();
-                    nodeId=doc.getElementsByAttribute("data-nodeId").attr("data-nodeId");
-
-                    Document wwwDoc=Jsoup.connect("https://www.gamersky.com/").get();
-
+                    Document wwwDoc = Jsoup.connect("https://www.gamersky.com/").get();
                     Elements content = wwwDoc.getElementsByClass("Bimg").get(0).getElementsByTag("li");
                     for(int i=0;i<content.size();i++) {
                         Elements e1 = content.get(i).getElementsByTag("img");
@@ -263,6 +257,36 @@ public class HomePageFragment extends Fragment {
                         }
                         tempTopData.add(new NewDataBean(linkTitle,linkHref));
                     }
+
+                    recyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            bannerData.clear();
+                            topData.clear();
+                            bannerData.addAll(tempBannerData);
+                            topData.addAll(tempTopData);
+                            toptv1.setText(topData.get(0).title);
+                            toptv2.setText(topData.get(1).title);
+                            bannerAdapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Thread newsLoad=new Thread(){
+            @Override
+            public void run(){
+
+                Document doc = null;
+                try {
+
+                    doc = Jsoup.connect("https://wap.gamersky.com/").get();
+                    nodeId=doc.getElementsByAttribute("data-nodeId").attr("data-nodeId");
+
+
 
                     Element es=doc.getElementById("listDataArea");
 
@@ -325,10 +349,11 @@ public class HomePageFragment extends Fragment {
                     refreshHandler.sendMessage(message);
 
                 }
-
-
             }
-        }.start();
+        };
+
+        headerLoad.start();
+        newsLoad.start();
     }
 
     //这个请求有点慢
@@ -449,17 +474,11 @@ public class HomePageFragment extends Fragment {
             if(msg.what==1){
                 refreshLayout.setRefreshing(false);
 
-                bannerData.clear();
-                topData.clear();
+
                 newsList.clear();
-                bannerData.addAll(tempBannerData);
-                topData.addAll(tempTopData);
                 newsList.addAll(tempNewsList);
                 System.out.println("更新ui");
 
-                toptv1.setText(topData.get(0).title);
-                toptv2.setText(topData.get(1).title);
-                bannerAdapter.notifyDataSetChanged();
                 newsRecyclerViewAdapter.notifyDataSetChanged();
 
                 System.out.println("更新ui完毕");
