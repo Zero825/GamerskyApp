@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 
 @Entity(tableName = "user_favorites",primaryKeys = {"user_name","href"})
@@ -40,7 +38,7 @@ public class UserFavorite {
     public UserFavorite(){}
 
     @Ignore
-    public UserFavorite(@NotNull String userName, @NotNull String href, String title, String time, int type) {
+    public UserFavorite(String userName, String href, String title, String time, int type) {
         this.userName=userName;
         this.href = href;
         this.title = title;

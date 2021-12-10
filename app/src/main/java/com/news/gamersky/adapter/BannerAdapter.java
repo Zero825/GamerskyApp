@@ -33,8 +33,6 @@ import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 
 public class  BannerAdapter extends PagerAdapter {
@@ -54,7 +52,6 @@ public class  BannerAdapter extends PagerAdapter {
         return view==object;
     }
 
-    @NotNull
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         View v = LayoutInflater.from(container.getContext())
@@ -126,12 +123,12 @@ public class  BannerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, @NotNull Object object) {
+    public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
     }
 
     @Override
-    public int getItemPosition(@NotNull Object object) {
+    public int getItemPosition(Object object) {
         return POSITION_NONE;
     }
 }

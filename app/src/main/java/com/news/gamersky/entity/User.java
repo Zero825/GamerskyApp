@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.Fts4;
 import androidx.room.PrimaryKey;
 
-import org.jetbrains.annotations.NotNull;
-
 @Entity(tableName = "users")
 public class User {
     @PrimaryKey@NonNull@ColumnInfo(name = "name")

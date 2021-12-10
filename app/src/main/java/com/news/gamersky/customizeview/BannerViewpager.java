@@ -1,28 +1,16 @@
 package com.news.gamersky.customizeview;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.news.gamersky.LoginActivity;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;

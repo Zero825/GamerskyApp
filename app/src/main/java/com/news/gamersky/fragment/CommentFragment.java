@@ -34,7 +34,6 @@ import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.CommentEmojiUtil;
 import com.news.gamersky.databean.CommentDataBean;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -133,13 +132,13 @@ public class CommentFragment extends Fragment {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
-            public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mSuspensionHeight = commentHeader.getHeight();
             }
 
             @Override
-            public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
                 if (commentAdapter.getItemViewType(mCurrentPosition + 1) == 0

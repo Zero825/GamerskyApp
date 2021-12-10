@@ -58,7 +58,6 @@ import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.databean.NewDataBean;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -123,7 +122,7 @@ public class HomePageFragment extends Fragment {
         startListen();
     }
 
-    public void init(@NotNull View view, @NotNull View headerView){
+    public void init(View view, View headerView){
 
         flag=0;
         lastFlag=0;
@@ -280,13 +279,11 @@ public class HomePageFragment extends Fragment {
             @Override
             public void run(){
 
-                Document doc = null;
+                Document doc;
                 try {
 
                     doc = Jsoup.connect("https://wap.gamersky.com/").get();
-                    nodeId=doc.getElementsByAttribute("data-nodeId").attr("data-nodeId");
-
-
+                    nodeId=doc.getElementById("wap-ymw-list-tp1").attr("data-nodeId");
 
                     Element es=doc.getElementById("listDataArea");
 
@@ -296,13 +293,12 @@ public class HomePageFragment extends Fragment {
                         Elements e=content2.get(i).getElementsByTag("img");
                         Elements e1=content2.get(i).getElementsByTag("p");
                         Elements e2=content2.get(i).getElementsByTag("h5");
-                        String s0=content2.get(i).attr("data-id");
-                        String s1=e.get(0).attr("data-lazysrc");
+                        String s0=content2.get(i).getElementsByTag("a").attr("data-itemid");
+                        String s1=e.get(0).attr("src");
                         String s2=e2.get(0).html();
-                        s2=s2.substring(s2.indexOf("</span>")+7);
                         String s3=content2.get(i).getElementsByTag("a").attr("href");
                         String s4=e1.get(0).getElementsByTag("time").text();
-                        String s5=e2.get(0).getElementsByTag("strong").text();
+                        String s5="";
                         tempNewsList.add(new NewDataBean(s0,s1,s2,s3,s4,s5,""));
                     }
 

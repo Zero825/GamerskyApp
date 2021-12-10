@@ -37,8 +37,6 @@ import com.news.gamersky.util.AppUtil;
 import com.news.gamersky.util.UIUtil;
 import com.news.gamersky.util.UserMsgUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 public class UserFragment extends Fragment {
     private final static String TAG="UserFragment";
     public final static int LOGIN_REQUEST=0;
@@ -128,7 +126,7 @@ public class UserFragment extends Fragment {
     }
 
     @Override
-    public void onCreateContextMenu(@NotNull ContextMenu menu, @NotNull View v,
+    public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = requireActivity().getMenuInflater();

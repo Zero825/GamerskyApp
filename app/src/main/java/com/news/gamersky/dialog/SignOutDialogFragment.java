@@ -10,9 +10,6 @@ import androidx.fragment.app.DialogFragment;
 
 import com.news.gamersky.R;
 
-import org.jetbrains.annotations.NotNull;
-
-
 public class SignOutDialogFragment extends DialogFragment {
 
     public interface SignOutDialogListener {
@@ -22,8 +19,6 @@ public class SignOutDialogFragment extends DialogFragment {
 
     SignOutDialogListener signOutDialogListener;
 
-
-    @NotNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

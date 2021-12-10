@@ -25,8 +25,6 @@ import com.news.gamersky.databean.NewDataBean;
 import com.news.gamersky.setting.AppSetting;
 import com.news.gamersky.util.ReadingProgressUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -61,9 +59,8 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         return i;
     }
 
-    @NotNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
         //Log.i("TAG", "onCreateViewHolder: "+viewType);
         if(viewType==0){
@@ -137,6 +134,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             textView2.setText(mDataset.get(position).date);
             textView.setText(Html.fromHtml(mDataset.get(position).title));
             if(ReadingProgressUtil.getNewsClick(context,mDataset.get(position).id)){
+                String id = mDataset.get(position).id;
                 textView.setTextColor(context.getColor(R.color.defaultColor));
             }else {
                 textView.setTextColor(context.getColor(R.color.textColorPrimary));
@@ -159,6 +157,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     if(PreferenceManager.getDefaultSharedPreferences(context)
                             .getBoolean("save_article_click",true)){
                         textView.setTextColor(context.getColor(R.color.defaultColor));
+                        String id2 = mDataset.get(position).id;
                         ReadingProgressUtil.putNewsClick(context,mDataset.get(position).id,true);
                     }
                     Intent intent=new Intent(context, ArticleActivity.class);
